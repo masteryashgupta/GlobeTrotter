@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { TripActivityService } from '../services/tripActivityService';
 
-import { tripActivityCreateSchema } from '../../../shared/validation';
+import { tripActivityCreateSchema } from '../shared/validation';
 import { validateBody } from '../middleware/validateBody';
 
 export const tripActivitiesRouter = Router({ mergeParams: true });

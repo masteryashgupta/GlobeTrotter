@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '../lib/supabaseAdmin';
-import { City, Activity } from '../../../shared/types';
+import { City, Activity } from '../shared/types';
 import { normalizedCities, normalizedActivities, ActivityWithCity } from '../data/seedData';
 
 export interface CitySearchParams {

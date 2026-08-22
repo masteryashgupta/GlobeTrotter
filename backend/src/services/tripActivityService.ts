@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '../lib/supabaseAdmin';
-import { TripActivity, Activity } from '../../../shared/types';
+import { TripActivity, Activity } from '../shared/types';
 import { StopService } from './stopService';
 import { CatalogService } from './catalogService';
 

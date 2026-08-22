@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { validateBody } from '../middleware/validateBody';
-import { expenseCreateSchema, expenseUpdateSchema, ExpenseCreateInput, ExpenseUpdateInput } from '../../../shared/validation';
+import { expenseCreateSchema, expenseUpdateSchema, ExpenseCreateInput, ExpenseUpdateInput } from '../shared/validation';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
 
 export const budgetRouter = Router();

@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { validateBody } from '../middleware/validateBody';
-import { tripCreateSchema, tripUpdateSchema, TripCreateInput, TripUpdateInput } from '../../../shared/validation';
+import { tripCreateSchema, tripUpdateSchema, TripCreateInput, TripUpdateInput } from '../shared/validation';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
 import { StopService } from '../services/stopService';
 import { TripActivityService } from '../services/tripActivityService';

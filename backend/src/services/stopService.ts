@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '../lib/supabaseAdmin';
-import { Stop, City } from '../../../shared/types';
+import { Stop, City } from '../shared/types';
 import { CatalogService } from './catalogService';
 
 export interface StopWithCity extends Stop {

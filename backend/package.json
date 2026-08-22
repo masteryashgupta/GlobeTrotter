@@ -2,11 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "GlobeTrotter Backend API Service",
-  "main": "dist/backend/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/backend/src/index.js",
+    "start": "node dist/index.js",
     "seed:local": "SUPABASE_URL=http://127.0.0.1:54321 tsx scripts/seed.ts",
     "seed:cloud": "tsx scripts/seed.ts"
   },

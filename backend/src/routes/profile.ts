@@ -5,7 +5,7 @@ import {
   profileUpdateSchema,
   profileDeleteSchema,
   ProfileUpdateInput,
-} from '../../../shared/validation';
+} from '../shared/validation';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
 
 export const profileRouter = Router();

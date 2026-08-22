@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { validateBody } from '../middleware/validateBody';
-import { stopCreateSchema } from '../../../shared/validation';
+import { stopCreateSchema } from '../shared/validation';
 import { StopService } from '../services/stopService';
 import { TripActivityService } from '../services/tripActivityService';
 

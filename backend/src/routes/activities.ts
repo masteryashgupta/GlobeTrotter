@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { CatalogService } from '../services/catalogService';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
-import { TripActivity } from '../../../shared/types';
+import { TripActivity } from '../shared/types';
 
 export const activitiesRouter = Router();
 

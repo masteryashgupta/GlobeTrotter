@@ -1,4 +1,4 @@
-import { City, Activity } from '../../../shared/types';
+import { City, Activity } from '../shared/types';
 
 export interface RawActivity {
   name: string;
