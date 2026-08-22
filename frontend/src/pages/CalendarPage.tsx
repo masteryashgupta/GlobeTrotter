@@ -10,6 +10,7 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { Card, Button, Badge, Modal, Input, useToast, Skeleton, EmptyState } from '../components/ui';
 import { ShareTripModal } from '../components/trips/ShareTripModal';
 import { supabase } from '../lib/supabase';
+import { API_BASE_URL } from '../lib/api';
 import { Trip } from '../../../shared/types';
 
 const locales = {
@@ -104,7 +105,7 @@ export const CalendarPage: React.FC = () => {
     queryKey: ['trip', tripId],
     queryFn: async () => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripId}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error('Failed to load trip details');
@@ -118,7 +119,7 @@ export const CalendarPage: React.FC = () => {
     queryKey: ['trip-calendar', tripId],
     queryFn: async () => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}/calendar`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripId}/calendar`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error('Failed to load calendar events');
@@ -155,7 +156,7 @@ export const CalendarPage: React.FC = () => {
       data: { scheduled_date?: string; scheduled_time?: string; custom_cost?: number; notes?: string };
     }) => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trip-activities/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/trip-activities/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -213,7 +214,7 @@ export const CalendarPage: React.FC = () => {
   const deleteActivityMutation = useMutation({
     mutationFn: async (id: string) => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trip-activities/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/trip-activities/${id}`, {
         method: 'DELETE',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });

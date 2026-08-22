@@ -7,9 +7,8 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/ui';
 import { Button, Card, Input, Select, Modal, Skeleton, EmptyState, Badge } from '../components/ui';
 import { supabase } from '../lib/supabase';
+import { API_BASE_URL } from '../lib/api';
 import { City } from '../../../shared/types';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const LANGUAGE_OPTIONS = [
   { label: 'English (US)', value: 'en' },

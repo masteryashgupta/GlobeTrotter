@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { API_BASE_URL } from '../lib/api';
 import { Trip, City } from '../../../shared/types';
 import { Card, Button, Badge, Skeleton, EmptyState } from '../components/ui';
 
@@ -20,11 +21,10 @@ export const DashboardPage: React.FC = () => {
     queryKey: ['trips', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
       const token = session?.access_token;
 
       try {
-        const res = await fetch(`${backendUrl}/api/trips`, {
+        const res = await fetch(`${API_BASE_URL}/trips`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

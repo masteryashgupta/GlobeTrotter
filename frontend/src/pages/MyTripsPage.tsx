@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { API_BASE_URL } from '../lib/api';
 import { Trip } from '../../../shared/types';
 import { Card, Button, Badge, Skeleton, EmptyState, Modal, useToast } from '../components/ui';
 import { TripForm } from '../components/trips/TripForm';
@@ -25,11 +26,10 @@ export const MyTripsPage: React.FC = () => {
     queryKey: ['trips', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
       const token = session?.access_token;
 
       try {
-        const res = await fetch(`${backendUrl}/api/trips`, {
+        const res = await fetch(`${API_BASE_URL}/trips`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) return await res.json();
@@ -54,10 +54,9 @@ export const MyTripsPage: React.FC = () => {
     setIsDeleting(true);
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
       const token = session?.access_token;
 
-      const res = await fetch(`${backendUrl}/api/trips/${tripToDelete.id}`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripToDelete.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

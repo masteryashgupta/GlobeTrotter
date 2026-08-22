@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, useToast } from '../ui';
 import { supabase } from '../../lib/supabase';
+import { API_BASE_URL } from '../../lib/api';
 
 interface ShareTripModalProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export const ShareTripModal: React.FC<ShareTripModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
 
-  const shareUrl = shareToken ? `${window.location.origin}/share/${shareToken}` : '';
+  const shareUrl = shareToken ? `${window.location.origin}${window.location.pathname}#/share/${shareToken}` : '';
 
   const handleToggleShare = async () => {
     try {
@@ -38,8 +39,8 @@ export const ShareTripModal: React.FC<ShareTripModalProps> = ({
       const token = session?.access_token;
 
       const endpoint = newPublicState
-        ? `http://localhost:5000/api/trips/${tripId}/share`
-        : `http://localhost:5000/api/trips/${tripId}/unshare`;
+        ? `${API_BASE_URL}/trips/${tripId}/share`
+        : `${API_BASE_URL}/trips/${tripId}/unshare`;
 
       const res = await fetch(endpoint, {
         method: 'POST',

@@ -2,7 +2,14 @@ import { supabase } from './supabase';
 import { City, Trip, Stop, Activity, TripActivity } from '../../../shared/types';
 import { StopCreateInput } from '../../../shared/validation';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const BACKEND_BASE_URL =
+  import.meta.env.VITE_BACKEND_URL ||
+  (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : 'http://localhost:5000');
+
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || `${BACKEND_BASE_URL}/api`;
+
+const BASE_URL = API_BASE_URL;
 
 async function getAuthHeader(): Promise<Record<string, string>> {
   const {

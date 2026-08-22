@@ -12,8 +12,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/ui';
 import { Card, Skeleton, Button, EmptyState } from '../components/ui';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

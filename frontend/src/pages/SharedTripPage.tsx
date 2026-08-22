@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Button, Badge, useToast, Skeleton } from '../components/ui';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../lib/api';
 
 export const SharedTripPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -23,7 +24,7 @@ export const SharedTripPage: React.FC = () => {
       if (!token) return;
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/share/${token}`);
+        const res = await fetch(`${API_BASE_URL}/share/${token}`);
         if (!res.ok) {
           const errData = await res.json();
           throw new Error(errData.error || 'This trip is not available or is no longer shared.');
@@ -54,7 +55,7 @@ export const SharedTripPage: React.FC = () => {
       const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
-      const res = await fetch(`http://localhost:5000/api/share/${token}/copy`, {
+      const res = await fetch(`${API_BASE_URL}/share/${token}/copy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

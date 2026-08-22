@@ -6,6 +6,7 @@ import { tripCreateSchema, TripCreateInput } from '../../../../shared/validation
 import { Trip } from '../../../../shared/types';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { API_BASE_URL } from '../../lib/api';
 import { Input, Textarea, Button, useToast } from '../ui';
 
 export interface TripFormProps {
@@ -85,10 +86,8 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
 
   const onSubmit = async (data: TripCreateInput) => {
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
       const token = session?.access_token;
-
-      const endpoint = isEdit ? `${backendUrl}/api/trips/${initialValues?.id}` : `${backendUrl}/api/trips`;
+      const endpoint = isEdit ? `${API_BASE_URL}/trips/${initialValues?.id}` : `${API_BASE_URL}/trips`;
       const method = isEdit ? 'PATCH' : 'POST';
 
       const response = await fetch(endpoint, {

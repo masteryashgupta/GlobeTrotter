@@ -20,6 +20,7 @@ import {
 import { Card, Button, Badge, Modal, Input, Select, useToast, Skeleton, EmptyState } from '../components/ui';
 import { ShareTripModal } from '../components/trips/ShareTripModal';
 import { supabase } from '../lib/supabase';
+import { API_BASE_URL } from '../lib/api';
 import { Expense, Trip } from '../../../shared/types';
 import {
   expenseCreateSchema,
@@ -89,7 +90,7 @@ export const BudgetPage: React.FC = () => {
     queryKey: ['trip', tripId],
     queryFn: async () => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripId}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error('Failed to load trip details');
@@ -103,7 +104,7 @@ export const BudgetPage: React.FC = () => {
     queryKey: ['trip-budget', tripId],
     queryFn: async () => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}/budget`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripId}/budget`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error('Failed to load budget breakdown');
@@ -117,7 +118,7 @@ export const BudgetPage: React.FC = () => {
     queryKey: ['trip-expenses', tripId],
     queryFn: async () => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}/expenses`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripId}/expenses`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error('Failed to load manual expenses');
@@ -185,7 +186,7 @@ export const BudgetPage: React.FC = () => {
   const createMutation = useMutation({
     mutationFn: async (formData: ExpenseCreateInput) => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}/expenses`, {
+      const res = await fetch(`${API_BASE_URL}/trips/${tripId}/expenses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +215,7 @@ export const BudgetPage: React.FC = () => {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ExpenseUpdateInput }) => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/expenses/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/expenses/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +245,7 @@ export const BudgetPage: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: async (expenseId: string) => {
       const token = await getAuthToken();
-      const res = await fetch(`http://localhost:5000/api/expenses/${expenseId}`, {
+      const res = await fetch(`${API_BASE_URL}/expenses/${expenseId}`, {
         method: 'DELETE',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
