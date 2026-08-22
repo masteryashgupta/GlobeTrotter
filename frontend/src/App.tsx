@@ -22,8 +22,8 @@ import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
 import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
 /**
- * GlobeTrotter Full-Stack App Root
- * Auto-deployed via GitHub Actions Workflow (.github/workflows/deploy-frontend.yml)
+ * GlobeTrotter Full-Stack App Root — v1.0.4 (Cache Invalidation Build)
+ * Primary Live Backend Endpoint: https://globetrotter-production-4300.up.railway.app
  */
 const queryClient = new QueryClient({
   defaultOptions: {
