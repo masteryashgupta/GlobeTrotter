@@ -363,6 +363,25 @@ export const ItineraryBuilderPage: React.FC = () => {
                 ))}
               </div>
             </SortableContext>
+
+            {/* Bottom "+ Add another Section" CTA Button (Screen 5 Spec) */}
+            <div className="pt-4 flex justify-center">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => {
+                  setEditingStop(null);
+                  setIsAddStopOpen(true);
+                }}
+                leftIcon={
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                }
+              >
+                + Add another Section
+              </Button>
+            </div>
           </DndContext>
         )}
       </div>

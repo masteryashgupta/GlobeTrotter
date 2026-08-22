@@ -7,7 +7,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Card, Button, Badge, Modal, Input, useToast, Skeleton, EmptyState } from '../components/ui';
+import { Card, Button, Badge, Modal, Input, useToast, Skeleton, EmptyState, FilterControlBar } from '../components/ui';
 import { ShareTripModal } from '../components/trips/ShareTripModal';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
@@ -328,6 +328,11 @@ export const CalendarPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 animate-fade-up">
+      {/* Search bar + Group by / Filter / Sort by controls (Screen 11 Spec) */}
+      <FilterControlBar
+        searchPlaceholder="Search calendar events, trip stays, or activities..."
+      />
+
       {/* Navigation & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E9E4F5]">
         <div>
@@ -337,7 +342,7 @@ export const CalendarPage: React.FC = () => {
             <span>{trip?.name || 'Trip Schedule'}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">
-            Trip Calendar &amp; Timeline
+            Calendar View
           </h1>
         </div>
 

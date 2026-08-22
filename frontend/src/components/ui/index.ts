@@ -8,3 +8,4 @@ export * from './Badge';
 export * from './Skeleton';
 export * from './Toast';
 export * from './EmptyState';
+export * from './FilterControlBar';

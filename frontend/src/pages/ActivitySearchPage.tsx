@@ -8,7 +8,7 @@ import { ActivityCard } from '../components/activities/ActivityCard';
 import { ActivityFilterPanel } from '../components/activities/ActivityFilterPanel';
 import { ActivityDetailModal } from '../components/activities/ActivityDetailModal';
 import { AddActivityModal } from '../components/activities/AddActivityModal';
-import { Skeleton, EmptyState, Button, Badge, useToast } from '../components/ui';
+import { Skeleton, EmptyState, Button, Badge, useToast, FilterControlBar } from '../components/ui';
 
 export const ActivitySearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -144,6 +144,12 @@ export const ActivitySearchPage: React.FC = () => {
 
   return (
     <div className="py-6 space-y-8 font-sans">
+      {/* Search bar + Group by / Filter / Sort by controls (Screen 8 Spec) */}
+      <FilterControlBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Search activities by name or description (e.g. Louvre, Scuba, Gondola)..."
+      />
       {/* Stop Context Banner (if navigated from Itinerary Builder) */}
       {stopId && (
         <div className="bg-[#7C3AED]/8 border border-[#7C3AED]/25 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3 shadow-sm">

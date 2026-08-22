@@ -6,7 +6,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { CityCard } from '../components/cities/CityCard';
 import { CityFilterPanel } from '../components/cities/CityFilterPanel';
 import { AddToTripModal } from '../components/cities/AddToTripModal';
-import { Input, Skeleton, EmptyState, Button, Badge } from '../components/ui';
+import { Input, Skeleton, EmptyState, Button, Badge, FilterControlBar } from '../components/ui';
 
 export const CitySearchPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -52,7 +52,14 @@ export const CitySearchPage: React.FC = () => {
 
   return (
     <div className="py-6 space-y-8 font-sans">
-      {/* Hero / Header Section */}
+      {/* Search bar + Group by / Filter / Sort by controls (Screen 8 Spec) */}
+      <FilterControlBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Search cities by name, region, or country (e.g. Paris, Tokyo, Italy)..."
+      />
+
+      {/* Hero Banner Section */}
       <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-10 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)]">
         <div
           className="absolute -top-16 -right-16 w-80 h-80 rounded-full pointer-events-none animate-ambient-glow"

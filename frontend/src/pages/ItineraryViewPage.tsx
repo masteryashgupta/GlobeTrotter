@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { supabase } from '../lib/supabase';
-import { Button, Badge, Skeleton, EmptyState, Card } from '../components/ui';
+import { Button, Badge, Skeleton, EmptyState, Card, FilterControlBar } from '../components/ui';
 import { formatCost, getCategoryBadgeVariant } from '../components/activities/ActivityCard';
 import { Activity } from '../../../shared/types';
 
@@ -115,6 +115,11 @@ export const ItineraryViewPage: React.FC = () => {
 
   return (
     <div className="py-6 space-y-8 font-sans">
+      {/* Top Search bar + Group by / Filter / Sort by controls (Screen 9 Spec) */}
+      <FilterControlBar
+        searchPlaceholder="Search itinerary activities, dates, or notes..."
+      />
+
       {/* Trip Overview Header Hero */}
       <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-8 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)] animate-fade-up">
         <div

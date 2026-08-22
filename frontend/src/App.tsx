@@ -20,6 +20,7 @@ import { CitySearchPage } from './pages/CitySearchPage';
 import { ActivitySearchPage } from './pages/ActivitySearchPage';
 import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
 import { ItineraryViewPage } from './pages/ItineraryViewPage';
+import { CommunityPage } from './pages/CommunityPage';
 
 /**
  * GlobeTrotter Full-Stack App Root
@@ -170,6 +171,16 @@ export function App() {
                   <ProtectedRoute>
                     <AppLayout>
                       <ActivitySearchPage />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/community"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout>
+                      <CommunityPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
