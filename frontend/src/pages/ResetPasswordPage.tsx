@@ -50,14 +50,22 @@ export const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 font-sans relative overflow-hidden">
+      {/* Ambient violet blob glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full pointer-events-none animate-ambient-glow"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(124,58,237,0.10) 0%, rgba(192,132,252,0.06) 45%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+      />
+      <div className="w-full max-w-md space-y-6 relative z-10 animate-fade-up">
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-teal-600 items-center justify-center text-white font-black text-2xl shadow-xl shadow-teal-900/30">
+          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7C3AED] to-[#C084FC] items-center justify-center text-white font-black text-2xl shadow-xl shadow-[rgba(124,58,237,0.25)] font-heading">
             G
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Set New Password</h1>
-          <p className="text-sm text-slate-400">Please enter your new account password below</p>
+          <h1 className="text-2xl font-bold text-[#1A1523] tracking-tight font-heading">Set New Password</h1>
+          <p className="text-sm text-[#6B7280]">Please enter your new account password below</p>
         </div>
 
         <Card>

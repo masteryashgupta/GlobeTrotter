@@ -78,10 +78,10 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
 
   return (
     <div
-      className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 bg-slate-900 border rounded-xl gap-3 transition-all ${
+      className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 bg-white border rounded-xl gap-3 transition-all font-sans ${
         isDragging
-          ? 'border-teal-500 ring-2 ring-teal-500/30 shadow-2xl bg-slate-850'
-          : 'border-slate-800 hover:border-slate-700/80'
+          ? 'border-[#7C3AED] ring-2 ring-[#7C3AED]/30 shadow-lg bg-[#F7F5FC]'
+          : 'border-[#E9E4F5] hover:border-[#7C3AED]/30'
       }`}
     >
       {/* Left: Drag Handle & Info */}
@@ -91,7 +91,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
           <button
             type="button"
             {...dragHandleProps}
-            className="cursor-grab active:cursor-grabbing p-1.5 -ml-1 min-w-[32px] min-h-[32px] flex items-center justify-center text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors touch-none select-none shrink-0"
+            className="cursor-grab active:cursor-grabbing p-1.5 -ml-1 min-w-[32px] min-h-[32px] flex items-center justify-center text-[#6B7280] hover:text-[#7C3AED] hover:bg-[#F7F5FC] rounded transition-colors touch-none select-none shrink-0"
             title="Drag to reorder activity"
             aria-label="Drag to reorder activity"
           >
@@ -112,7 +112,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
             'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80'
           }
           alt={activity.name || 'Experience'}
-          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg object-cover bg-slate-950 shrink-0 border border-slate-800"
+          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg object-cover bg-[#F7F5FC] shrink-0 border border-[#E9E4F5]"
           onError={(e) => {
             (e.target as HTMLImageElement).src =
               'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80';
@@ -121,7 +121,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
 
         <div className="min-w-0 space-y-0.5">
           <div className="flex items-center gap-2 flex-wrap">
-            <h5 className="text-xs sm:text-sm font-bold text-white truncate">
+            <h5 className="text-xs sm:text-sm font-bold text-[#1A1523] truncate">
               {activity.name || 'Custom Activity'}
             </h5>
             {activity.category && (
@@ -131,7 +131,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
             )}
           </div>
           {tripActivity.notes && (
-            <p className="text-[11px] text-slate-400 truncate max-w-xs">
+            <p className="text-[11px] text-[#6B7280] truncate max-w-xs">
               📝 {tripActivity.notes}
             </p>
           )}
@@ -152,13 +152,13 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
               setInlineDateError('');
             }}
             onBlur={handleDateBlur}
-            className={`px-2 py-1 text-xs bg-slate-950 border rounded-lg text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 ${
-              inlineDateError ? 'border-rose-500 text-rose-300' : 'border-slate-700'
+            className={`px-2 py-1 text-xs bg-[#F7F5FC] border rounded-lg text-[#1A1523] focus:outline-none focus:ring-1 focus:ring-[#7C3AED] ${
+              inlineDateError ? 'border-[#EF4444] text-[#EF4444]' : 'border-[#E9E4F5]'
             }`}
             title={`Stay range: ${stop.arrival_date} to ${stop.departure_date}`}
           />
           {inlineDateError && (
-            <span className="absolute -bottom-4 right-0 text-[10px] text-rose-400 font-bold whitespace-nowrap">
+            <span className="absolute -bottom-4 right-0 text-[10px] text-[#EF4444] font-bold whitespace-nowrap">
               {inlineDateError}
             </span>
           )}
@@ -170,12 +170,12 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
           value={scheduledTime}
           onChange={(e) => setScheduledTime(e.target.value)}
           onBlur={handleTimeBlur}
-          className="px-2 py-1 text-xs bg-slate-950 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
+          className="px-2 py-1 text-xs bg-[#F7F5FC] border border-[#E9E4F5] rounded-lg text-[#1A1523] focus:outline-none focus:ring-1 focus:ring-[#7C3AED]"
           title="Scheduled time"
         />
 
         {/* Cost */}
-        <span className="text-xs font-extrabold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+        <span className="text-xs font-extrabold text-[#15803D] px-2 py-0.5 rounded bg-[#22C55E]/10 border border-[#22C55E]/20">
           {formatCost(tripActivity.custom_cost !== null && tripActivity.custom_cost !== undefined ? tripActivity.custom_cost : activity.cost)}
         </span>
 
@@ -184,7 +184,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
           type="button"
           onClick={() => deleteMutation.mutate()}
           disabled={deleteMutation.isPending}
-          className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+          className="p-1.5 text-[#6B7280] hover:text-[#EF4444] hover:bg-[#EF4444]/10 rounded-lg transition-colors"
           title="Remove activity from stop"
           aria-label="Remove activity"
         >

@@ -232,13 +232,13 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-4">
+    <div className="max-w-4xl mx-auto space-y-8 py-4 animate-fade-up">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl">
-          Account Settings & Profile
+        <h1 className="text-2xl font-extrabold text-[#1A1523] tracking-tight sm:text-3xl font-heading">
+          Account Settings &amp; Profile
         </h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-[#6B7280] mt-1">
           Manage your personal details, preferred language, saved trip destinations, and account lifecycle.
         </p>
       </div>
@@ -259,29 +259,29 @@ export const SettingsPage: React.FC = () => {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Avatar Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6 border-b border-slate-700/60">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6 border-b border-[#E9E4F5]">
               <div className="relative group">
                 {avatarPreview || watchAvatarUrl ? (
                   <img
                     src={(avatarPreview || watchAvatarUrl) ?? undefined}
                     alt="Avatar preview"
-                    className="w-20 h-20 rounded-full object-cover border-2 border-teal-500 shadow-md"
+                    className="w-20 h-20 rounded-full object-cover border-2 border-[#7C3AED] shadow-md"
                     onError={() => setAvatarPreview('')}
                   />
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center text-teal-400 font-bold text-2xl border-2 border-slate-600">
+                  <div className="w-20 h-20 rounded-full bg-[#F7F5FC] flex items-center justify-center text-[#7C3AED] font-bold text-2xl border-2 border-[#E9E4F5]">
                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )}
               </div>
 
               <div className="flex-1 space-y-3">
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wide">
+                <label className="block text-xs font-semibold text-[#1A1523] uppercase tracking-wide">
                   Profile Avatar
                 </label>
                 <div className="flex flex-wrap items-center gap-3">
                   <label className="cursor-pointer">
-                    <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors border border-slate-600">
+                    <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium bg-[#F7F5FC] hover:bg-[#E9E4F5] text-[#1A1523] rounded-lg transition-colors border border-[#E9E4F5]">
                       {isUploadingAvatar ? 'Uploading...' : 'Upload New Photo'}
                     </span>
                     <input
@@ -292,7 +292,7 @@ export const SettingsPage: React.FC = () => {
                       className="hidden"
                     />
                   </label>
-                  <span className="text-xs text-slate-500">or enter image URL below</span>
+                  <span className="text-xs text-[#6B7280]">or enter image URL below</span>
                 </div>
                 <Input
                   placeholder="https://example.com/avatar.jpg"
@@ -314,7 +314,7 @@ export const SettingsPage: React.FC = () => {
                 readOnly
                 disabled
                 helperText="Email is managed via Supabase Auth"
-                className="bg-slate-900/60 text-slate-400 cursor-not-allowed border-slate-800"
+                className="bg-[#F7F5FC] text-[#6B7280] cursor-not-allowed border-[#E9E4F5]"
               />
               <Input
                 label="Full Name"
@@ -336,7 +336,7 @@ export const SettingsPage: React.FC = () => {
             </div>
 
             {/* Form Submit Footer */}
-            <div className="pt-4 border-t border-slate-700/60 flex justify-end">
+            <div className="pt-4 border-t border-[#E9E4F5] flex justify-end">
               <Button type="submit" isLoading={isSubmitting}>
                 Save Profile Changes
               </Button>
@@ -381,7 +381,7 @@ export const SettingsPage: React.FC = () => {
             {savedDestinations.map((city) => (
               <div
                 key={city.id}
-                className="group relative overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/60 shadow-md hover:border-teal-500/50 transition-all"
+                className="group relative overflow-hidden rounded-xl border border-[#E9E4F5] bg-[#F7F5FC] shadow-sm hover:border-[#7C3AED]/40 transition-all"
               >
                 {city.image_url ? (
                   <img
@@ -390,20 +390,20 @@ export const SettingsPage: React.FC = () => {
                     className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="w-full h-32 bg-slate-800 flex items-center justify-center text-slate-500">
+                  <div className="w-full h-32 bg-[#E9E4F5] flex items-center justify-center text-[#6B7280]">
                     No image available
                   </div>
                 )}
                 <div className="p-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-white tracking-tight">{city.name}</h4>
+                    <h4 className="font-bold text-[#1A1523] tracking-tight font-heading">{city.name}</h4>
                     {city.cost_index && (
                       <Badge variant="secondary">
                         {'₹'.repeat(city.cost_index)}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">{city.country} {city.region ? `• ${city.region}` : ''}</p>
+                  <p className="text-xs text-[#6B7280] mt-1">{city.country} {city.region ? `• ${city.region}` : ''}</p>
                 </div>
               </div>
             ))}
@@ -412,18 +412,18 @@ export const SettingsPage: React.FC = () => {
       </Card>
 
       {/* 3. Account Deletion Danger Zone */}
-      <Card className="border-rose-900/40 bg-rose-950/10">
+      <Card className="border-[#EF4444]/30 bg-[#EF4444]/5">
         <Card.Header>
-          <Card.Title className="text-rose-400">Danger Zone</Card.Title>
-          <Card.Description className="text-slate-400">
+          <Card.Title className="text-[#EF4444]">Danger Zone</Card.Title>
+          <Card.Description className="text-[#6B7280]">
             Permanently delete your user account, profile, trips, and all associated itinerary data.
           </Card.Description>
         </Card.Header>
 
         <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-slate-200">Delete User Account</h4>
-            <p className="text-xs text-slate-400 mt-0.5">This action is irreversible and cannot be undone.</p>
+            <h4 className="text-sm font-semibold text-[#1A1523]">Delete User Account</h4>
+            <p className="text-xs text-[#6B7280] mt-0.5">This action is irreversible and cannot be undone.</p>
           </div>
           <Button variant="danger" onClick={() => setIsDeleteModalOpen(true)} className="flex-shrink-0">
             Delete Account

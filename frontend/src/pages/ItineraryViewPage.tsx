@@ -116,8 +116,14 @@ export const ItineraryViewPage: React.FC = () => {
   return (
     <div className="py-6 space-y-8 font-sans">
       {/* Trip Overview Header Hero */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950/40 to-slate-900 border border-slate-800 p-6 sm:p-8 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-8 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)] animate-fade-up">
+        <div
+          className="absolute -top-12 -right-12 w-80 h-80 rounded-full pointer-events-none animate-ambient-glow"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(124,58,237,0.14) 0%, rgba(192,132,252,0.07) 45%, transparent 70%)',
+            filter: 'blur(32px)',
+          }}
+        />
 
         {isLoading ? (
           <div className="space-y-4">
@@ -140,18 +146,18 @@ export const ItineraryViewPage: React.FC = () => {
                     </Badge>
                   )}
                   {trip && (
-                    <span className="text-xs text-slate-400 font-medium">
+                    <span className="text-xs text-[#6B7280] font-medium">
                       📅 {trip.start_date} → {trip.end_date}
                     </span>
                   )}
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1523] tracking-tight leading-tight font-heading">
                   {trip?.name || 'Itinerary'}
                 </h1>
 
                 {trip?.description && (
-                  <p className="text-sm text-slate-300 max-w-xl">
+                  <p className="text-sm text-[#6B7280] max-w-xl">
                     {trip.description}
                   </p>
                 )}
@@ -176,7 +182,6 @@ export const ItineraryViewPage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="md"
-                  className="border-slate-700"
                   onClick={() => window.print()}
                   leftIcon={
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,31 +195,31 @@ export const ItineraryViewPage: React.FC = () => {
             </div>
 
             {/* Quick Metrics Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800/80">
-              <div className="p-3 bg-slate-950/60 border border-slate-800/60 rounded-2xl">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Duration</span>
-                <span className="text-lg font-extrabold text-white">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#E9E4F5]">
+              <div className="p-3 bg-white border border-[#E9E4F5] rounded-2xl shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Duration</span>
+                <span className="text-lg font-extrabold text-[#1A1523] font-heading">
                   {summary?.total_days || days.length} Days
                 </span>
               </div>
 
-              <div className="p-3 bg-slate-950/60 border border-slate-800/60 rounded-2xl">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Destinations</span>
-                <span className="text-lg font-extrabold text-teal-400">
+              <div className="p-3 bg-white border border-[#E9E4F5] rounded-2xl shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Destinations</span>
+                <span className="text-lg font-extrabold text-[#7C3AED] font-heading">
                   {summary?.total_stops || stops.length} Cities
                 </span>
               </div>
 
-              <div className="p-3 bg-slate-950/60 border border-slate-800/60 rounded-2xl">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Activities</span>
-                <span className="text-lg font-extrabold text-white">
+              <div className="p-3 bg-white border border-[#E9E4F5] rounded-2xl shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Activities</span>
+                <span className="text-lg font-extrabold text-[#1A1523] font-heading">
                   {summary?.total_activities || 0} Scheduled
                 </span>
               </div>
 
-              <div className="p-3 bg-slate-950/60 border border-slate-800/60 rounded-2xl">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Est. Activity Cost</span>
-                <span className="text-lg font-extrabold text-emerald-400">
+              <div className="p-3 bg-white border border-[#E9E4F5] rounded-2xl shadow-sm">
+                <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Est. Activity Cost</span>
+                <span className="text-lg font-extrabold text-[#22C55E] font-heading">
                   {formatCost(summary?.total_estimated_cost || 0)}
                 </span>
               </div>
@@ -226,14 +231,14 @@ export const ItineraryViewPage: React.FC = () => {
       {/* Main Content Area */}
       <div className="space-y-6">
         {/* Controls Bar: View Mode Toggle */}
-        <div className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-slate-800">
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 p-1 rounded-xl">
+        <div className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-[#E9E4F5]">
+          <div className="flex items-center gap-2 bg-[#F7F5FC] border border-[#E9E4F5] p-1 rounded-xl">
             <button
               onClick={() => setViewMode('timeline')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === 'timeline'
-                  ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#7C3AED] text-white shadow-md shadow-[rgba(124,58,237,0.2)]'
+                  : 'text-[#6B7280] hover:text-[#1A1523]'
               }`}
             >
               <span>📅</span>
@@ -244,8 +249,8 @@ export const ItineraryViewPage: React.FC = () => {
               onClick={() => setViewMode('grouped')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === 'grouped'
-                  ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#7C3AED] text-white shadow-md shadow-[rgba(124,58,237,0.2)]'
+                  : 'text-[#6B7280] hover:text-[#1A1523]'
               }`}
             >
               <span>🏙️</span>
@@ -253,7 +258,7 @@ export const ItineraryViewPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="text-xs text-slate-400 font-medium">
+          <div className="text-xs text-[#6B7280] font-medium">
             {viewMode === 'timeline'
               ? `Showing ${days.length} days of adventure`
               : `Showing ${stops.length} destination stops`}
@@ -300,25 +305,25 @@ export const ItineraryViewPage: React.FC = () => {
               return (
                 <div
                   key={day.date}
-                  className="relative bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-7 space-y-5 shadow-xl transition-all hover:border-slate-700/80"
+                  className="relative bg-[#F7F5FC] border border-[#E9E4F5] rounded-3xl p-5 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(124,58,237,0.08)] transition-all hover:border-[#C084FC]/60"
                 >
                   {/* Day Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E9E4F5]">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-extrabold text-sm flex items-center justify-center shrink-0">
+                      <div className="w-11 h-11 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] font-extrabold text-sm flex items-center justify-center shrink-0">
                         D{day.day_number}
                       </div>
 
                       <div>
                         <div className="flex items-center gap-2.5">
-                          <h3 className="text-lg font-extrabold text-white tracking-tight">
+                          <h3 className="text-lg font-extrabold text-[#1A1523] tracking-tight font-heading">
                             {formatDateTitle(day.date)}
                           </h3>
-                          <span className="text-xs text-slate-500 font-medium">({day.date})</span>
+                          <span className="text-xs text-[#6B7280] font-medium">({day.date})</span>
                         </div>
 
                         {day.city ? (
-                          <div className="flex items-center gap-1.5 text-xs text-teal-400 font-semibold mt-0.5">
+                          <div className="flex items-center gap-1.5 text-xs text-[#7C3AED] font-semibold mt-0.5">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -326,7 +331,7 @@ export const ItineraryViewPage: React.FC = () => {
                             <span>{day.city.name}, {day.city.country}</span>
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-400">Transit / Free Date</span>
+                          <span className="text-xs text-[#6B7280]">Transit / Free Date</span>
                         )}
                       </div>
                     </div>
@@ -341,8 +346,8 @@ export const ItineraryViewPage: React.FC = () => {
 
                   {/* Day Activities List */}
                   {activities.length === 0 ? (
-                    <div className="p-4 rounded-2xl bg-slate-950/60 border border-dashed border-slate-800 text-center">
-                      <p className="text-xs text-slate-400">
+                    <div className="p-4 rounded-2xl bg-white border border-dashed border-[#E9E4F5] text-center">
+                      <p className="text-xs text-[#6B7280]">
                         {day.city
                           ? `Free day in ${day.city.name} — explore at your own leisure or add experiences in the builder.`
                           : 'No destination stop active on this date.'}
@@ -356,7 +361,7 @@ export const ItineraryViewPage: React.FC = () => {
                         return (
                           <div
                             key={act.id}
-                            className="flex items-center justify-between p-3.5 bg-slate-950/80 border border-slate-800/90 rounded-2xl gap-3 transition-all hover:border-slate-700"
+                            className="flex items-center justify-between p-3.5 bg-white border border-[#E9E4F5] rounded-2xl gap-3 transition-all hover:border-[#7C3AED]/40 shadow-sm"
                           >
                             <div className="flex items-center gap-3 min-w-0">
                               <img
@@ -365,7 +370,7 @@ export const ItineraryViewPage: React.FC = () => {
                                   'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80'
                                 }
                                 alt={activityObj.name || 'Activity'}
-                                className="w-12 h-12 rounded-xl object-cover bg-slate-900 shrink-0 border border-slate-800"
+                                className="w-12 h-12 rounded-xl object-cover bg-[#F7F5FC] shrink-0 border border-[#E9E4F5]"
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).src =
                                     'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80';
@@ -374,7 +379,7 @@ export const ItineraryViewPage: React.FC = () => {
 
                               <div className="min-w-0 space-y-1">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <h4 className="text-xs sm:text-sm font-bold text-white truncate">
+                                  <h4 className="text-xs sm:text-sm font-bold text-[#1A1523] truncate">
                                     {activityObj.name || 'Experience'}
                                   </h4>
                                   {activityObj.category && (
@@ -384,14 +389,14 @@ export const ItineraryViewPage: React.FC = () => {
                                   )}
                                 </div>
 
-                                <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                                  <span className="text-teal-300 font-semibold flex items-center gap-1">
+                                <div className="flex items-center gap-2 text-xs text-[#6B7280] font-medium">
+                                  <span className="text-[#7C3AED] font-semibold flex items-center gap-1">
                                     🕒 {formatTimeStr(act.scheduled_time)}
                                   </span>
                                   {act.notes && (
                                     <>
                                       <span>•</span>
-                                      <span className="truncate max-w-xs text-slate-400">
+                                      <span className="truncate max-w-xs text-[#6B7280]">
                                         📝 {act.notes}
                                       </span>
                                     </>
@@ -401,7 +406,7 @@ export const ItineraryViewPage: React.FC = () => {
                             </div>
 
                             <div className="shrink-0 text-right">
-                              <span className="text-xs font-extrabold text-emerald-400 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 block">
+                              <span className="text-xs font-extrabold text-[#15803D] px-2.5 py-1 rounded-lg bg-[#22C55E]/10 border border-[#22C55E]/20 block">
                                 {formatCost(act.custom_cost !== null && act.custom_cost !== undefined ? act.custom_cost : activityObj.cost)}
                               </span>
                             </div>
@@ -426,12 +431,12 @@ export const ItineraryViewPage: React.FC = () => {
               return (
                 <div
                   key={stop.id}
-                  className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-7 space-y-5 shadow-xl transition-all hover:border-slate-700/80"
+                  className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-3xl p-5 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(124,58,237,0.08)] transition-all hover:border-[#C084FC]/60"
                 >
                   {/* City Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E9E4F5]">
                     <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-10 h-10 rounded-2xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-extrabold text-sm flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] font-extrabold text-sm flex items-center justify-center shrink-0">
                         {stopIdx + 1}
                       </div>
 
@@ -441,7 +446,7 @@ export const ItineraryViewPage: React.FC = () => {
                           'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80'
                         }
                         alt={stop.cities?.name || 'City'}
-                        className="w-14 h-14 rounded-2xl object-cover bg-slate-950 border border-slate-800 shrink-0"
+                        className="w-14 h-14 rounded-2xl object-cover bg-[#F7F5FC] border border-[#E9E4F5] shrink-0"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
                             'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80';
@@ -450,7 +455,7 @@ export const ItineraryViewPage: React.FC = () => {
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-xl font-extrabold text-white tracking-tight">
+                          <h3 className="text-xl font-extrabold text-[#1A1523] tracking-tight font-heading">
                             {stop.cities?.name || 'Destination'}
                           </h3>
                           {stop.cities?.region && (
@@ -459,17 +464,17 @@ export const ItineraryViewPage: React.FC = () => {
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs font-semibold text-slate-400 mt-0.5">
+                        <p className="text-xs font-semibold text-[#6B7280] mt-0.5">
                           {stop.cities?.country}
                         </p>
                       </div>
                     </div>
 
                     {/* Stay Dates Pill */}
-                    <div className="flex items-center gap-3 self-start sm:self-center bg-slate-950/80 px-4 py-2 rounded-2xl border border-slate-800">
+                    <div className="flex items-center gap-3 self-start sm:self-center bg-white px-4 py-2 rounded-2xl border border-[#E9E4F5] shadow-sm">
                       <div className="text-left">
-                        <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Stay Window</span>
-                        <span className="text-xs sm:text-sm font-semibold text-slate-200">
+                        <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Stay Window</span>
+                        <span className="text-xs sm:text-sm font-semibold text-[#1A1523]">
                           {stop.arrival_date} → {stop.departure_date}
                         </span>
                       </div>
@@ -481,13 +486,13 @@ export const ItineraryViewPage: React.FC = () => {
 
                   {/* Scheduled Activities for this City */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                       Scheduled Experiences ({activities.length})
                     </h4>
 
                     {activities.length === 0 ? (
-                      <div className="p-4 rounded-2xl bg-slate-950/60 border border-dashed border-slate-800 text-center">
-                        <p className="text-xs text-slate-400">
+                      <div className="p-4 rounded-2xl bg-white border border-dashed border-[#E9E4F5] text-center">
+                        <p className="text-xs text-[#6B7280]">
                           No activities scheduled in {stop.cities?.name} yet.
                         </p>
                       </div>
@@ -498,17 +503,17 @@ export const ItineraryViewPage: React.FC = () => {
                           return (
                             <div
                               key={act.id}
-                              className="flex items-center justify-between p-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl gap-3"
+                              className="flex items-center justify-between p-3.5 bg-white border border-[#E9E4F5] rounded-2xl gap-3 shadow-sm"
                             >
                               <div className="flex items-center gap-3 min-w-0">
                                 <img
                                   src={actObj.image_url || ''}
                                   alt={actObj.name}
-                                  className="w-10 h-10 rounded-xl object-cover bg-slate-900 shrink-0 border border-slate-800"
+                                  className="w-10 h-10 rounded-xl object-cover bg-[#F7F5FC] shrink-0 border border-[#E9E4F5]"
                                 />
                                 <div className="min-w-0">
-                                  <h5 className="text-xs font-bold text-white truncate">{actObj.name}</h5>
-                                  <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                                  <h5 className="text-xs font-bold text-[#1A1523] truncate">{actObj.name}</h5>
+                                  <div className="flex items-center gap-2 text-[11px] text-[#6B7280] mt-0.5">
                                     {act.scheduled_date && <span>📅 {act.scheduled_date}</span>}
                                     {act.scheduled_time && <span>🕒 {formatTimeStr(act.scheduled_time)}</span>}
                                   </div>
@@ -516,7 +521,7 @@ export const ItineraryViewPage: React.FC = () => {
                               </div>
 
                               <div className="shrink-0">
-                                <span className="text-xs font-extrabold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                                <span className="text-xs font-extrabold text-[#15803D] px-2 py-0.5 rounded bg-[#22C55E]/10 border border-[#22C55E]/20">
                                   {formatCost(act.custom_cost !== null && act.custom_cost !== undefined ? act.custom_cost : actObj.cost)}
                                 </span>
                               </div>

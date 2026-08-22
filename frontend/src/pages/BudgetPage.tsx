@@ -30,11 +30,11 @@ import {
 } from '../../../shared/validation';
 
 const CATEGORIES = [
-  { value: 'transport', label: 'Transport', color: '#3b82f6', bg: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-  { value: 'stay', label: 'Stay / Accommodations', color: '#8b5cf6', bg: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
-  { value: 'activity', label: 'Activities & Tours', color: '#10b981', bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-  { value: 'meals', label: 'Meals & Food', color: '#f59e0b', bg: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-  { value: 'misc', label: 'Miscellaneous', color: '#64748b', bg: 'bg-slate-500/10 text-slate-400 border-slate-500/20' },
+  { value: 'transport', label: 'Transport', color: '#7C3AED', bg: 'bg-[#7C3AED]/12 text-[#5B21B6] border-[#C4B5FD]/60' },
+  { value: 'stay', label: 'Stay / Accommodations', color: '#C084FC', bg: 'bg-[#C084FC]/15 text-[#7C3AED] border-[#C084FC]/50' },
+  { value: 'activity', label: 'Activities & Tours', color: '#22C55E', bg: 'bg-[#22C55E]/12 text-[#15803D] border-[#22C55E]/40' },
+  { value: 'meals', label: 'Meals & Food', color: '#F59E0B', bg: 'bg-[#F59E0B]/12 text-[#B45309] border-[#F59E0B]/40' },
+  { value: 'misc', label: 'Miscellaneous', color: '#6B7280', bg: 'bg-[#F7F5FC] text-[#6B7280] border-[#E9E4F5]' },
 ];
 
 interface BudgetBreakdownData {
@@ -357,17 +357,17 @@ export const BudgetPage: React.FC = () => {
   const hasCostData = (budgetData?.total || 0) > 0 || expenses.length > 0;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8 animate-fade-up">
       {/* Header & Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E9E4F5]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-            <Link to="/trips" className="hover:text-emerald-400 transition-colors">Trips</Link>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
+            <Link to="/trips" className="hover:text-[#7C3AED] transition-colors">Trips</Link>
             <span>/</span>
             <span>{trip?.name || 'Trip Budget'}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Trip Budget Breakdown & Expenses
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">
+            Trip Budget Breakdown &amp; Expenses
           </h1>
         </div>
 
@@ -375,7 +375,6 @@ export const BudgetPage: React.FC = () => {
           <Button
             variant="outline"
             onClick={() => setIsShareModalOpen(true)}
-            className="border-slate-700 text-slate-300 hover:text-white"
           >
             Share Trip
           </Button>
@@ -387,34 +386,34 @@ export const BudgetPage: React.FC = () => {
 
       {/* Summary Metric Cards & Target Threshold Control */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Grand Total Cost</p>
-          <p className="text-3xl font-extrabold text-white mt-2">
+        <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-5 rounded-2xl shadow-sm">
+          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Grand Total Cost</p>
+          <p className="text-3xl font-extrabold text-[#1A1523] mt-2 font-heading">
             ${(budgetData?.total || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Scheduled Activities + Manual Expenses</p>
+          <p className="text-xs text-[#6B7280] mt-1">Scheduled Activities + Manual Expenses</p>
         </Card>
 
-        <Card className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Trip Duration</p>
-          <p className="text-3xl font-extrabold text-sky-400 mt-2">
+        <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-5 rounded-2xl shadow-sm">
+          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Trip Duration</p>
+          <p className="text-3xl font-extrabold text-[#7C3AED] mt-2 font-heading">
             {budgetData?.tripDurationDays || 1} {budgetData?.tripDurationDays === 1 ? 'Day' : 'Days'}
           </p>
-          <p className="text-xs text-slate-500 mt-1">{trip?.start_date} &rarr; {trip?.end_date}</p>
+          <p className="text-xs text-[#6B7280] mt-1">{trip?.start_date} &rarr; {trip?.end_date}</p>
         </Card>
 
-        <Card className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Per-Day Average</p>
-          <p className="text-3xl font-extrabold text-emerald-400 mt-2">
+        <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-5 rounded-2xl shadow-sm">
+          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Per-Day Average</p>
+          <p className="text-3xl font-extrabold text-[#22C55E] mt-2 font-heading">
             ${(budgetData?.perDayAverage || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Average daily cost</p>
+          <p className="text-xs text-[#6B7280] mt-1">Average daily cost</p>
         </Card>
 
         {/* Configurable Target Daily Budget Input */}
-        <Card className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+        <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Daily Target Budget</p>
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Daily Target Budget</p>
             {overbudgetDays.length > 0 && (
               <Badge variant="danger" size="sm">
                 {overbudgetDays.length} Over
@@ -422,17 +421,17 @@ export const BudgetPage: React.FC = () => {
             )}
           </div>
           <div className="mt-2 flex items-center gap-2">
-            <span className="text-xl font-bold text-slate-400">₹</span>
+            <span className="text-xl font-bold text-[#6B7280]">₹</span>
             <input
               type="number"
               step="10"
               min="1"
               value={dailyThresholdInput}
               onChange={(e) => handleThresholdChange(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xl font-extrabold text-amber-400 focus:outline-none focus:border-amber-500"
+              className="w-full bg-white border border-[#E9E4F5] rounded-lg px-3 py-1 text-xl font-extrabold text-[#7C3AED] focus:outline-none focus:border-[#7C3AED]"
             />
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">Set target limit per day</p>
+          <p className="text-[11px] text-[#6B7280] mt-1">Set target limit per day</p>
         </Card>
       </div>
 
@@ -475,10 +474,10 @@ export const BudgetPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pie Chart: Category Breakdown */}
-          <Card className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl space-y-4">
+          <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-6 rounded-2xl space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white">Category Cost Breakdown</h3>
-              <span className="text-xs text-slate-400">Activities + Expenses</span>
+              <h3 className="text-base font-bold text-[#1A1523] font-heading">Category Cost Breakdown</h3>
+              <span className="text-xs text-[#6B7280]">Activities + Expenses</span>
             </div>
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -501,7 +500,7 @@ export const BudgetPage: React.FC = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
+                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#E9E4F5', borderRadius: '12px', color: '#1A1523', boxShadow: '0 4px 16px rgba(124,58,237,0.1)' }}
                     formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Cost']}
                   />
                   <Legend verticalAlign="bottom" height={36} />
@@ -511,15 +510,15 @@ export const BudgetPage: React.FC = () => {
           </Card>
 
           {/* Bar Chart: Per-Day Timeline Costs with Overbudget Highlighting */}
-          <Card className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl space-y-4">
+          <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-6 rounded-2xl space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white">Daily Cost Timeline ($)</h3>
+              <h3 className="text-base font-bold text-[#1A1523] font-heading">Daily Cost Timeline ($)</h3>
               <div className="flex items-center gap-3 text-xs">
-                <span className="flex items-center gap-1 text-slate-400">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block" /> Within Target
+                <span className="flex items-center gap-1 text-[#6B7280]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#22C55E] inline-block" /> Within Target
                 </span>
-                <span className="flex items-center gap-1 text-rose-400">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 inline-block" /> Over Budget
+                <span className="flex items-center gap-1 text-[#EF4444]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#EF4444] inline-block" /> Over Budget
                 </span>
               </div>
             </div>
@@ -527,25 +526,25 @@ export const BudgetPage: React.FC = () => {
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={budgetData?.perDay || []}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="date" stroke="#64748b" tick={{ fontSize: 11 }} />
-                  <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E9E4F5" />
+                  <XAxis dataKey="date" stroke="#6B7280" tick={{ fontSize: 11 }} />
+                  <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
+                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#E9E4F5', borderRadius: '12px', color: '#1A1523', boxShadow: '0 4px 16px rgba(124,58,237,0.1)' }}
                     formatter={(val: any) => [`$${Number(val).toFixed(2)}`, 'Total Spent']}
                   />
                   {dailyThreshold > 0 && (
                     <ReferenceLine
                       y={dailyThreshold}
-                      stroke="#f43f5e"
+                      stroke="#EF4444"
                       strokeDasharray="4 4"
-                      label={{ value: `$${dailyThreshold}/day target`, fill: '#f43f5e', fontSize: 10, position: 'top' }}
+                      label={{ value: `$${dailyThreshold}/day target`, fill: '#EF4444', fontSize: 10, position: 'top' }}
                     />
                   )}
                   <Bar dataKey="total" radius={[4, 4, 0, 0]}>
                     {(budgetData?.perDay || []).map((entry, index) => {
                       const isOver = dailyThreshold > 0 && entry.total > dailyThreshold;
-                      return <Cell key={`cell-day-${index}`} fill={isOver ? '#f43f5e' : '#10b981'} />;
+                      return <Cell key={`cell-day-${index}`} fill={isOver ? '#EF4444' : '#22C55E'} />;
                     })}
                   </Bar>
                 </BarChart>
@@ -558,7 +557,7 @@ export const BudgetPage: React.FC = () => {
       {/* Manual Expenses Section & Table */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-lg font-bold text-white">Manual Expense Ledger</h2>
+          <h2 className="text-lg font-bold text-[#1A1523] font-heading">Manual Expense Ledger</h2>
 
           {/* Filter Categories */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
@@ -566,8 +565,8 @@ export const BudgetPage: React.FC = () => {
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 selectedCategory === 'all'
-                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                  : 'bg-slate-800/80 text-slate-400 hover:text-white'
+                  ? 'bg-[#7C3AED] text-white shadow-md shadow-[rgba(124,58,237,0.2)]'
+                  : 'bg-[#F7F5FC] text-[#6B7280] hover:text-[#1A1523] border border-[#E9E4F5]'
               }`}
             >
               All ({expenses.length})
@@ -580,8 +579,8 @@ export const BudgetPage: React.FC = () => {
                   onClick={() => setSelectedCategory(cat.value)}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
                     selectedCategory === cat.value
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                      : 'bg-slate-800/80 text-slate-400 hover:text-white'
+                      ? 'bg-[#7C3AED] text-white shadow-md shadow-[rgba(124,58,237,0.2)]'
+                      : 'bg-[#F7F5FC] text-[#6B7280] hover:text-[#1A1523] border border-[#E9E4F5]'
                   }`}
                 >
                   {cat.label} ({count})
@@ -603,9 +602,9 @@ export const BudgetPage: React.FC = () => {
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <div className="overflow-x-auto rounded-2xl border border-[#E9E4F5] bg-white shadow-sm">
+            <table className="w-full text-left text-sm text-[#1A1523]">
+              <thead className="bg-[#F7F5FC] text-xs font-semibold uppercase tracking-wider text-[#6B7280] border-b border-[#E9E4F5]">
                 <tr>
                   <th className="py-3.5 px-4">Label / Description</th>
                   <th className="py-3.5 px-4">Category</th>
@@ -615,37 +614,37 @@ export const BudgetPage: React.FC = () => {
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-[#E9E4F5]">
                 {filteredExpenses.map((exp) => {
                   const catConfig = CATEGORIES.find((c) => c.value === exp.category) || CATEGORIES[4];
                   return (
-                    <tr key={exp.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-white">{exp.label}</td>
+                    <tr key={exp.id} className="hover:bg-[#F7F5FC]/60 transition-colors">
+                      <td className="py-3.5 px-4 font-semibold text-[#1A1523]">{exp.label}</td>
                       <td className="py-3.5 px-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${catConfig.bg}`}>
                           {catConfig.label}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-400 text-xs">
+                      <td className="py-3.5 px-4 text-[#6B7280] text-xs">
                         {exp.stop_id ? 'Linked to Stop' : 'General Trip Expense'}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-400 text-xs">
+                      <td className="py-3.5 px-4 text-[#6B7280] text-xs">
                         {new Date(exp.created_at).toLocaleDateString()}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-400">
+                      <td className="py-3.5 px-4 text-right font-mono font-bold text-[#15803D]">
                         ${Number(exp.amount).toFixed(2)}
                       </td>
                       <td className="py-3.5 px-4 text-right space-x-2">
                         <Button
                           variant="ghost"
-                          className="px-2.5 py-1 text-xs text-slate-300 hover:text-white"
+                          className="px-2.5 py-1 text-xs text-[#6B7280] hover:text-[#1A1523]"
                           onClick={() => openEditModal(exp)}
                         >
                           Edit
                         </Button>
                         <Button
                           variant="ghost"
-                          className="px-2.5 py-1 text-xs text-rose-400 hover:text-rose-300"
+                          className="px-2.5 py-1 text-xs text-[#EF4444] hover:text-[#DC2626]"
                           onClick={() => handleDeleteExpense(exp.id)}
                         >
                           Delete

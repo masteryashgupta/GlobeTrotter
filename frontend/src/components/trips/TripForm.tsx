@@ -165,11 +165,11 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
 
       {/* Cover Photo File Upload */}
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-slate-300 tracking-wide uppercase">
+        <label className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase">
           Cover Photo (Supabase Storage)
         </label>
         {coverPhotoUrl && (
-          <div className="relative h-40 w-full rounded-xl overflow-hidden border border-slate-700 bg-slate-800 mb-2">
+          <div className="relative h-40 w-full rounded-xl overflow-hidden border border-[#E9E4F5] bg-[#F7F5FC] mb-2">
             <img src={coverPhotoUrl} alt="Cover preview" className="w-full h-full object-cover" />
           </div>
         )}
@@ -178,9 +178,9 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
           accept="image/*"
           onChange={handleFileUpload}
           disabled={isUploading}
-          className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-teal-400 hover:file:bg-slate-700 cursor-pointer"
+          className="w-full text-xs text-[#6B7280] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#F7F5FC] file:text-[#7C3AED] hover:file:bg-[#E9E4F5] cursor-pointer"
         />
-        {isUploading && <p className="text-xs text-teal-400 animate-pulse">Uploading cover photo...</p>}
+        {isUploading && <p className="text-xs text-[#7C3AED] animate-pulse">Uploading cover photo...</p>}
       </div>
 
       {/* Public Visibility Toggle */}
@@ -188,10 +188,10 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
         <input
           type="checkbox"
           id="is_public"
-          className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-teal-500 focus:ring-teal-500"
+          className="w-4 h-4 rounded border-[#E9E4F5] text-[#7C3AED] focus:ring-[#7C3AED]"
           {...register('is_public')}
         />
-        <label htmlFor="is_public" className="text-xs text-slate-300 select-none cursor-pointer">
+        <label htmlFor="is_public" className="text-xs text-[#1A1523] select-none cursor-pointer">
           Make this trip public (anyone with link can view)
         </label>
       </div>

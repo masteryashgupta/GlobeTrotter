@@ -125,12 +125,12 @@ export const StopCard: React.FC<StopCardProps> = ({
   return (
     <Card
       hoverable={!isDragging}
-      className={`bg-slate-900/90 border-slate-800 p-0 overflow-hidden transition-all shadow-xl ${
-        isDragging ? 'border-teal-500/80 ring-2 ring-teal-500/40 shadow-2xl' : ''
+      className={`bg-[#F7F5FC] border-[#E9E4F5] p-0 overflow-hidden transition-all shadow-sm ${
+        isDragging ? 'border-[#7C3AED] ring-2 ring-[#7C3AED]/30 shadow-lg' : ''
       }`}
     >
       {/* Top Main Row */}
-      <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-sans">
         {/* Left: Drag Handle, Thumbnail & Destination Details */}
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           {/* Visible Grip Drag Handle */}
@@ -138,7 +138,7 @@ export const StopCard: React.FC<StopCardProps> = ({
             <button
               type="button"
               {...dragHandleProps}
-              className="cursor-grab active:cursor-grabbing p-2 -ml-1 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition-colors touch-none select-none shrink-0"
+              className="cursor-grab active:cursor-grabbing p-2 -ml-1 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#6B7280] hover:text-[#7C3AED] hover:bg-white rounded-lg transition-colors touch-none select-none shrink-0"
               title="Drag to reorder stop"
               aria-label="Drag to reorder stop"
             >
@@ -154,7 +154,7 @@ export const StopCard: React.FC<StopCardProps> = ({
           )}
 
           {/* Stop Index Pill */}
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-black text-xs sm:text-sm flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] font-black text-xs sm:text-sm flex items-center justify-center shrink-0">
             {index + 1}
           </div>
 
@@ -165,7 +165,7 @@ export const StopCard: React.FC<StopCardProps> = ({
               'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80'
             }
             alt={stop.cities?.name || 'City'}
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover bg-slate-950 border border-slate-800 shrink-0"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover bg-[#F7F5FC] border border-[#E9E4F5] shrink-0"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80';
@@ -175,7 +175,7 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* City Name & Country */}
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight truncate">
+              <h3 className="text-base sm:text-lg font-bold text-[#1A1523] tracking-tight truncate font-heading">
                 {stop.cities?.name || 'Unknown City'}
               </h3>
               {stop.cities?.region && (
@@ -184,8 +184,8 @@ export const StopCard: React.FC<StopCardProps> = ({
                 </Badge>
               )}
             </div>
-            <p className="text-xs font-semibold text-slate-400 flex items-center gap-1 mt-0.5">
-              <svg className="w-3.5 h-3.5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <p className="text-xs font-semibold text-[#6B7280] flex items-center gap-1 mt-0.5">
+              <svg className="w-3.5 h-3.5 text-[#7C3AED]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
@@ -195,10 +195,10 @@ export const StopCard: React.FC<StopCardProps> = ({
         </div>
 
         {/* Center: Stay Dates & Duration */}
-        <div className="flex items-center gap-3 bg-slate-950/60 border border-slate-800/80 px-3.5 py-2 rounded-xl shrink-0">
+        <div className="flex items-center gap-3 bg-white border border-[#E9E4F5] px-3.5 py-2 rounded-xl shrink-0 shadow-sm">
           <div className="text-left">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Stay Window</span>
-            <span className="text-xs sm:text-sm font-semibold text-slate-200">
+            <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Stay Window</span>
+            <span className="text-xs sm:text-sm font-semibold text-[#1A1523]">
               {stop.arrival_date} → {stop.departure_date}
             </span>
           </div>
@@ -214,7 +214,7 @@ export const StopCard: React.FC<StopCardProps> = ({
             variant="outline"
             size="sm"
             onClick={() => setIsAddActivityOpen(true)}
-            className="text-xs border-teal-500/40 text-teal-300 hover:bg-teal-500/10"
+            className="text-xs"
             leftIcon={
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -227,7 +227,7 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* Edit Stop button */}
           <button
             onClick={() => onEdit(stop)}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-2 rounded-lg text-[#6B7280] hover:text-[#1A1523] hover:bg-white transition-colors"
             title="Edit stop dates"
             aria-label="Edit stop"
           >
@@ -239,7 +239,7 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* Delete Stop button */}
           <button
             onClick={() => onDelete(stop)}
-            className="p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+            className="p-2 rounded-lg text-[#6B7280] hover:text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors"
             title="Delete stop"
             aria-label="Delete stop"
           >
@@ -251,10 +251,10 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* Expand / Collapse toggle */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2 rounded-lg text-[#6B7280] hover:text-[#1A1523] hover:bg-white transition-colors flex items-center gap-1.5 text-xs font-semibold"
             aria-label="Toggle activities list"
           >
-            <span className="text-slate-500 text-[11px]">
+            <span className="text-[#6B7280] text-[11px]">
               {stopActivities.length} {stopActivities.length === 1 ? 'activity' : 'activities'}
             </span>
             <svg
@@ -273,14 +273,14 @@ export const StopCard: React.FC<StopCardProps> = ({
 
       {/* Expandable Activities Drawer */}
       {isExpanded && (
-        <div className="bg-slate-950/80 border-t border-slate-800 p-4 sm:p-5 space-y-4">
+        <div className="bg-white border-t border-[#E9E4F5] p-4 sm:p-5 space-y-4 font-sans">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-3">
-              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <h4 className="text-xs font-bold text-[#1A1523] uppercase tracking-wider flex items-center gap-2">
                 <span>Scheduled Experiences ({stopActivities.length})</span>
               </h4>
               {stopActivities.length > 1 && (
-                <span className="hidden sm:inline text-[11px] text-slate-500">
+                <span className="hidden sm:inline text-[11px] text-[#6B7280]">
                   (Drag ⋮⋮ to reorder)
                 </span>
               )}
@@ -289,14 +289,14 @@ export const StopCard: React.FC<StopCardProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsAddActivityOpen(true)}
-                className="text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors flex items-center gap-1"
+                className="text-xs font-bold text-[#7C3AED] hover:text-[#5B21B6] transition-colors flex items-center gap-1"
               >
                 <span>+ Add Experience</span>
               </button>
-              <span className="text-slate-700">|</span>
+              <span className="text-[#E9E4F5]">|</span>
               <Link
                 to={`/activities/search?cityId=${stop.city_id}&stopId=${stop.id}&tripId=${tripId}`}
-                className="text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                className="text-xs font-semibold text-[#6B7280] hover:text-[#1A1523] transition-colors"
               >
                 Browse Catalog →
               </Link>
@@ -304,15 +304,15 @@ export const StopCard: React.FC<StopCardProps> = ({
           </div>
 
           {stopActivities.length === 0 ? (
-            <div className="p-5 rounded-xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-2">
-              <p className="text-xs text-slate-400">
+            <div className="p-5 rounded-xl bg-[#F7F5FC] border border-dashed border-[#E9E4F5] text-center space-y-2">
+              <p className="text-xs text-[#6B7280]">
                 No activities scheduled for {stop.cities?.name || 'this stop'} yet.
               </p>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsAddActivityOpen(true)}
-                className="text-xs border-teal-500/30 text-teal-300"
+                className="text-xs"
               >
                 Schedule First Activity
               </Button>

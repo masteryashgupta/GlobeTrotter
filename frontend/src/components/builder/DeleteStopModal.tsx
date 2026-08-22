@@ -63,11 +63,11 @@ export const DeleteStopModal: React.FC<DeleteStopModalProps> = ({
         </>
       }
     >
-      <div className="space-y-3 py-1">
-        <p className="text-sm text-slate-300">
-          Are you sure you want to remove <strong className="text-white">{stop.cities?.name || 'this destination'}</strong> from your trip itinerary?
+      <div className="space-y-3 py-1 font-sans">
+        <p className="text-sm text-[#1A1523]">
+          Are you sure you want to remove <strong className="text-[#1A1523] font-bold">{stop.cities?.name || 'this destination'}</strong> from your trip itinerary?
         </p>
-        <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300">
+        <div className="p-3 bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xl text-xs text-[#EF4444]">
           ⚠️ This will also delete any scheduled activities and day plans assigned to this stop.
         </div>
       </div>

@@ -146,25 +146,25 @@ export const ActivitySearchPage: React.FC = () => {
     <div className="py-6 space-y-8 font-sans">
       {/* Stop Context Banner (if navigated from Itinerary Builder) */}
       {stopId && (
-        <div className="bg-teal-950/70 border border-teal-500/30 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3 shadow-lg">
+        <div className="bg-[#7C3AED]/8 border border-[#7C3AED]/25 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#7C3AED]/15 text-[#5B21B6] flex items-center justify-center shrink-0">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">
+              <h4 className="text-sm font-bold text-[#1A1523]">
                 Adding activities to itinerary stop {selectedCityObj ? `(${selectedCityObj.name})` : ''}
               </h4>
-              <p className="text-xs text-teal-200/80">
+              <p className="text-xs text-[#6B7280]">
                 Clicking "Add" directly attaches the experience to this stop in your itinerary.
               </p>
             </div>
           </div>
           {tripId && (
             <Link to={`/trips/${tripId}/build`}>
-              <Button variant="outline" size="sm" className="border-teal-500/40 text-teal-300">
+              <Button variant="secondary" size="sm">
                 ← Back to Builder
               </Button>
             </Link>
@@ -173,23 +173,29 @@ export const ActivitySearchPage: React.FC = () => {
       )}
 
       {/* Header Section */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800/80 p-6 sm:p-10 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-10 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)]">
+        <div
+          className="absolute -top-16 -right-16 w-80 h-80 rounded-full pointer-events-none animate-ambient-glow"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(124,58,237,0.14) 0%, rgba(192,132,252,0.07) 45%, transparent 70%)',
+            filter: 'blur(32px)',
+          }}
+        />
         <div className="relative z-10 max-w-2xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold tracking-wide">
-            <span>✨ Experiences & Attractions</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] text-xs font-semibold tracking-wide">
+            <span>✨ Experiences &amp; Attractions</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Discover Activities & Tours
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1523] tracking-tight leading-tight font-heading">
+            Discover Activities &amp; Tours
           </h1>
-          <p className="text-sm sm:text-base text-slate-300">
+          <p className="text-sm sm:text-base text-[#6B7280]">
             Browse sightseeing tours, foodie crawls, outdoor adventures, and cultural highlights with duration and cost filters.
           </p>
 
           {/* Search Input */}
           <div className="pt-2">
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#9CA3AF]">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -199,12 +205,12 @@ export const ActivitySearchPage: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search activities by name or description (e.g. Louvre, Scuba, Tapas, Gondola)..."
-                className="w-full pl-11 pr-10 py-3.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-inner transition-all"
+                className="w-full pl-11 pr-10 py-3.5 bg-white border border-[#E9E4F5] rounded-xl text-sm sm:text-base text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] shadow-sm transition-all"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#9CA3AF] hover:text-[#1A1523]"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -240,14 +246,14 @@ export const ActivitySearchPage: React.FC = () => {
         {/* Results Area */}
         <div className="lg:col-span-3 space-y-6">
           {/* Results Action / Status Bar */}
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-slate-800">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-[#E9E4F5]">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <h2 className="text-lg font-bold text-[#1A1523] tracking-tight font-heading">
                 {isLoading ? 'Searching activities...' : `${activities.length} Experiences Available`}
               </h2>
               {isFetching && !isLoading && (
-                <div className="flex items-center gap-1.5 text-xs text-indigo-400 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+                <div className="flex items-center gap-1.5 text-xs text-[#7C3AED] font-medium">
+                  <span className="w-2 h-2 rounded-full bg-[#7C3AED] animate-ping" />
                   <span>Updating...</span>
                 </div>
               )}

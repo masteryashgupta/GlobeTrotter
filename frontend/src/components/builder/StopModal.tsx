@@ -127,11 +127,11 @@ export const StopModal: React.FC<StopModalProps> = ({
       title={isEditMode ? 'Edit Itinerary Stop' : 'Add Destination Stop'}
       size="md"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-sans">
         {/* Error Alert Box (Surfaces Overlap & Business Rule Rejections) */}
         {formError && (
-          <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs flex items-start gap-2.5 animate-fadeIn">
-            <svg className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="p-3 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] text-xs flex items-start gap-2.5 animate-fadeIn">
+            <svg className="w-4 h-4 text-[#EF4444] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div className="flex-1">
@@ -143,7 +143,7 @@ export const StopModal: React.FC<StopModalProps> = ({
 
         {/* City Autocomplete & Selector */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 tracking-wide uppercase">
+          <label className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase">
             Destination City
           </label>
           <div className="relative">
@@ -155,13 +155,13 @@ export const StopModal: React.FC<StopModalProps> = ({
                 setSelectedCityId('');
               }}
               placeholder="Search city (e.g. Tokyo, Rome, Paris)..."
-              className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3.5 py-2.5 bg-white border border-[#E9E4F5] rounded-lg text-sm text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] shadow-sm transition-all"
             />
           </div>
 
           {/* City Selection Pills / Dropdown Options */}
           {cities.length > 0 && !selectedCityId && citySearch && (
-            <div className="max-h-40 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl p-1.5 space-y-1 shadow-2xl z-20">
+            <div className="max-h-40 overflow-y-auto bg-white border border-[#E9E4F5] rounded-xl p-1.5 space-y-1 shadow-lg z-20">
               {cities.map((city) => (
                 <button
                   key={city.id}
@@ -170,20 +170,20 @@ export const StopModal: React.FC<StopModalProps> = ({
                     setSelectedCityId(city.id);
                     setCitySearch(`${city.name}, ${city.country}`);
                   }}
-                  className="w-full flex items-center justify-between p-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-800 text-left transition-colors"
+                  className="w-full flex items-center justify-between p-2 rounded-lg text-xs text-[#6B7280] hover:text-[#1A1523] hover:bg-[#F7F5FC] text-left transition-colors"
                 >
-                  <span className="font-bold text-slate-100">{city.name}</span>
-                  <span className="text-slate-400">{city.country} • {city.region}</span>
+                  <span className="font-bold text-[#1A1523]">{city.name}</span>
+                  <span className="text-[#6B7280]">{city.country} • {city.region}</span>
                 </button>
               ))}
             </div>
           )}
 
           {selectedCityObj && (
-            <div className="flex items-center gap-2.5 p-2 bg-slate-950/70 border border-teal-500/30 rounded-lg text-xs text-teal-300">
+            <div className="flex items-center gap-2.5 p-2 bg-[#7C3AED]/10 border border-[#C4B5FD]/40 rounded-lg text-xs text-[#5B21B6]">
               <span className="font-bold">{selectedCityObj.name}</span>
-              <span className="text-slate-400">({selectedCityObj.country})</span>
-              <span className="ml-auto text-[11px] text-teal-400 font-semibold">✓ Selected</span>
+              <span className="text-[#6B7280]">({selectedCityObj.country})</span>
+              <span className="ml-auto text-[11px] text-[#7C3AED] font-semibold">✓ Selected</span>
             </div>
           )}
         </div>
@@ -207,13 +207,13 @@ export const StopModal: React.FC<StopModalProps> = ({
         </div>
 
         {tripStartDate && tripEndDate && (
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-[#6B7280]">
             Trip duration: {tripStartDate} to {tripEndDate}
           </p>
         )}
 
         {/* Modal Footer Actions */}
-        <div className="pt-4 border-t border-slate-800 flex justify-end gap-2.5">
+        <div className="pt-4 border-t border-[#E9E4F5] flex justify-end gap-2.5">
           <Button variant="ghost" type="button" onClick={onClose}>
             Cancel
           </Button>

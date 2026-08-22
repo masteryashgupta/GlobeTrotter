@@ -139,17 +139,17 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 font-sans">
           {/* Summary Box */}
-          <div className="flex items-center gap-3 p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <div className="flex items-center gap-3 p-3 bg-[#F7F5FC] border border-[#E9E4F5] rounded-xl">
             <img
               src={activity.image_url || ''}
               alt={activity.name}
-              className="w-12 h-12 rounded-lg object-cover bg-slate-900 shrink-0"
+              className="w-12 h-12 rounded-lg object-cover bg-[#F7F5FC] shrink-0 border border-[#E9E4F5]"
             />
             <div>
-              <h4 className="text-sm font-bold text-white">{activity.name}</h4>
-              <p className="text-xs text-slate-400">
+              <h4 className="text-sm font-bold text-[#1A1523] font-heading">{activity.name}</h4>
+              <p className="text-xs text-[#6B7280]">
                 {activity.cities?.name} • Cost: {formatCost(activity.cost)} • Category: {activity.category}
               </p>
             </div>
@@ -180,7 +180,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
 
           {/* Notes */}
           <div>
-            <label className="text-xs font-semibold text-slate-300 tracking-wide uppercase block mb-1.5">
+            <label className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase block mb-1.5">
               Personal Notes (Optional)
             </label>
             <textarea
@@ -188,11 +188,11 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Bring camera, booked ticket #1234..."
               rows={2}
-              className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors resize-none"
+              className="w-full px-3.5 py-2.5 bg-white border border-[#E9E4F5] rounded-lg text-sm text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] transition-colors resize-none shadow-sm"
             />
           </div>
 
-          <div className="pt-3 border-t border-slate-800 flex justify-end gap-2.5">
+          <div className="pt-3 border-t border-[#E9E4F5] flex justify-end gap-2.5">
             <Button variant="ghost" type="button" onClick={onClose}>
               Cancel
             </Button>

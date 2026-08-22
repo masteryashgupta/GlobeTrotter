@@ -40,11 +40,11 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
   activeCount,
 }) => {
   return (
-    <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-5 space-y-6 shadow-xl">
+    <div className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl p-5 space-y-6 shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="flex items-center justify-between pb-3 border-b border-[#E9E4F5]">
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 text-[#7C3AED]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -52,7 +52,7 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
             />
           </svg>
-          <h3 className="text-sm font-bold text-white tracking-tight">Filter Activities</h3>
+          <h3 className="text-sm font-bold text-[#1A1523] tracking-tight font-heading">Filter Activities</h3>
           {activeCount > 0 && (
             <Badge variant="primary" size="sm">
               {activeCount}
@@ -63,7 +63,7 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
         {activeCount > 0 && (
           <button
             onClick={onClearFilters}
-            className="text-xs font-semibold text-teal-400 hover:text-teal-300 transition-colors"
+            className="text-xs font-semibold text-[#7C3AED] hover:text-[#5B21B6] transition-colors"
           >
             Reset
           </button>
@@ -89,11 +89,11 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
       {/* Categories (Multi-select pills) */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-xs font-semibold text-slate-300 tracking-wide uppercase">
+          <label className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase">
             Categories
           </label>
           {selectedCategories.length > 0 && (
-            <span className="text-[11px] text-teal-400 font-medium">
+            <span className="text-[11px] text-[#7C3AED] font-medium">
               {selectedCategories.length} selected
             </span>
           )}
@@ -108,8 +108,8 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
                 onClick={() => onCategoryToggle(cat.id)}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition-all text-left ${
                   isSelected
-                    ? 'bg-teal-500/15 border-teal-500/50 text-teal-300 shadow-sm'
-                    : 'bg-slate-800/40 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                    ? 'bg-[#7C3AED]/15 border-[#C4B5FD] text-[#5B21B6] shadow-sm'
+                    : 'bg-white border-[#E9E4F5] text-[#6B7280] hover:text-[#1A1523]'
                 }`}
               >
                 <span className="flex items-center gap-2">
@@ -119,8 +119,8 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
                 <span
                   className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${
                     isSelected
-                      ? 'bg-teal-500 border-teal-500 text-white'
-                      : 'border-slate-600 bg-slate-900'
+                      ? 'bg-[#7C3AED] border-[#7C3AED] text-white'
+                      : 'border-[#E9E4F5] bg-[#F7F5FC]'
                   }`}
                 >
                   {isSelected && (

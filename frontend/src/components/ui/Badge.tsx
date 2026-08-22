@@ -14,12 +14,18 @@ export const Badge: React.FC<BadgeProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    primary: 'bg-teal-500/15 text-teal-300 border-teal-500/30 backdrop-blur-md shadow-sm shadow-teal-950',
-    secondary: 'bg-amber-500/15 text-amber-300 border-amber-500/30 backdrop-blur-md shadow-sm shadow-amber-950',
-    success: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 backdrop-blur-md shadow-sm shadow-emerald-950',
-    warning: 'bg-amber-500/15 text-amber-300 border-amber-500/30 backdrop-blur-md shadow-sm shadow-amber-950',
-    danger: 'bg-rose-500/15 text-rose-300 border-rose-500/30 backdrop-blur-md shadow-sm shadow-rose-950',
-    neutral: 'bg-slate-800/80 text-slate-300 border-slate-700/60 backdrop-blur-md',
+    /* Violet — main brand */
+    primary:   'bg-[#7C3AED]/12 text-[#5B21B6] border-[#C4B5FD]/60',
+    /* Soft purple — secondary */
+    secondary: 'bg-[#C084FC]/15 text-[#7C3AED] border-[#C084FC]/50',
+    /* Green — success */
+    success:   'bg-[#22C55E]/12 text-[#15803D] border-[#22C55E]/40',
+    /* Amber — warning */
+    warning:   'bg-[#F59E0B]/12 text-[#B45309] border-[#F59E0B]/40',
+    /* Red — danger */
+    danger:    'bg-[#EF4444]/12 text-[#B91C1C] border-[#EF4444]/40',
+    /* Neutral — muted lavender */
+    neutral:   'bg-[#F7F5FC] text-[#6B7280] border-[#E9E4F5]',
   };
 
   const sizeStyles = {

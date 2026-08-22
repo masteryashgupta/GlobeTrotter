@@ -181,8 +181,14 @@ export const ItineraryBuilderPage: React.FC = () => {
   return (
     <div className="py-6 space-y-8 font-sans">
       {/* Trip Header / Banner */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950/40 to-slate-900 border border-slate-800 p-6 sm:p-8 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-8 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)]">
+        <div
+          className="absolute -top-12 -right-12 w-72 h-72 rounded-full pointer-events-none animate-ambient-glow"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(124,58,237,0.14) 0%, rgba(192,132,252,0.07) 45%, transparent 70%)',
+            filter: 'blur(28px)',
+          }}
+        />
 
         {isTripLoading ? (
           <div className="space-y-3">
@@ -193,8 +199,8 @@ export const ItineraryBuilderPage: React.FC = () => {
         ) : (
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                <Link to="/trips" className="hover:text-emerald-400 transition-colors">My Trips</Link>
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
+                <Link to="/trips" className="hover:text-[#7C3AED] transition-colors">My Trips</Link>
                 <span>/</span>
                 <span>Itinerary Builder</span>
               </div>
@@ -208,18 +214,18 @@ export const ItineraryBuilderPage: React.FC = () => {
                   </Badge>
                 )}
                 {trip && (
-                  <span className="text-xs text-slate-400 font-medium">
+                  <span className="text-xs text-[#6B7280] font-medium">
                     📅 {trip.start_date} → {trip.end_date}
                   </span>
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1523] tracking-tight leading-tight font-heading">
                 {trip?.name || 'My Adventure'}
               </h1>
 
               {trip?.description && (
-                <p className="text-sm text-slate-300 line-clamp-2">
+                <p className="text-sm text-[#6B7280] line-clamp-2">
                   {trip.description}
                 </p>
               )}

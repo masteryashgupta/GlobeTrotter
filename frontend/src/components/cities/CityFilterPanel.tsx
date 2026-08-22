@@ -23,11 +23,11 @@ export const CityFilterPanel: React.FC<CityFilterPanelProps> = ({
   activeCount,
 }) => {
   return (
-    <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-5 space-y-5 shadow-xl">
+    <div className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl p-5 space-y-5 shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="flex items-center justify-between pb-3 border-b border-[#E9E4F5]">
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 text-[#7C3AED]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -35,7 +35,7 @@ export const CityFilterPanel: React.FC<CityFilterPanelProps> = ({
               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
             />
           </svg>
-          <h3 className="text-sm font-bold text-white tracking-tight">Filter Destinations</h3>
+          <h3 className="text-sm font-bold text-[#1A1523] tracking-tight font-heading">Filter Destinations</h3>
           {activeCount > 0 && (
             <Badge variant="primary" size="sm">
               {activeCount} active
@@ -46,7 +46,7 @@ export const CityFilterPanel: React.FC<CityFilterPanelProps> = ({
         {activeCount > 0 && (
           <button
             onClick={onClearFilters}
-            className="text-xs font-semibold text-teal-400 hover:text-teal-300 transition-colors"
+            className="text-xs font-semibold text-[#7C3AED] hover:text-[#5B21B6] transition-colors"
           >
             Reset
           </button>
@@ -81,7 +81,7 @@ export const CityFilterPanel: React.FC<CityFilterPanelProps> = ({
 
       {/* Quick Region Pills */}
       <div>
-        <label className="text-xs font-semibold text-slate-300 tracking-wide uppercase block mb-2">
+        <label className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase block mb-2">
           Popular Continents
         </label>
         <div className="flex flex-wrap gap-1.5">
@@ -92,8 +92,8 @@ export const CityFilterPanel: React.FC<CityFilterPanelProps> = ({
               onClick={() => onRegionChange(region === reg ? '' : reg)}
               className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
                 region === reg
-                  ? 'bg-teal-500/20 border-teal-500/50 text-teal-300 font-semibold'
-                  : 'bg-slate-800/60 border-slate-700/60 text-slate-400 hover:text-white hover:border-slate-600'
+                  ? 'bg-[#7C3AED]/15 border-[#C4B5FD] text-[#5B21B6] font-semibold'
+                  : 'bg-white border-[#E9E4F5] text-[#6B7280] hover:text-[#1A1523]'
               }`}
             >
               {reg}

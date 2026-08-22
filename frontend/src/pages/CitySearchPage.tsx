@@ -53,23 +53,29 @@ export const CitySearchPage: React.FC = () => {
   return (
     <div className="py-6 space-y-8 font-sans">
       {/* Hero / Header Section */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950/40 to-slate-900 border border-slate-800/80 p-6 sm:p-10 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-10 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)]">
+        <div
+          className="absolute -top-16 -right-16 w-80 h-80 rounded-full pointer-events-none animate-ambient-glow"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(124,58,237,0.14) 0%, rgba(192,132,252,0.07) 45%, transparent 70%)',
+            filter: 'blur(32px)',
+          }}
+        />
         <div className="relative z-10 max-w-2xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-semibold tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] text-xs font-semibold tracking-wide">
             <span>🌍 Destination Discovery</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1523] tracking-tight leading-tight font-heading">
             Explore World Destinations
           </h1>
-          <p className="text-sm sm:text-base text-slate-300">
+          <p className="text-sm sm:text-base text-[#6B7280]">
             Search top-rated travel cities worldwide, explore cost indices and popularity scores, and seamlessly add stops to your itinerary.
           </p>
 
           {/* Search Bar Input */}
           <div className="pt-2">
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#9CA3AF]">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
@@ -84,12 +90,12 @@ export const CitySearchPage: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search cities (e.g. Tokyo, Paris, Rome, Barcelona)..."
-                className="w-full pl-11 pr-10 py-3.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-inner transition-all"
+                className="w-full pl-11 pr-10 py-3.5 bg-white border border-[#E9E4F5] rounded-xl text-sm sm:text-base text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] shadow-sm transition-all"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#9CA3AF] hover:text-[#1A1523]"
                   aria-label="Clear search"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,14 +129,14 @@ export const CitySearchPage: React.FC = () => {
         {/* Results Area */}
         <div className="lg:col-span-3 space-y-6">
           {/* Results Action / Status Bar */}
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-slate-800">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-2 border-b border-[#E9E4F5]">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <h2 className="text-lg font-bold text-[#1A1523] tracking-tight font-heading">
                 {isLoading ? 'Searching destinations...' : `${cities.length} Cities Found`}
               </h2>
               {isFetching && !isLoading && (
-                <div className="flex items-center gap-1.5 text-xs text-teal-400 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+                <div className="flex items-center gap-1.5 text-xs text-[#7C3AED] font-medium">
+                  <span className="w-2 h-2 rounded-full bg-[#7C3AED] animate-ping" />
                   <span>Updating...</span>
                 </div>
               )}
@@ -160,12 +166,12 @@ export const CitySearchPage: React.FC = () => {
 
           {/* Active Filter Tags */}
           {activeFilterCount > 0 && (
-            <div className="flex items-center gap-2 flex-wrap text-xs text-slate-300">
-              <span className="text-slate-500 font-medium">Active filters:</span>
+            <div className="flex items-center gap-2 flex-wrap text-xs text-[#6B7280]">
+              <span className="text-[#6B7280] font-medium">Active filters:</span>
               {debouncedSearch && (
                 <Badge variant="primary" size="sm" className="flex items-center gap-1">
                   Query: "{debouncedSearch}"
-                  <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-white">
+                  <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-[#5B21B6]">
                     ×
                   </button>
                 </Badge>
@@ -173,7 +179,7 @@ export const CitySearchPage: React.FC = () => {
               {regionFilter && (
                 <Badge variant="secondary" size="sm" className="flex items-center gap-1">
                   Region: {regionFilter}
-                  <button onClick={() => setRegionFilter('')} className="ml-1 hover:text-white">
+                  <button onClick={() => setRegionFilter('')} className="ml-1 hover:text-[#5B21B6]">
                     ×
                   </button>
                 </Badge>
@@ -181,14 +187,14 @@ export const CitySearchPage: React.FC = () => {
               {countryFilter && (
                 <Badge variant="warning" size="sm" className="flex items-center gap-1">
                   Country: {countryFilter}
-                  <button onClick={() => setCountryFilter('')} className="ml-1 hover:text-white">
+                  <button onClick={() => setCountryFilter('')} className="ml-1 hover:text-[#B45309]">
                     ×
                   </button>
                 </Badge>
               )}
               <button
                 onClick={handleClearAllFilters}
-                className="text-xs text-teal-400 hover:text-teal-300 underline ml-2 font-medium"
+                className="text-xs text-[#7C3AED] hover:text-[#5B21B6] underline ml-2 font-medium"
               >
                 Clear all
               </button>
@@ -247,17 +253,16 @@ export const CitySearchPage: React.FC = () => {
       {/* Mobile Filter Drawer Modal */}
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
-          <div
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+          <div className="fixed inset-0 bg-[#1A1523]/50 backdrop-blur-sm transition-opacity"
             onClick={() => setIsMobileFilterOpen(false)}
           />
-          <div className="relative w-full max-w-sm bg-slate-900 border-l border-slate-800 h-full p-6 overflow-y-auto z-10 shadow-2xl flex flex-col justify-between">
+          <div className="relative w-full max-w-sm bg-white border-l border-[#E9E4F5] h-full p-6 overflow-y-auto z-10 shadow-[0_8px_32px_rgba(124,58,237,0.15)] flex flex-col justify-between">
             <div className="space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <h3 className="text-base font-bold text-white">Filter Destinations</h3>
+              <div className="flex items-center justify-between pb-4 border-b border-[#E9E4F5]">
+                <h3 className="text-base font-bold text-[#1A1523] font-heading">Filter Destinations</h3>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-[#6B7280] hover:text-[#1A1523] p-1 hover:bg-[#F7F5FC] rounded-lg transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -281,7 +286,7 @@ export const CitySearchPage: React.FC = () => {
               />
             </div>
 
-            <div className="pt-6 border-t border-slate-800">
+            <div className="pt-6 border-t border-[#E9E4F5]">
               <Button
                 variant="primary"
                 className="w-full"

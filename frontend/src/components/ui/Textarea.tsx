@@ -13,7 +13,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="flex flex-col gap-1.5 w-full">
         {label && (
-          <label htmlFor={textareaId} className="text-xs font-semibold text-slate-300 tracking-wide uppercase">
+          <label htmlFor={textareaId} className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase">
             {label}
           </label>
         )}
@@ -21,15 +21,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           ref={ref}
           rows={rows}
-          className={`w-full px-3.5 py-2.5 bg-slate-800 border rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 transition-colors resize-y ${
+          className={`w-full px-3.5 py-2.5 bg-[#F7F5FC] border rounded-xl text-sm text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 transition-colors resize-y ${
             error
-              ? 'border-rose-500 focus:ring-rose-500 focus:border-rose-500'
-              : 'border-slate-700 focus:ring-teal-500 focus:border-teal-500'
+              ? 'border-[#EF4444] focus:ring-[#EF4444]/25 focus:border-[#EF4444]'
+              : 'border-[#E9E4F5] focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] hover:border-[#C4B5FD]'
           } ${className}`}
           {...props}
         />
-        {error && <p className="text-xs text-rose-400 font-medium mt-0.5">{error}</p>}
-        {!error && helperText && <p className="text-xs text-slate-400 mt-0.5">{helperText}</p>}
+        {error && <p className="text-xs text-[#EF4444] font-medium mt-0.5">{error}</p>}
+        {!error && helperText && <p className="text-xs text-[#6B7280] mt-0.5">{helperText}</p>}
       </div>
     );
   }

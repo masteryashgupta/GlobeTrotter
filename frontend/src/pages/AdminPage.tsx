@@ -56,13 +56,13 @@ interface Pagination {
 
 // ─── Colours ─────────────────────────────────────────────────────────────────
 const CITY_COLOURS = [
-  '#14b8a6', '#0ea5e9', '#6366f1', '#8b5cf6',
-  '#ec4899', '#f59e0b', '#10b981', '#f43f5e',
+  '#7C3AED', '#C084FC', '#22C55E', '#F59E0B',
+  '#EC4899', '#06B6D4', '#6B7280', '#EF4444',
   '#3b82f6', '#a78bfa',
 ];
 const ACTIVITY_COLOURS = [
-  '#f59e0b', '#10b981', '#6366f1', '#ec4899',
-  '#14b8a6', '#0ea5e9', '#8b5cf6', '#f43f5e',
+  '#F59E0B', '#22C55E', '#7C3AED', '#EC4899',
+  '#C084FC', '#06B6D4', '#6B7280', '#EF4444',
   '#3b82f6', '#a78bfa',
 ];
 
@@ -80,23 +80,23 @@ function StatCard({
   colour?: 'teal' | 'indigo' | 'amber' | 'rose';
 }) {
   const ring = {
-    teal: 'border-teal-500/30 shadow-teal-950/30',
-    indigo: 'border-amber-500/30 shadow-amber-950/30',
-    amber: 'border-amber-500/30 shadow-amber-950/30',
-    rose: 'border-rose-500/30 shadow-rose-950/30',
+    teal: 'border-[#7C3AED]/30 shadow-[0_4px_16px_rgba(124,58,237,0.08)]',
+    indigo: 'border-[#C084FC]/30 shadow-[0_4px_16px_rgba(192,132,252,0.08)]',
+    amber: 'border-[#F59E0B]/30 shadow-[0_4px_16px_rgba(245,158,11,0.08)]',
+    rose: 'border-[#EF4444]/30 shadow-[0_4px_16px_rgba(239,68,68,0.08)]',
   }[colour];
   const val = {
-    teal: 'text-teal-300',
-    indigo: 'text-amber-300',
-    amber: 'text-amber-300',
-    rose: 'text-rose-300',
+    teal: 'text-[#7C3AED]',
+    indigo: 'text-[#5B21B6]',
+    amber: 'text-[#B45309]',
+    rose: 'text-[#B91C1C]',
   }[colour];
 
   return (
-    <div className={`rounded-2xl border bg-[#131C2E]/90 backdrop-blur-xl p-5 shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${ring}`}>
-      <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">{label}</p>
+    <div className={`rounded-2xl border bg-[#F7F5FC] p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 ${ring}`}>
+      <p className="text-xs font-semibold uppercase tracking-widest text-[#6B7280]">{label}</p>
       <p className={`mt-2 text-3xl font-extrabold tracking-tight font-heading ${val}`}>{value}</p>
-      {sub && <p className="mt-1 text-xs text-slate-500">{sub}</p>}
+      {sub && <p className="mt-1 text-xs text-[#6B7280]">{sub}</p>}
     </div>
   );
 }
@@ -115,9 +115,9 @@ function StatCardSkeleton() {
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs shadow-xl">
-      <p className="font-semibold text-white">{label}</p>
-      <p className="text-teal-400">{payload[0]?.value} {payload[0]?.name}</p>
+    <div className="rounded-lg border border-[#E9E4F5] bg-white px-3 py-2 text-xs shadow-md">
+      <p className="font-semibold text-[#1A1523]">{label}</p>
+      <p className="text-[#7C3AED]">{payload[0]?.value} {payload[0]?.name}</p>
     </div>
   );
 };
@@ -185,22 +185,22 @@ export const AdminPage: React.FC = () => {
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-7xl mx-auto space-y-8 py-4">
+    <div className="max-w-7xl mx-auto space-y-8 py-4 animate-fade-up">
 
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-900/40 border border-teal-700/50 text-xs font-semibold text-teal-400 uppercase tracking-widest">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-xs font-semibold text-[#5B21B6] uppercase tracking-widest">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
             </svg>
             Admin Only
           </span>
         </div>
-        <h1 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl">
+        <h1 className="text-2xl font-extrabold text-[#1A1523] tracking-tight sm:text-3xl font-heading">
           Platform Analytics Dashboard
         </h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-[#6B7280] mt-1">
           Live aggregate metrics, city and activity popularity, and user management.
         </p>
       </div>
@@ -364,21 +364,21 @@ export const AdminPage: React.FC = () => {
               />
             </div>
           ) : (
-            <div className="mt-2 overflow-x-auto rounded-lg">
+            <div className="mt-2 overflow-x-auto rounded-lg border border-[#E9E4F5] bg-white">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-700/60">
+                  <tr className="border-b border-[#E9E4F5] bg-[#F7F5FC]">
                     {['Name', 'Email', 'Joined', 'Trips', 'Role'].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500 whitespace-nowrap"
+                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-[#6B7280] whitespace-nowrap"
                       >
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-[#E9E4F5]">
                   {isLoadingUsers
                     ? Array.from({ length: 8 }).map((_, i) => (
                         <tr key={i}>
@@ -392,38 +392,38 @@ export const AdminPage: React.FC = () => {
                     : users.map((u) => (
                         <tr
                           key={u.id}
-                          className="hover:bg-slate-800/40 transition-colors"
+                          className="hover:bg-[#F7F5FC]/60 transition-colors"
                         >
                           <td className="px-4 py-3 whitespace-nowrap">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-7 h-7 rounded-full bg-teal-900/50 border border-teal-700/50 flex items-center justify-center text-xs font-bold text-teal-400 flex-shrink-0">
+                              <div className="w-7 h-7 rounded-full bg-[#7C3AED]/10 border border-[#C4B5FD] flex items-center justify-center text-xs font-bold text-[#7C3AED] flex-shrink-0">
                                 {(u.full_name || u.email || '?').charAt(0).toUpperCase()}
                               </div>
-                              <span className="font-medium text-slate-200 truncate max-w-[140px]">
-                                {u.full_name || <span className="text-slate-500 italic">No name</span>}
+                              <span className="font-medium text-[#1A1523] truncate max-w-[140px]">
+                                {u.full_name || <span className="text-[#6B7280] italic">No name</span>}
                               </span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-slate-400 whitespace-nowrap truncate max-w-[200px]">
-                            {u.email || <span className="text-slate-600">—</span>}
+                          <td className="px-4 py-3 text-[#6B7280] whitespace-nowrap truncate max-w-[200px]">
+                            {u.email || <span className="text-[#6B7280]">—</span>}
                           </td>
-                          <td className="px-4 py-3 text-slate-400 whitespace-nowrap">
+                          <td className="px-4 py-3 text-[#6B7280] whitespace-nowrap">
                             {new Date(u.created_at).toLocaleDateString('en-GB', {
                               day: '2-digit', month: 'short', year: 'numeric',
                             })}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <span className="inline-flex items-center justify-center w-8 h-6 rounded-md bg-slate-700/60 text-xs font-bold text-slate-300">
+                            <span className="inline-flex items-center justify-center w-8 h-6 rounded-md bg-[#F7F5FC] text-xs font-bold text-[#1A1523] border border-[#E9E4F5]">
                               {u.trip_count}
                             </span>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             {u.is_admin ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-900/40 border border-teal-700/50 text-xs font-semibold text-teal-400">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#7C3AED]/15 border border-[#C4B5FD] text-xs font-semibold text-[#5B21B6]">
                                 Admin
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-medium text-slate-500">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F7F5FC] border border-[#E9E4F5] text-xs font-medium text-[#6B7280]">
                                 User
                               </span>
                             )}

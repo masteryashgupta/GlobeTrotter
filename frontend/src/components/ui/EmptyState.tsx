@@ -17,11 +17,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col items-center justify-center p-8 text-center bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl ${className}`}
+      className={`flex flex-col items-center justify-center p-10 text-center bg-[#F7F5FC] border border-dashed border-[#C4B5FD]/60 rounded-2xl ${className}`}
     >
-      <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-4">
+      {/* Violet icon container */}
+      <div className="w-14 h-14 rounded-2xl bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(124,58,237,0.12)]">
         {icon || (
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -31,8 +32,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           </svg>
         )}
       </div>
-      <h3 className="text-base font-bold text-white tracking-tight">{title}</h3>
-      {description && <p className="text-sm text-slate-400 max-w-sm mt-1 mb-5">{description}</p>}
+      <h3 className="text-base font-bold text-[#1A1523] tracking-tight font-heading">{title}</h3>
+      {description && <p className="text-sm text-[#6B7280] max-w-sm mt-1.5 mb-5 leading-relaxed">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

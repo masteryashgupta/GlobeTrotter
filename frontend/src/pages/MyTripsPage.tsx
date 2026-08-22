@@ -80,15 +80,15 @@ export const MyTripsPage: React.FC = () => {
   return (
     <div className="space-y-8 font-sans pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E9E4F5] pb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">My Trips</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">My Trips</h1>
+          <p className="text-sm text-[#6B7280] mt-1">
             Manage your travel itineraries, edit details, or build out daily stops
           </p>
         </div>
         <Link to="/trips/new" className="shrink-0">
-          <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-lg shadow-teal-900/30">
+          <Button variant="primary" size="lg" className="w-full sm:w-auto">
             + Plan New Trip
           </Button>
         </Link>
@@ -128,8 +128,9 @@ export const MyTripsPage: React.FC = () => {
 
             const renderCardList = (items: Trip[]) => (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items.map((trip) => (
-                  <Card key={trip.id} hoverable className="flex flex-col justify-between group overflow-hidden border-slate-800 bg-slate-900/60">
+                {items.map((trip, i) => (
+                  // [STYLING] Stagger animation + violet hover colors
+                  <Card key={trip.id} hoverable className={`flex flex-col justify-between group overflow-hidden animate-fade-up animate-stagger-${Math.min(i + 1, 6) as 1 | 2 | 3 | 4 | 5 | 6}`}>
                     <div>
                       <div className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden bg-slate-800 relative">
                         <img
@@ -147,18 +148,18 @@ export const MyTripsPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <Card.Title className="group-hover:text-teal-400 transition-colors">
+                      <Card.Title className="group-hover:text-[#7C3AED] transition-colors">
                         {trip.name || 'Untitled Trip'}
                       </Card.Title>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-[#6B7280] mt-1">
                         📅 {trip.start_date} to {trip.end_date}
                       </p>
                       {trip.description && (
-                        <p className="text-xs text-slate-300 mt-2 line-clamp-2">{trip.description}</p>
+                        <p className="text-xs text-[#6B7280] mt-2 line-clamp-2">{trip.description}</p>
                       )}
                     </div>
 
-                    <Card.Footer className="mt-4 pt-3 flex items-center justify-between border-t border-slate-800/80">
+                    <Card.Footer className="mt-4 pt-3 flex items-center justify-between border-t border-[#E9E4F5]">
                       <div className="flex items-center gap-1.5">
                         <Button
                           size="sm"
@@ -199,49 +200,49 @@ export const MyTripsPage: React.FC = () => {
               <>
                 {/* Ongoing Section */}
                 <section className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <span className="text-emerald-400 text-lg">🟢</span>
-                    <h2 className="text-xl font-bold text-white">Ongoing Trips</h2>
-                    <span className="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-full ml-1">
+                  <div className="flex items-center gap-2 border-b border-[#E9E4F5] pb-2">
+                    <span className="text-[#22C55E] text-lg">🟢</span>
+                    <h2 className="text-xl font-bold text-[#1A1523] font-heading">Ongoing Trips</h2>
+                    <span className="text-xs bg-[#22C55E]/10 text-[#15803D] border border-[#22C55E]/30 px-2 py-0.5 rounded-full ml-1">
                       {ongoing.length}
                     </span>
                   </div>
                   {ongoing.length > 0 ? (
                     renderCardList(ongoing)
                   ) : (
-                    <p className="text-xs text-slate-500 italic">No trips currently in progress.</p>
+                    <p className="text-xs text-[#6B7280] italic">No trips currently in progress.</p>
                   )}
                 </section>
 
                 {/* Upcoming Section */}
                 <section className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <span className="text-sky-400 text-lg">✈️</span>
-                    <h2 className="text-xl font-bold text-white">Upcoming Trips</h2>
-                    <span className="text-xs bg-sky-950 text-sky-300 border border-sky-800 px-2 py-0.5 rounded-full ml-1">
+                  <div className="flex items-center gap-2 border-b border-[#E9E4F5] pb-2">
+                    <span className="text-sky-500 text-lg">✈️</span>
+                    <h2 className="text-xl font-bold text-[#1A1523] font-heading">Upcoming Trips</h2>
+                    <span className="text-xs bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-full ml-1">
                       {upcoming.length}
                     </span>
                   </div>
                   {upcoming.length > 0 ? (
                     renderCardList(upcoming)
                   ) : (
-                    <p className="text-xs text-slate-500 italic">No upcoming trips planned yet.</p>
+                    <p className="text-xs text-[#6B7280] italic">No upcoming trips planned yet.</p>
                   )}
                 </section>
 
                 {/* Completed Section */}
                 <section className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <span className="text-purple-400 text-lg">🏁</span>
-                    <h2 className="text-xl font-bold text-white">Completed Trips</h2>
-                    <span className="text-xs bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full ml-1">
+                  <div className="flex items-center gap-2 border-b border-[#E9E4F5] pb-2">
+                    <span className="text-[#7C3AED] text-lg">🏁</span>
+                    <h2 className="text-xl font-bold text-[#1A1523] font-heading">Completed Trips</h2>
+                    <span className="text-xs bg-[#7C3AED]/10 text-[#5B21B6] border border-[#C4B5FD]/50 px-2 py-0.5 rounded-full ml-1">
                       {completed.length}
                     </span>
                   </div>
                   {completed.length > 0 ? (
                     renderCardList(completed)
                   ) : (
-                    <p className="text-xs text-slate-500 italic">No completed past trips found.</p>
+                    <p className="text-xs text-[#6B7280] italic">No completed past trips found.</p>
                   )}
                 </section>
               </>
@@ -266,8 +267,8 @@ export const MyTripsPage: React.FC = () => {
           </>
         }
       >
-        <p className="text-sm text-slate-300">
-          Are you sure you want to delete <strong className="text-white">"{tripToDelete?.name}"</strong>?
+        <p className="text-sm text-[#6B7280]">
+          Are you sure you want to delete <strong className="text-[#1A1523]">"{tripToDelete?.name}"</strong>?
           This action cannot be undone.
         </p>
       </Modal>

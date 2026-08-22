@@ -159,15 +159,15 @@ export const AddToTripModal: React.FC<AddToTripModalProps> = ({ city, isOpen, on
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Destination Summary Banner */}
-          <div className="flex items-center gap-3 p-3 bg-slate-950/70 border border-slate-800 rounded-xl">
+          <div className="flex items-center gap-3 p-3 bg-[#F7F5FC] border border-[#E9E4F5] rounded-xl">
             <img
               src={city.image_url || ''}
               alt={city.name}
-              className="w-12 h-12 rounded-lg object-cover bg-slate-900 shrink-0"
+              className="w-12 h-12 rounded-lg object-cover bg-[#F7F5FC] shrink-0 border border-[#E9E4F5]"
             />
             <div>
-              <h4 className="text-sm font-bold text-white">{city.name}</h4>
-              <p className="text-xs text-slate-400">
+              <h4 className="text-sm font-bold text-[#1A1523] font-heading">{city.name}</h4>
+              <p className="text-xs text-[#6B7280]">
                 {city.country} • {city.region} • Popularity: {city.popularity}%
               </p>
             </div>
@@ -185,7 +185,7 @@ export const AddToTripModal: React.FC<AddToTripModalProps> = ({ city, isOpen, on
           />
 
           {selectedTrip && (
-            <div className="text-[11px] text-teal-400 bg-teal-500/10 px-3 py-1.5 rounded-lg border border-teal-500/20">
+            <div className="text-[11px] text-[#5B21B6] bg-[#7C3AED]/10 px-3 py-1.5 rounded-lg border border-[#C4B5FD]/40">
               Trip window: {selectedTrip.start_date} → {selectedTrip.end_date}
             </div>
           )}
@@ -208,9 +208,9 @@ export const AddToTripModal: React.FC<AddToTripModalProps> = ({ city, isOpen, on
             />
           </div>
 
-          {dateError && <p className="text-xs text-rose-400 font-medium">{dateError}</p>}
+          {dateError && <p className="text-xs text-[#EF4444] font-medium">{dateError}</p>}
 
-          <div className="pt-3 border-t border-slate-800 flex justify-end gap-2.5">
+          <div className="pt-3 border-t border-[#E9E4F5] flex justify-end gap-2.5">
             <Button variant="ghost" type="button" onClick={onClose}>
               Cancel
             </Button>

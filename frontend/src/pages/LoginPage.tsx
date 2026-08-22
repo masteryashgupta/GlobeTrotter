@@ -73,22 +73,40 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+    /* ── Page shell: white bg, overflow-hidden for the ambient blobs ── */
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
 
-      <div className="w-full max-w-md space-y-6 relative z-10">
-        {/* Header */}
+      {/* ── Signature ambient glow: slow-floating violet blob (the ONE bold element) ── */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full pointer-events-none animate-ambient-glow"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(124,58,237,0.12) 0%, rgba(192,132,252,0.07) 45%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+      />
+      {/* Secondary smaller blob — soft purple, bottom-right */}
+      <div
+        className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(192,132,252,0.10) 0%, transparent 70%)',
+          filter: 'blur(30px)',
+        }}
+      />
+
+      <div className="w-full max-w-md space-y-6 relative z-10 animate-fade-up">
+        {/* ── Header ── */}
         <div className="text-center space-y-3">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 items-center justify-center text-slate-950 font-black text-2xl shadow-xl shadow-teal-500/20 font-heading">
+          {/* Violet gradient logo badge */}
+          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7C3AED] to-[#C084FC] items-center justify-center text-white font-black text-2xl shadow-xl shadow-[rgba(124,58,237,0.25)] font-heading">
             G
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-50 tracking-tight font-heading">Sign in to GlobeTrotter</h1>
-          <p className="text-sm text-slate-400">Access your itineraries, trips, and saved activities</p>
+          <h1 className="text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">
+            Sign in to GlobeTrotter
+          </h1>
+          <p className="text-sm text-[#6B7280]">Access your itineraries, trips, and saved activities</p>
         </div>
 
-        {/* Card Form */}
+        {/* ── Card Form ── */}
         <Card>
           <form onSubmit={handleLoginSubmit(onLogin)} className="space-y-4" noValidate>
             <Input
@@ -101,11 +119,11 @@ export const LoginPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-slate-300 tracking-wide uppercase">Password</label>
+                <label className="text-xs font-semibold text-[#1A1523] tracking-wide uppercase">Password</label>
                 <button
                   type="button"
                   onClick={() => setIsForgotModalOpen(true)}
-                  className="text-xs text-teal-400 hover:text-teal-300 font-medium transition-colors"
+                  className="text-xs text-[#7C3AED] hover:text-[#5B21B6] font-medium transition-colors"
                 >
                   Forgot Password?
                 </button>
@@ -129,9 +147,9 @@ export const LoginPage: React.FC = () => {
           </form>
 
           <Card.Footer className="justify-center">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6B7280]">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-teal-400 font-semibold hover:underline">
+              <Link to="/signup" className="text-[#7C3AED] font-semibold hover:text-[#5B21B6] hover:underline transition-colors">
                 Sign up
               </Link>
             </p>
@@ -139,7 +157,7 @@ export const LoginPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Forgot Password Modal */}
+      {/* ── Forgot Password Modal ── */}
       <Modal
         isOpen={isForgotModalOpen}
         onClose={() => setIsForgotModalOpen(false)}
@@ -159,7 +177,7 @@ export const LoginPage: React.FC = () => {
           </>
         }
       >
-        <p className="text-xs text-slate-400 mb-4">
+        <p className="text-sm text-[#6B7280] mb-4">
           Enter your registered account email below. We will send a secure link to reset your password.
         </p>
         <Input

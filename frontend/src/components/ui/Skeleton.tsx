@@ -15,16 +15,17 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    text: 'h-4 w-full rounded',
-    circular: 'rounded-full',
+    text:        'h-4 w-full rounded',
+    circular:    'rounded-full',
     rectangular: 'rounded-xl',
   };
 
   return (
     <div
-      className={`animate-pulse bg-slate-800/80 ${variantStyles[variant]} ${className}`}
+      /* Lavender shimmer instead of dark pulse */
+      className={`skeleton-shimmer ${variantStyles[variant]} ${className}`}
       style={{
-        width: width !== undefined ? width : undefined,
+        width:  width  !== undefined ? width  : undefined,
         height: height !== undefined ? height : undefined,
         ...style,
       }}

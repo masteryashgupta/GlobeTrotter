@@ -23,17 +23,34 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
+    /* ── Base ── */
     const baseStyles =
-      'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0B0F19] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none min-h-[44px] cursor-pointer';
+      'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none min-h-[44px] cursor-pointer';
 
+    /* ── Variants ── */
     const variantStyles = {
-      primary: 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-lg shadow-teal-500/20 hover:shadow-teal-500/35 focus:ring-teal-400 font-bold',
-      secondary: 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md shadow-amber-500/20 focus:ring-amber-400 font-bold',
-      outline: 'border border-slate-700/80 bg-slate-900/40 text-slate-200 hover:bg-slate-800/80 hover:border-teal-500/40 hover:text-white focus:ring-teal-500 shadow-sm',
-      danger: 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-md shadow-rose-900/30 focus:ring-rose-500',
-      ghost: 'text-slate-300 hover:bg-slate-800/60 hover:text-white focus:ring-slate-500',
+      /* Solid violet — primary CTA */
+      primary:
+        'bg-[#7C3AED] hover:bg-[#5B21B6] text-white shadow-md shadow-[rgba(124,58,237,0.25)] hover:shadow-[rgba(124,58,237,0.40)] hover:shadow-lg hover:scale-[1.03] font-bold',
+
+      /* White bg with violet border — secondary */
+      secondary:
+        'bg-white border border-[#7C3AED] text-[#7C3AED] hover:bg-[#F7F5FC] hover:border-[#5B21B6] hover:text-[#5B21B6] shadow-sm hover:shadow-md hover:scale-[1.03] font-semibold',
+
+      /* Lavender bg, violet border/text */
+      outline:
+        'bg-[#F7F5FC] border border-[#E9E4F5] text-[#1A1523] hover:border-[#7C3AED] hover:text-[#7C3AED] hover:bg-white shadow-sm hover:scale-[1.02]',
+
+      /* Red / danger — semantically unchanged */
+      danger:
+        'bg-gradient-to-r from-[#EF4444] to-[#DC2626] hover:from-[#DC2626] hover:to-[#B91C1C] text-white shadow-md shadow-[rgba(239,68,68,0.25)] hover:scale-[1.03] font-bold',
+
+      /* Ghost — minimal, lavender hover */
+      ghost:
+        'text-[#6B7280] hover:bg-[#F7F5FC] hover:text-[#1A1523]',
     };
 
+    /* ── Sizes ── */
     const sizeStyles = {
       sm: 'px-3.5 py-1.5 text-xs gap-1.5 rounded-lg',
       md: 'px-4.5 py-2 text-sm gap-2',

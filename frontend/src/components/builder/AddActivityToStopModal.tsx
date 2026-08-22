@@ -135,14 +135,14 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
       title={`Add Activity in ${stop.cities?.name || 'Destination'}`}
       size="lg"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-sans">
         {/* Destination Header Banner */}
-        <div className="flex items-center justify-between p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-xs">
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="font-bold text-white">📍 {stop.cities?.name}</span>
+        <div className="flex items-center justify-between p-3 bg-[#F7F5FC] border border-[#E9E4F5] rounded-xl text-xs">
+          <div className="flex items-center gap-2 text-[#6B7280]">
+            <span className="font-bold text-[#1A1523]">📍 {stop.cities?.name}</span>
             <span>({stop.cities?.country})</span>
           </div>
-          <div className="text-teal-400 font-semibold">
+          <div className="text-[#7C3AED] font-semibold">
             Stay window: {stop.arrival_date} → {stop.departure_date}
           </div>
         </div>
@@ -154,13 +154,13 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search activities in city..."
-            className="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full px-3.5 py-2 bg-white border border-[#E9E4F5] rounded-lg text-xs text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] shadow-sm"
           />
 
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full px-3.5 py-2 bg-white border border-[#E9E4F5] rounded-lg text-xs text-[#1A1523] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] shadow-sm"
           >
             <option value="">All Categories</option>
             {ALL_CATEGORIES.map((cat) => (
@@ -173,11 +173,11 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
 
         {/* Activity Selection List */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
-            Select Activity {selectedActivity && <span className="text-teal-400 font-bold">• 1 Selected</span>}
+          <label className="text-xs font-semibold text-[#1A1523] uppercase tracking-wide">
+            Select Activity {selectedActivity && <span className="text-[#7C3AED] font-bold">• 1 Selected</span>}
           </label>
 
-          <div className="max-h-48 overflow-y-auto border border-slate-800 bg-slate-950/80 rounded-xl p-2 space-y-2">
+          <div className="max-h-48 overflow-y-auto border border-[#E9E4F5] bg-white rounded-xl p-2 space-y-2">
             {isLoading ? (
               <div className="space-y-2 p-2">
                 <Skeleton variant="rectangular" height={36} />
@@ -185,7 +185,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
                 <Skeleton variant="rectangular" height={36} />
               </div>
             ) : activities.length === 0 ? (
-              <div className="text-center py-6 text-xs text-slate-400">
+              <div className="text-center py-6 text-xs text-[#6B7280]">
                 No activities found matching your search.
               </div>
             ) : (
@@ -200,19 +200,19 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
                     }}
                     className={`flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-teal-500/20 border-teal-500/60 ring-1 ring-teal-500/40'
-                        : 'bg-slate-900/90 border-slate-800 hover:border-slate-700'
+                        ? 'bg-[#7C3AED]/15 border-[#C4B5FD] ring-1 ring-[#7C3AED]/30'
+                        : 'bg-[#F7F5FC] border-[#E9E4F5] hover:border-[#C4B5FD]'
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <img
                         src={act.image_url || ''}
                         alt={act.name}
-                        className="w-10 h-10 rounded-lg object-cover bg-slate-950 shrink-0"
+                        className="w-10 h-10 rounded-lg object-cover bg-[#F7F5FC] shrink-0 border border-[#E9E4F5]"
                       />
                       <div className="min-w-0">
-                        <h5 className="text-xs font-bold text-white truncate">{act.name}</h5>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                        <h5 className="text-xs font-bold text-[#1A1523] truncate">{act.name}</h5>
+                        <div className="flex items-center gap-2 text-[11px] text-[#6B7280] mt-0.5">
                           <span className="capitalize">{act.category}</span>
                           <span>•</span>
                           <span>{formatDuration(act.duration_minutes)}</span>
@@ -221,10 +221,10 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs font-bold text-emerald-400">{formatCost(act.cost)}</span>
+                      <span className="text-xs font-bold text-[#15803D]">{formatCost(act.cost)}</span>
                       <span
                         className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                          isSelected ? 'bg-teal-500 text-white' : 'bg-slate-800 text-slate-500'
+                          isSelected ? 'bg-[#7C3AED] text-white' : 'bg-[#E9E4F5] text-[#6B7280]'
                         }`}
                       >
                         {isSelected ? '✓' : '+'}
@@ -238,7 +238,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
         </div>
 
         {/* Scheduling Details (Date bounded to stop window) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[#E9E4F5]">
           <div>
             <Input
               type="date"
@@ -272,14 +272,14 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
         </div>
 
         {dateError && (
-          <div className="p-2.5 bg-rose-500/15 border border-rose-500/40 rounded-lg text-xs text-rose-300 font-medium">
+          <div className="p-2.5 bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-lg text-xs text-[#EF4444] font-medium">
             ⚠️ {dateError}
           </div>
         )}
 
         {/* Notes */}
         <div>
-          <label className="text-xs font-semibold text-slate-300 uppercase tracking-wide block mb-1">
+          <label className="text-xs font-semibold text-[#1A1523] uppercase tracking-wide block mb-1">
             Notes / Booking info (Optional)
           </label>
           <input
@@ -287,12 +287,12 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="e.g. Reservation under John, meet at North Gate"
-            className="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full px-3.5 py-2 bg-white border border-[#E9E4F5] rounded-lg text-xs text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/25 focus:border-[#7C3AED] shadow-sm"
           />
         </div>
 
         {/* Modal Actions */}
-        <div className="pt-3 border-t border-slate-800 flex justify-end gap-2.5">
+        <div className="pt-3 border-t border-[#E9E4F5] flex justify-end gap-2.5">
           <Button variant="ghost" type="button" onClick={onClose}>
             Cancel
           </Button>

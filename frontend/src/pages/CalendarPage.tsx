@@ -29,13 +29,13 @@ const withDragAndDrop = (withDragAndDropFromLib as any).default || withDragAndDr
 const DnDCalendar = withDragAndDrop(Calendar as any);
 
 const CATEGORY_COLORS: Record<string, string> = {
-  sightseeing: '#3b82f6',
-  food: '#f59e0b',
-  adventure: '#10b981',
-  nightlife: '#ec4899',
-  culture: '#8b5cf6',
-  shopping: '#06b6d4',
-  other: '#64748b',
+  sightseeing: '#7C3AED',
+  food: '#F59E0B',
+  adventure: '#22C55E',
+  nightlife: '#EC4899',
+  culture: '#C084FC',
+  shopping: '#06B6D4',
+  other: '#6B7280',
 };
 
 export interface RawCalendarEvent {
@@ -297,13 +297,13 @@ export const CalendarPage: React.FC = () => {
   // Event Prop Styling
   const eventPropGetter = (event: any) => {
     const cat = event.resource?.category || 'other';
-    const color = CATEGORY_COLORS[cat] || '#64748b';
+    const color = CATEGORY_COLORS[cat] || '#6B7280';
 
     return {
       style: {
-        backgroundColor: `${color}25`,
+        backgroundColor: `${color}18`,
         borderLeft: `4px solid ${color}`,
-        color: '#ffffff',
+        color: '#1A1523',
         borderRadius: '6px',
         fontSize: '12px',
         fontWeight: 600,
@@ -327,23 +327,23 @@ export const CalendarPage: React.FC = () => {
   const defaultDate = trip?.start_date ? new Date(trip.start_date) : new Date();
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 animate-fade-up">
       {/* Navigation & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E9E4F5]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-            <Link to="/trips" className="hover:text-emerald-400 transition-colors">Trips</Link>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
+            <Link to="/trips" className="hover:text-[#7C3AED] transition-colors">Trips</Link>
             <span>/</span>
             <span>{trip?.name || 'Trip Schedule'}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Trip Calendar & Timeline
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">
+            Trip Calendar &amp; Timeline
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
           {/* View Switcher Pills */}
-          <div className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold">
+          <div className="inline-flex p-1 rounded-xl bg-[#F7F5FC] border border-[#E9E4F5] text-xs font-semibold">
             {[
               { id: Views.MONTH, label: 'Month' },
               { id: Views.WEEK, label: 'Week' },
@@ -354,7 +354,7 @@ export const CalendarPage: React.FC = () => {
                 key={v.id}
                 onClick={() => setCalendarView(v.id as View)}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
-                  calendarView === v.id ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+                  calendarView === v.id ? 'bg-[#7C3AED] text-white shadow-md shadow-[rgba(124,58,237,0.2)]' : 'text-[#6B7280] hover:text-[#1A1523]'
                 }`}
               >
                 {v.label}
@@ -365,7 +365,6 @@ export const CalendarPage: React.FC = () => {
           <Button
             variant="outline"
             onClick={() => setIsShareModalOpen(true)}
-            className="border-slate-700 text-slate-300 hover:text-white"
           >
             Share
           </Button>
@@ -384,10 +383,10 @@ export const CalendarPage: React.FC = () => {
           }
         />
       ) : (
-        <Card className="bg-slate-900/60 border border-slate-800 p-4 sm:p-6 rounded-2xl space-y-3">
-          <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800/80">
+        <Card className="bg-[#F7F5FC] border border-[#E9E4F5] p-4 sm:p-6 rounded-2xl space-y-3 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-[#6B7280] pb-2 border-b border-[#E9E4F5]">
             <span className="flex items-center gap-2">
-              💡 <span className="font-semibold text-slate-300">Drag and drop</span> activities onto any date to reschedule. Click an event to view or edit details.
+              💡 <span className="font-semibold text-[#1A1523]">Drag and drop</span> activities onto any date to reschedule. Click an event to view or edit details.
             </span>
             {isMobile && (
               <Badge variant="warning" size="sm">
@@ -396,7 +395,21 @@ export const CalendarPage: React.FC = () => {
             )}
           </div>
 
-          <div className="h-[520px] sm:h-[650px] font-sans text-slate-200">
+          <div className="h-[520px] sm:h-[650px] font-sans text-[#1A1523]">
+            <style>{`
+              .rbc-[#7C3AED] { color: #1A1523; }
+              .rbc-calendar { font-family: inherit; color: #1A1523; }
+              .rbc-header { padding: 8px; font-weight: 700; color: #1A1523; border-bottom: 1px solid #E9E4F5; }
+              .rbc-[#7C3AED]-bg { background-color: #F7F5FC; }
+              .rbc-month-view, .rbc-time-view, .rbc-agenda-view { border: 1px solid #E9E4F5; border-radius: 16px; overflow: hidden; background: #ffffff; }
+              .rbc-day-bg + .rbc-day-bg, .rbc-month-row + .rbc-month-row, .rbc-header + .rbc-header { border-left: 1px solid #E9E4F5; }
+              .rbc-month-row { border-top: 1px solid #E9E4F5; }
+              .rbc-today { background-color: rgba(124, 58, 237, 0.08) !important; }
+              .rbc-off-range-bg { background-color: #F7F5FC; }
+              .rbc-date-cell { padding: 4px 8px; font-weight: 600; color: #1A1523; }
+              .rbc-agenda-view table.rbc-agenda-table { border: 1px solid #E9E4F5; }
+              .rbc-agenda-view table.rbc-agenda-table tbody > tr > td { border-top: 1px solid #E9E4F5; color: #1A1523; }
+            `}</style>
             <DnDCalendar
               localizer={localizer}
               events={events}
@@ -422,29 +435,29 @@ export const CalendarPage: React.FC = () => {
           onClose={() => setSelectedEvent(null)}
           title={selectedEvent.title}
         >
-          <div className="space-y-4 text-sm text-slate-300">
+          <div className="space-y-4 text-sm text-[#1A1523]">
             <div className="flex items-center justify-between">
               <span
                 className="px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider text-white"
-                style={{ backgroundColor: CATEGORY_COLORS[selectedEvent.resource.category] || '#64748b' }}
+                style={{ backgroundColor: CATEGORY_COLORS[selectedEvent.resource.category] || '#6B7280' }}
               >
                 {selectedEvent.resource.category}
               </span>
-              <span className="text-xs font-mono font-bold text-emerald-400">
+              <span className="text-xs font-mono font-bold text-[#15803D]">
                 ${Number(selectedEvent.resource.cost).toFixed(2)}
               </span>
             </div>
 
-            <div className="space-y-1 bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 text-xs">
-              <p className="text-slate-400">📍 Destination: <span className="text-white font-semibold">{selectedEvent.resource.stopCity}</span></p>
-              <p className="text-slate-400">📅 Date: <span className="text-white font-semibold">{format(selectedEvent.start, 'yyyy-MM-dd')}</span></p>
-              <p className="text-slate-400">⏰ Time: <span className="text-white font-semibold">{format(selectedEvent.start, 'hh:mm a')} &rarr; {format(selectedEvent.end, 'hh:mm a')}</span></p>
+            <div className="space-y-1 bg-[#F7F5FC] p-3.5 rounded-xl border border-[#E9E4F5] text-xs">
+              <p className="text-[#6B7280]">📍 Destination: <span className="text-[#1A1523] font-semibold">{selectedEvent.resource.stopCity}</span></p>
+              <p className="text-[#6B7280]">📅 Date: <span className="text-[#1A1523] font-semibold">{format(selectedEvent.start, 'yyyy-MM-dd')}</span></p>
+              <p className="text-[#6B7280]">⏰ Time: <span className="text-[#1A1523] font-semibold">{format(selectedEvent.start, 'hh:mm a')} &rarr; {format(selectedEvent.end, 'hh:mm a')}</span></p>
             </div>
 
             {selectedEvent.resource.notes && (
               <div className="space-y-1">
-                <span className="text-xs font-semibold text-slate-400 uppercase">Notes</span>
-                <p className="text-xs text-slate-300 italic bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/60">
+                <span className="text-xs font-semibold text-[#6B7280] uppercase">Notes</span>
+                <p className="text-xs text-[#1A1523] italic bg-[#F7F5FC] p-2.5 rounded-lg border border-[#E9E4F5]">
                   {selectedEvent.resource.notes}
                 </p>
               </div>

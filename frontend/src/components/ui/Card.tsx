@@ -15,8 +15,10 @@ export const Card: React.FC<CardProps> & {
 } = ({ children, className = '', hoverable = false, ...props }) => {
   return (
     <div
-      className={`bg-[#131C2E]/90 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-xl ${
-        hoverable ? 'transition-all duration-300 ease-out hover:border-teal-500/40 hover:shadow-2xl hover:shadow-teal-950/30 hover:-translate-y-1' : ''
+      className={`bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl p-6 shadow-[0_4px_16px_rgba(124,58,237,0.08)] ${
+        hoverable
+          ? 'transition-all duration-220 ease-out hover:border-[#C084FC]/60 hover:shadow-[0_8px_32px_rgba(124,58,237,0.18)] hover:-translate-y-1 cursor-pointer'
+          : ''
       } ${className}`}
       {...props}
     >
@@ -33,14 +35,15 @@ Card.Header = ({ children, className = '', ...props }) => (
 Card.Header.displayName = 'Card.Header';
 
 Card.Title = ({ children, className = '', ...props }) => (
-  <h3 className={`text-lg font-bold text-white tracking-tight ${className}`} {...props}>
+  /* Using h3 for semantic hierarchy; text is near-black with purple undertone */
+  <h3 className={`text-lg font-bold text-[#1A1523] tracking-tight font-heading ${className}`} {...props}>
     {children}
   </h3>
 );
 Card.Title.displayName = 'Card.Title';
 
 Card.Description = ({ children, className = '', ...props }) => (
-  <p className={`text-sm text-slate-400 mt-1 ${className}`} {...props}>
+  <p className={`text-sm text-[#6B7280] mt-1 ${className}`} {...props}>
     {children}
   </p>
 );
@@ -54,7 +57,7 @@ Card.Content = ({ children, className = '', ...props }) => (
 Card.Content.displayName = 'Card.Content';
 
 Card.Footer = ({ children, className = '', ...props }) => (
-  <div className={`mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between ${className}`} {...props}>
+  <div className={`mt-6 pt-4 border-t border-[#E9E4F5] flex items-center justify-between ${className}`} {...props}>
     {children}
   </div>
 );
