@@ -418,7 +418,7 @@ tripsRouter.post('/:id/share', requireAuth, async (req: AuthenticatedRequest, re
       return res.status(400).json({ error: 'Failed to share trip', details: error.message });
     }
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = (process.env.FRONTEND_URL || 'https://masteryashgupta.github.io/GlobeTrotter').replace(/\/$/, '');
 
     return res.json({
       id: updatedTrip.id,
