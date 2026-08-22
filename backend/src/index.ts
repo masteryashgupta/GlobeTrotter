@@ -9,6 +9,7 @@ import { budgetRouter } from './routes/budget';
 import { expensesRouter } from './routes/expenses';
 import { adminRouter } from './routes/admin';
 import { shareRouter } from './routes/share';
+import { tripActivitiesRouter } from './routes/tripActivities';
 
 dotenv.config();
 
@@ -38,13 +39,12 @@ app.get('/api/health', (_req: Request, res: Response) => {
 app.use('/api/trips', tripsRouter);
 app.use('/api/stops', stopsRouter);
 app.use('/api/activities', activitiesRouter);
-app.use('/api/trip-activities', activitiesRouter);
+app.use('/api/trip-activities', tripActivitiesRouter);
 app.use('/api/cities', citiesRouter);
 app.use('/api/budget', budgetRouter);
 app.use('/api/share', shareRouter);
 app.use('/api', expensesRouter);
 app.use('/api/admin', adminRouter);
-
 
 app.listen(PORT, () => {
   console.log(`Backend server listening on port ${PORT}`);

@@ -31,21 +31,11 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 2. Trips Endpoints (Part A - Fully Implemented)
+## 2. Trips Endpoints (Part A & C - Fully Implemented)
 
 ### `POST /api/trips`
 - **Auth Required:** Yes (`requireAuth`)
 - **Body Validation:** `tripCreateSchema`
-  ```json
-  {
-    "name": "Japan Autumn Discovery",
-    "description": "7-day journey across Tokyo and Kyoto",
-    "start_date": "2026-10-15",
-    "end_date": "2026-10-22",
-    "cover_photo_url": "https://images.unsplash.com/photo-1540959733332",
-    "is_public": true
-  }
-  ```
 - **Response (201 Created):** `Trip` object
 
 ### `GET /api/trips`
@@ -75,78 +65,85 @@ Authorization: Bearer <supabase_access_token>
 
 ### `GET /api/share/:token`
 - **Auth Required:** None (Public read-only)
-- **Response (200 OK):** Full trip object with nested `stops` and `activities`. Excludes owner private info.
+- **Response (200 OK):** Full trip object with nested `stops` and `activities`.
 
 ### `POST /api/share/:token/copy`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (201 Created):** Cloned `Trip` object owned by caller, prefixed with `"Copy of "`, including all copied stops, activities, and audit record in `trip_copies`.
+- **Response (201 Created):** Cloned `Trip` object owned by caller.
+
+### `GET /api/trips/:tripId/timeline`
+- **Auth Required:** Yes (`requireAuth` + Owner/Public Check)
+- **Response (200 OK):** Aggregated timeline object (days, stops, activities, summary).
 
 ---
 
-## 3. Cities Endpoints (Part B - Planned Stubs)
+## 3. Cities Endpoints (Part B - Fully Implemented)
 
 ### `GET /api/cities/search`
-- **Auth Required:** Optional
-- **Query Params:** `?query=paris`
-- **Response (200 OK):** Array of matching `City` objects.
+- **Auth Required:** None (Public)
+- **Query Params:** `q`, `country`, `region`, `limit`
+- **Response (200 OK):** Array of `City` objects sorted by `popularity DESC`.
+
+### `GET /api/cities/popular`
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Top `City` objects.
 
 ### `GET /api/cities/:id`
-- **Auth Required:** Optional
-- **Response (200 OK):** `City` object with detailed description and image.
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Single `City` object.
 
 ---
 
-## 4. Itinerary & Stops Endpoints (Part B - Planned Stubs)
+## 4. Activities & Stops Endpoints (Part B - Fully Implemented)
 
-### `POST /api/stops`
+### `GET /api/activities/search`
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Array of `Activity` objects.
+
+### `POST /api/stops/:stopId/activities` (and `POST /api/activities/trip-activities`)
+- **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
+- **Response (201 Created):** `TripActivity` object.
+
+### `PATCH /api/trip-activities/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Updated `TripActivity` object.
+
+### `DELETE /api/trip-activities/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** `{ "message": "Trip activity deleted successfully", "id": "<id>" }`
+
+### `POST /api/trips/:tripId/stops`
 - **Auth Required:** Yes (`requireAuth` + `validateBody(stopCreateSchema)`)
 - **Response (201 Created):** `Stop` object.
 
 ### `DELETE /api/stops/:id`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** `{ "message": "Stop deleted" }`
-
-### `POST /api/activities/trip-activities`
-- **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
-- **Response (201 Created):** `TripActivity` object.
+- **Response (200 OK):** `{ "message": "Stop deleted successfully", "id": "<stopId>" }`
 
 ---
 
 ## 5. Budget & Expense Endpoints (Part C - Implemented)
 
 ### `POST /api/trips/:tripId/expenses`
-- **Auth Required:** Yes (`requireAuth` + `validateBody(expenseCreateSchema)` + Owner Check)
-- **Response (201 Created):** Created `Expense` object.
+- **Auth Required:** Yes (`requireAuth` + `validateBody(expenseCreateSchema)`)
+- **Response (201 Created):** `Expense` object.
 
 ### `GET /api/trips/:tripId/expenses`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** Array of manual `Expense` objects for the trip.
-
-### `PATCH /api/expenses/:id`
-- **Auth Required:** Yes (`requireAuth` + `validateBody(expenseUpdateSchema)` + Owner Check)
-- **Response (200 OK):** Updated `Expense` object.
-
-### `DELETE /api/expenses/:id`
-- **Auth Required:** Yes (`requireAuth` + Owner Check)
-- **Response (200 OK):** `{ "message": "Expense deleted successfully", "id": "<expense_id>" }`
-
-### `GET /api/budget/trips/:tripId/expenses`
-- **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** Array of `Expense` objects + category breakdown + total cost summary.
+- **Response (200 OK):** Array of manual `Expense` objects.
 
 ### `GET /api/trips/:tripId/budget`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** Comprehensive JSON shape `{ byCategory, total, tripDurationDays, perDayAverage, perDay }`.
+- **Response (200 OK):** `{ byCategory, total, tripDurationDays, perDayAverage, perDay }`.
 
-### `GET /api/trips/:tripId/calendar`
+### `GET /api/trips/:id/calendar`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** Array of calendar event objects `{ id, title, start, end, stopCity, cost, category, notes }`.
-
+- **Response (200 OK):** Array of calendar event objects.
 
 ---
 
 ## 6. Admin Endpoints (Part D - Planned Stubs)
 
 ### `GET /api/admin/stats`
-- **Auth Required:** Yes (`requireAuth` + Service Role/Admin Check)
-- **Response (200 OK):** Application platform metrics (total users, total trips, popular cities).
+- **Auth Required:** Yes (`requireAuth` + Admin Check)
+- **Response (200 OK):** Application platform metrics.
