@@ -80,22 +80,22 @@ function StatCard({
   colour?: 'teal' | 'indigo' | 'amber' | 'rose';
 }) {
   const ring = {
-    teal: 'border-teal-500/30 shadow-teal-900/20',
-    indigo: 'border-indigo-500/30 shadow-indigo-900/20',
-    amber: 'border-amber-500/30 shadow-amber-900/20',
-    rose: 'border-rose-500/30 shadow-rose-900/20',
+    teal: 'border-teal-500/30 shadow-teal-950/30',
+    indigo: 'border-amber-500/30 shadow-amber-950/30',
+    amber: 'border-amber-500/30 shadow-amber-950/30',
+    rose: 'border-rose-500/30 shadow-rose-950/30',
   }[colour];
   const val = {
-    teal: 'text-teal-400',
-    indigo: 'text-indigo-400',
-    amber: 'text-amber-400',
-    rose: 'text-rose-400',
+    teal: 'text-teal-300',
+    indigo: 'text-amber-300',
+    amber: 'text-amber-300',
+    rose: 'text-rose-300',
   }[colour];
 
   return (
-    <div className={`rounded-xl border bg-slate-800/80 p-5 shadow-lg ${ring}`}>
+    <div className={`rounded-2xl border bg-[#131C2E]/90 backdrop-blur-xl p-5 shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${ring}`}>
       <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">{label}</p>
-      <p className={`mt-2 text-3xl font-extrabold tracking-tight ${val}`}>{value}</p>
+      <p className={`mt-2 text-3xl font-extrabold tracking-tight font-heading ${val}`}>{value}</p>
       {sub && <p className="mt-1 text-xs text-slate-500">{sub}</p>}
     </div>
   );
