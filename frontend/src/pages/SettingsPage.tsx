@@ -45,13 +45,17 @@ export const SettingsPage: React.FC = () => {
     reset,
     formState: { errors },
   } = useForm<ProfileUpdateInput>({
-    resolver: zodResolver(profileUpdateSchema),
+    // zodResolver with z.preprocess widens input types to `unknown`; cast to satisfy RHF's Resolver generic.
+    // The actual runtime behaviour is fully correct — preprocess coerces empty strings before validation.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(profileUpdateSchema) as any,
     defaultValues: {
       full_name: '',
       avatar_url: '',
       language_pref: 'en',
     },
   });
+
 
   const watchAvatarUrl = watch('avatar_url');
 
@@ -123,6 +127,16 @@ export const SettingsPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
+    // Validate file type and size client-side
+    if (!file.type.startsWith('image/')) {
+      addToast('error', 'Invalid File', 'Please select an image file (JPEG, PNG, WebP, etc.).');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      addToast('error', 'File Too Large', 'Avatar image must be under 5 MB.');
+      return;
+    }
+
     setIsUploadingAvatar(true);
     try {
       const fileExt = file.name.split('.').pop();
@@ -133,22 +147,29 @@ export const SettingsPage: React.FC = () => {
         .from('avatars')
         .upload(filePath, file, { upsert: true });
 
+      let publicUrl: string;
       if (uploadError) {
-        console.warn('Storage bucket upload warning:', uploadError.message);
+        // Storage bucket not configured or unavailable — use a local blob URL for the preview
+        // and warn the user that the URL won't persist after page refresh.
+        console.warn('Storage upload failed, using local blob URL:', uploadError.message);
+        publicUrl = URL.createObjectURL(file);
+        addToast('warning', 'Avatar Preview Only', 'Storage upload failed. The preview is local only — save your profile after configuring the Supabase Storage bucket.');
+      } else {
+        const { data: publicUrlData } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+        publicUrl = publicUrlData?.publicUrl || URL.createObjectURL(file);
+        addToast('success', 'Avatar Uploaded', 'Your profile photo has been updated. Click Save to persist the change.');
       }
 
-      const { data: publicUrlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      const publicUrl = publicUrlData?.publicUrl || URL.createObjectURL(file);
       setValue('avatar_url', publicUrl, { shouldValidate: true });
       setAvatarPreview(publicUrl);
-      addToast('success', 'Avatar Uploaded', 'Your profile photo preview has been updated.');
     } catch (err: any) {
       addToast('error', 'Upload Failed', err.message || 'Could not upload avatar image.');
     } finally {
       setIsUploadingAvatar(false);
+      // Reset the file input so the same file can be re-selected if needed
+      e.target.value = '';
     }
   };
 
@@ -400,12 +421,12 @@ export const SettingsPage: React.FC = () => {
           </Card.Description>
         </Card.Header>
 
-        <div className="flex items-center justify-between pt-2">
-          <div>
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+          <div className="min-w-0">
             <h4 className="text-sm font-semibold text-slate-200">Delete User Account</h4>
             <p className="text-xs text-slate-400 mt-0.5">This action is irreversible and cannot be undone.</p>
           </div>
-          <Button variant="danger" onClick={() => setIsDeleteModalOpen(true)}>
+          <Button variant="danger" onClick={() => setIsDeleteModalOpen(true)} className="flex-shrink-0">
             Delete Account
           </Button>
         </div>

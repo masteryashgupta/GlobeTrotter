@@ -213,11 +213,11 @@ export const AdminPage: React.FC = () => {
           Platform Overview
         </h2>
         {isLoadingStats ? (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {Array.from({ length: 5 }).map((_, i) => <StatCardSkeleton key={i} />)}
           </div>
         ) : stats ? (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <StatCard label="Total Users" value={stats.total_users.toLocaleString()} colour="teal" />
             <StatCard label="Total Trips" value={stats.total_trips.toLocaleString()} colour="indigo" />
             <StatCard

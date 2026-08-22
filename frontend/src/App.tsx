@@ -38,7 +38,7 @@ function DashboardWithAdminDeniedToast() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <PlaceholderPage title="Dashboard" part="Part A: Auth &amp; Dashboard" />;
+  return <PlaceholderPage title="Dashboard" part="Part A: Auth & Dashboard" />;
 }
 
 export function App() {
