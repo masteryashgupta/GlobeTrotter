@@ -482,7 +482,7 @@ export const CalendarPage: React.FC = () => {
         >
           <form onSubmit={handleSaveEdit} className="space-y-4">
             <Input
-              label="Custom Cost ($ USD)"
+              label="Custom Cost (₹ INR)"
               type="number"
               step="0.01"
               min="0"

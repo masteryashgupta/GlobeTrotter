@@ -174,7 +174,7 @@ export const SharedTripPage: React.FC = () => {
 
             <div className="bg-slate-900/80 backdrop-blur border border-slate-800 p-4 rounded-2xl text-right">
               <span className="text-xs uppercase text-slate-400 font-bold tracking-wider">Est. Activity Cost</span>
-              <p className="text-2xl font-mono font-extrabold text-emerald-400">${totalCost.toFixed(2)}</p>
+              <p className="text-2xl font-mono font-extrabold text-emerald-400">₹{totalCost.toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -270,7 +270,7 @@ export const SharedTripPage: React.FC = () => {
                                 {cat}
                               </span>
                               <span className="text-xs font-mono font-bold text-emerald-400">
-                                ${Number(cost).toFixed(2)}
+                                ₹{Number(cost).toFixed(2)}
                               </span>
                             </div>
 

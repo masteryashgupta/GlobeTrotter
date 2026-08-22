@@ -40,7 +40,7 @@ export const formatDuration = (minutes?: number | null): string => {
 
 export const formatCost = (cost?: number | null): string => {
   if (cost === undefined || cost === null || cost === 0) return 'Free';
-  return `$${Number(cost).toFixed(0)}`;
+  return `₹${Number(cost).toFixed(0)}`;
 };
 
 export const ActivityCard: React.FC<ActivityCardProps> = ({

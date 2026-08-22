@@ -240,7 +240,7 @@ export const DashboardPage: React.FC = () => {
                   </div>
                   {city.cost_index && (
                     <span className="text-xs text-amber-400 font-semibold">
-                      {'$'.repeat(city.cost_index)}
+                      {'₹'.repeat(city.cost_index)}
                     </span>
                   )}
                 </div>

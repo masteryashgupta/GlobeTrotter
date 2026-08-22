@@ -399,7 +399,7 @@ export const SettingsPage: React.FC = () => {
                     <h4 className="font-bold text-white tracking-tight">{city.name}</h4>
                     {city.cost_index && (
                       <Badge variant="secondary">
-                        {'$'.repeat(city.cost_index)}
+                        {'₹'.repeat(city.cost_index)}
                       </Badge>
                     )}
                   </div>

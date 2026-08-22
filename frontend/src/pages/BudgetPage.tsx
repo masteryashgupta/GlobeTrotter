@@ -422,7 +422,7 @@ export const BudgetPage: React.FC = () => {
             )}
           </div>
           <div className="mt-2 flex items-center gap-2">
-            <span className="text-xl font-bold text-slate-400">$</span>
+            <span className="text-xl font-bold text-slate-400">₹</span>
             <input
               type="number"
               step="10"
@@ -445,7 +445,7 @@ export const BudgetPage: React.FC = () => {
               Daily Budget Threshold Exceeded ({overbudgetDays.length} {overbudgetDays.length === 1 ? 'day' : 'days'})
             </h4>
             <p className="text-xs text-rose-300/90 mt-1">
-              Your spending on the following days exceeds your <span className="font-bold text-white">${dailyThreshold}/day</span> target:
+              Your spending on the following days exceeds your <span className="font-bold text-white">₹{dailyThreshold}/day</span> target:
             </p>
             <div className="flex flex-wrap gap-2 mt-2">
               {overbudgetDays.map((d) => (
@@ -453,7 +453,7 @@ export const BudgetPage: React.FC = () => {
                   key={d.date}
                   className="px-2.5 py-1 rounded-lg bg-rose-900/60 border border-rose-700/60 text-xs font-semibold font-mono text-rose-100"
                 >
-                  📅 {d.date}: ${d.total.toFixed(2)} (+${(d.total - dailyThreshold).toFixed(2)})
+                  📅 {d.date}: ₹{d.total.toFixed(2)} (+₹{(d.total - dailyThreshold).toFixed(2)})
                 </span>
               ))}
             </div>
@@ -696,7 +696,7 @@ export const BudgetPage: React.FC = () => {
 
             <div>
               <Input
-                label="Amount ($ USD)"
+                label="Amount (₹ INR)"
                 type="number"
                 step="0.01"
                 min="0.01"
