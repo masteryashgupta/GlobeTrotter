@@ -300,17 +300,8 @@ export const SettingsPage: React.FC = () => {
                       className="hidden"
                     />
                   </label>
-                  <span className="text-xs text-[#6B7280]">or enter image URL below</span>
                 </div>
-                <Input
-                  placeholder="https://example.com/avatar.jpg"
-                  error={errors.avatar_url?.message}
-                  {...register('avatar_url')}
-                  onChange={(e) => {
-                    register('avatar_url').onChange(e);
-                    setAvatarPreview(e.target.value);
-                  }}
-                />
+                <input type="hidden" {...register('avatar_url')} />
               </div>
             </div>
 
