@@ -32,6 +32,7 @@ export const profileUpdateSchema = z.object({
     z.string().url('Must be a valid image URL (https://...)').nullable().optional()
   ),
   language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).optional(),
+  currency: z.enum(['USD', 'INR', 'EUR', 'GBP', 'JPY', 'AUD']).optional(),
 });
 
 export const profileDeleteSchema = z.object({
