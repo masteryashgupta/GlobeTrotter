@@ -695,10 +695,7 @@ export async function runSeed() {
     const regionEsc = item.region.replace(/'/g, "''");
     const imageEsc = item.image_url.replace(/'/g, "''");
 
-    sqlContent += `-- City: ${item.name}, ${item.country}\n`;
-    sqlContent += `INSERT INTO public.cities (name, country, region, cost_index, popularity, image_url)\n`;
-    sqlContent += `VALUES ('${cityNameEsc}', '${countryEsc}', '${regionEsc}', ${item.cost_index}, ${item.popularity}, '${imageEsc}')\n`;
-    sqlContent += `ON CONFLICT (name, country) DO UPDATE SET cost_index = EXCLUDED.cost_index, popularity = EXCLUDED.popularity, image_url = EXCLUDED.image_url;\n\n`;
+    sqlContent += `INSERT INTO public.cities (name, country, region, cost_index, popularity, image_url) VALUES ('${cityNameEsc}', '${countryEsc}', '${regionEsc}', ${item.cost_index}, ${item.popularity}, '${imageEsc}') ON CONFLICT (name, country) DO UPDATE SET cost_index = EXCLUDED.cost_index, popularity = EXCLUDED.popularity, image_url = EXCLUDED.image_url;\n`;
 
     // Attempt direct API insert via Supabase client if connected
     try {
@@ -753,9 +750,7 @@ export async function runSeed() {
       const descEsc = act.description.replace(/'/g, "''");
       const actImgEsc = act.image_url.replace(/'/g, "''");
 
-      sqlContent += `INSERT INTO public.activities (city_id, name, category, description, cost, duration_minutes, image_url)\n`;
-      sqlContent += `VALUES ((SELECT id FROM public.cities WHERE name = '${cityNameEsc}' AND country = '${countryEsc}' LIMIT 1), '${actNameEsc}', '${act.category}', '${descEsc}', ${act.cost}, ${act.duration_minutes}, '${actImgEsc}')\n`;
-      sqlContent += `ON CONFLICT (city_id, name) DO UPDATE SET cost = EXCLUDED.cost, duration_minutes = EXCLUDED.duration_minutes;\n`;
+      sqlContent += `INSERT INTO public.activities (city_id, name, category, description, cost, duration_minutes, image_url) VALUES ((SELECT id FROM public.cities WHERE name = '${cityNameEsc}' AND country = '${countryEsc}' LIMIT 1), '${actNameEsc}', '${act.category}', '${descEsc}', ${act.cost}, ${act.duration_minutes}, '${actImgEsc}') ON CONFLICT (city_id, name) DO UPDATE SET cost = EXCLUDED.cost, duration_minutes = EXCLUDED.duration_minutes;\n`;
     }
     sqlContent += `\n`;
   }
