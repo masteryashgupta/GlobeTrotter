@@ -24,20 +24,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed select-none min-h-[44px]';
+      'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0B0F19] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 select-none min-h-[44px] cursor-pointer';
 
     const variantStyles = {
-      primary: 'bg-teal-600 hover:bg-teal-500 text-white focus:ring-teal-500 active:bg-teal-700',
-      secondary: 'bg-indigo-600 hover:bg-indigo-500 text-white focus:ring-indigo-500 active:bg-indigo-700',
-      outline: 'border border-slate-700 text-slate-200 hover:bg-slate-800 focus:ring-teal-500',
-      danger: 'bg-rose-600 hover:bg-rose-500 text-white focus:ring-rose-500 active:bg-rose-700',
-      ghost: 'text-slate-300 hover:bg-slate-800 hover:text-white focus:ring-slate-500',
+      primary: 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-lg shadow-teal-500/20 hover:shadow-teal-500/35 focus:ring-teal-400 font-bold',
+      secondary: 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md shadow-amber-500/20 focus:ring-amber-400 font-bold',
+      outline: 'border border-slate-700/80 bg-slate-900/40 text-slate-200 hover:bg-slate-800/80 hover:border-teal-500/40 hover:text-white focus:ring-teal-500 shadow-sm',
+      danger: 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-md shadow-rose-900/30 focus:ring-rose-500',
+      ghost: 'text-slate-300 hover:bg-slate-800/60 hover:text-white focus:ring-slate-500',
     };
 
     const sizeStyles = {
-      sm: 'px-3 py-1.5 text-xs gap-1.5',
-      md: 'px-4 py-2 text-sm gap-2',
-      lg: 'px-5 py-2.5 text-base gap-2.5',
+      sm: 'px-3.5 py-1.5 text-xs gap-1.5 rounded-lg',
+      md: 'px-4.5 py-2 text-sm gap-2',
+      lg: 'px-6 py-3 text-base gap-2.5 rounded-2xl',
     };
 
     return (

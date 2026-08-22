@@ -95,20 +95,26 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-10 font-sans pb-12">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-md">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Welcome back, {profile?.full_name || user?.email?.split('@')[0] || 'Traveler'}! ✈️
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Where is your next destination? Manage your trips or explore new places below.
-          </p>
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#131C2E] via-slate-900 to-[#131C2E] border border-slate-800/90 rounded-3xl p-8 backdrop-blur-xl shadow-2xl shadow-slate-950">
+        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 relative z-10">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs font-semibold mb-1">
+              ✨ Smart Travel Concierge
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-50 tracking-tight font-heading">
+              Welcome back, {profile?.full_name || user?.email?.split('@')[0] || 'Traveler'}! ✈️
+            </h1>
+            <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
+              Where is your next adventure? Build itineraries, organize budgets, or discover top regional destinations.
+            </p>
+          </div>
+          <Link to="/trips/new" className="shrink-0">
+            <Button variant="primary" size="lg" className="w-full sm:w-auto">
+              + Plan New Trip
+            </Button>
+          </Link>
         </div>
-        <Link to="/trips/new" className="shrink-0">
-          <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-lg shadow-teal-900/30">
-            + Plan New Trip
-          </Button>
-        </Link>
       </div>
 
       {/* Recent Trips Section */}

@@ -89,14 +89,18 @@ export const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 font-sans">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-teal-600 items-center justify-center text-white font-black text-2xl shadow-xl shadow-teal-900/30">
+        <div className="text-center space-y-3">
+          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 items-center justify-center text-slate-950 font-black text-2xl shadow-xl shadow-teal-500/20 font-heading">
             G
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Create your GlobeTrotter account</h1>
+          <h1 className="text-3xl font-extrabold text-slate-50 tracking-tight font-heading">Create your GlobeTrotter account</h1>
           <p className="text-sm text-slate-400">Join travel enthusiasts and start planning your journeys</p>
         </div>
 

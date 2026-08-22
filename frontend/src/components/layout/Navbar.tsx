@@ -15,6 +15,7 @@ export const Navbar = () => {
     { name: 'Search Cities', path: '/cities/search' },
     { name: 'Search Activities', path: '/activities/search' },
     { name: 'Settings', path: '/settings' },
+    ...(profile?.is_admin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
   ];
 
   const isActive = (path: string) => {
@@ -25,30 +26,30 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
+    <nav className="bg-[#0B0F19]/80 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-50 transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
           <div className="flex items-center gap-8">
-            <Link to="/dashboard" className="flex items-center gap-2 group">
-              <span className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:bg-teal-500 transition-colors">
+            <Link to="/dashboard" className="flex items-center gap-2.5 group">
+              <span className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform duration-200">
                 G
               </span>
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-teal-400 transition-colors">
+              <span className="text-xl font-black tracking-tight text-slate-50 group-hover:text-teal-400 transition-colors font-heading">
                 GlobeTrotter
               </span>
             </Link>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-1.5">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     isActive(link.path)
-                      ? 'bg-teal-500/10 text-teal-400 font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                      ? 'bg-teal-500/15 text-teal-300 font-semibold border border-teal-500/30 shadow-sm shadow-teal-950'
+                      : 'text-slate-300 hover:text-slate-50 hover:bg-slate-800/60'
                   }`}
                 >
                   {link.name}

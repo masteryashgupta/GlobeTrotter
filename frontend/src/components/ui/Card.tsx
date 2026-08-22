@@ -15,8 +15,8 @@ export const Card: React.FC<CardProps> & {
 } = ({ children, className = '', hoverable = false, ...props }) => {
   return (
     <div
-      className={`bg-slate-800/80 backdrop-blur-md border border-slate-700/80 rounded-xl p-6 shadow-xl ${
-        hoverable ? 'transition-all duration-200 hover:border-slate-600 hover:shadow-2xl hover:-translate-y-0.5' : ''
+      className={`bg-[#131C2E]/90 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-xl ${
+        hoverable ? 'transition-all duration-300 ease-out hover:border-teal-500/40 hover:shadow-2xl hover:shadow-teal-950/30 hover:-translate-y-1' : ''
       } ${className}`}
       {...props}
     >
