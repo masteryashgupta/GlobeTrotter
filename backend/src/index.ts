@@ -7,6 +7,7 @@ import { activitiesRouter } from './routes/activities';
 import { citiesRouter } from './routes/cities';
 import { budgetRouter } from './routes/budget';
 import { expensesRouter } from './routes/expenses';
+import { communityRouter } from './routes/community';
 import { adminRouter } from './routes/admin';
 import { profileRouter } from './routes/profile';
 import { shareRouter } from './routes/share';
@@ -47,11 +48,13 @@ app.use('/api/trips', tripsRouter);
 app.use('/api/stops', stopsRouter);
 app.use('/api/activities', activitiesRouter);
 app.use('/api/trip-activities', tripActivitiesRouter);
-app.use('/api/cities', citiesRouter);
+app.use('/api/trips/:tripId/expenses', expensesRouter);
+app.use('/api/community', communityRouter);
 app.use('/api/budget', budgetRouter);
 app.use('/api/share', shareRouter);
 app.use('/api', expensesRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/cities', citiesRouter);
 
 app.listen(PORT, () => {
   console.log(`Backend server listening on port ${PORT}`);

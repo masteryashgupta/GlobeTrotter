@@ -359,4 +359,37 @@ export const api = {
     }
     return res.json();
   },
+
+  // -------------------------
+  // Community Posts
+  // -------------------------
+  getCommunityPosts: async () => {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${API_BASE_URL}/community`, {
+      headers,
+    });
+    if (!res.ok) throw new Error('Failed to fetch community posts');
+    return res.json();
+  },
+
+  createCommunityPost: async (data: any) => {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${API_BASE_URL}/community`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to create community post');
+    return res.json();
+  },
+
+  likeCommunityPost: async (postId: string) => {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${API_BASE_URL}/community/${postId}/like`, {
+      method: 'POST',
+      headers,
+    });
+    if (!res.ok) throw new Error('Failed to like community post');
+    return res.json();
+  },
 };

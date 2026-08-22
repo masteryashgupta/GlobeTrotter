@@ -239,6 +239,44 @@ export interface Database {
           created_at?: string
         }
       }
+      community_posts: {
+        Row: {
+          id: string
+          user_id: string
+          location: string
+          trip_title: string
+          content: string
+          image_url: string | null
+          likes_count: number
+          comments_count: number
+          category: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          location: string
+          trip_title: string
+          content: string
+          image_url?: string | null
+          likes_count?: number
+          comments_count?: number
+          category: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          location?: string
+          trip_title?: string
+          content?: string
+          image_url?: string | null
+          likes_count?: number
+          comments_count?: number
+          category?: string
+          created_at?: string
+        }
+      }
       trip_copies: {
         Row: {
           id: string

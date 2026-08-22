@@ -133,3 +133,12 @@ export type TripActivityCreateInput = z.infer<typeof tripActivityCreateSchema>;
 export type ExpenseCreateInput = z.infer<typeof expenseCreateSchema>;
 export type ExpenseUpdateInput = z.infer<typeof expenseUpdateSchema>;
 export type TripShareInput = z.infer<typeof tripShareSchema>;
+
+export const communityPostSchema = z.object({
+  location: z.string().trim().min(1, 'Location is required'),
+  trip_title: z.string().trim().min(1, 'Trip title is required').max(150, 'Title too long'),
+  content: z.string().trim().min(1, 'Content is required').max(2000, 'Content too long'),
+  category: z.string().trim().min(1, 'Category is required'),
+  image_url: z.string().url().nullable().optional(),
+});
+export type CommunityPostInput = z.infer<typeof communityPostSchema>;
