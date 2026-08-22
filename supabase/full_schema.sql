@@ -205,11 +205,26 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Realtime Publication
-ALTER PUBLICATION supabase_realtime ADD TABLE public.trips;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.stops;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.trip_activities;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.expenses;
+-- Enable Supabase Realtime safely (idempotent)
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.trips;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.stops;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.trip_activities;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.expenses;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Profile Auto-Creation Trigger
 CREATE OR REPLACE FUNCTION public.handle_new_user()
