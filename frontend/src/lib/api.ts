@@ -2,12 +2,19 @@ import { supabase } from './supabase';
 import { City, Trip, Stop, Activity, TripActivity } from '../../../shared/types';
 import { StopCreateInput } from '../../../shared/validation';
 
-export const BACKEND_BASE_URL =
-  import.meta.env.VITE_BACKEND_URL ||
-  (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : 'https://globetrotter-production-4300.up.railway.app');
+const rawApiUrl = import.meta.env.VITE_API_URL || '';
+const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || '';
 
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || `${BACKEND_BASE_URL}/api`;
+const isInvalidDomain = (url: string) => !url || url.includes('globetrotter-backend-production') || url.includes('localhost');
+
+export const BACKEND_BASE_URL =
+  !isInvalidDomain(rawBackendUrl)
+    ? rawBackendUrl
+    : !isInvalidDomain(rawApiUrl)
+    ? rawApiUrl.replace(/\/api\/?$/, '')
+    : 'https://globetrotter-production-4300.up.railway.app';
+
+export const API_BASE_URL = `${BACKEND_BASE_URL}/api`;
 
 const BASE_URL = API_BASE_URL;
 

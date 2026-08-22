@@ -84,10 +84,10 @@ jobs:
       - name: Build Frontend Production Artifact
         working-directory: ./frontend
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://ddeqnwsxowmpclyzrjkx.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkZXFud3N4b3dtcGNseXpyamt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczNzAzNTUsImV4cCI6MjEwMjk0NjM1NX0.fI24-f0K0rJe9AD1SIWrxHm90hfOp9JMcHlV2tHYVUU' }}
+          VITE_API_URL: https://globetrotter-production-4300.up.railway.app/api
+          VITE_BACKEND_URL: https://globetrotter-production-4300.up.railway.app
         run: npm run build
 
       - name: Setup GitHub Pages
