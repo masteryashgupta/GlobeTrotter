@@ -4,6 +4,7 @@ import { validateBody } from '../middleware/validateBody';
 import { tripCreateSchema, tripUpdateSchema, TripCreateInput, TripUpdateInput } from '../../../shared/validation';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
 import { StopService } from '../services/stopService';
+import { TripActivityService } from '../services/tripActivityService';
 
 export const tripsRouter = Router();
 
@@ -259,5 +260,127 @@ tripsRouter.patch('/:tripId/stops/reorder', requireAuth, async (req: Authenticat
     return res.json(reordered);
   } catch (err: any) {
     return res.status(err.statusCode || 500).json({ error: err.message || 'Server error reordering stops' });
+  }
+});
+
+// 9. GET /api/trips/:tripId/timeline - Aggregated day-by-day & grouped-by-city timeline
+tripsRouter.get('/:tripId/timeline', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = Array.isArray(req.params.tripId) ? req.params.tripId[0] : (req.params.tripId as string);
+    const userId = req.user!.id;
+
+    // 1. Fetch trip
+    const { data: trip, error: tripError } = await supabaseAdmin
+      .from('trips')
+      .select('*')
+      .eq('id', tripId)
+      .single();
+
+    if (tripError || !trip) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+
+    // Permission check: owner or public trip
+    if (!trip.is_public && trip.owner_id !== userId) {
+      return res.status(403).json({ error: 'Forbidden: You do not have access to this trip' });
+    }
+
+    // 2. Fetch stops for trip
+    const rawStops = await StopService.getStopsByTripId(tripId);
+
+    // 3. Fetch activities for each stop
+    const stopsWithActivities = await Promise.all(
+      rawStops.map(async (stop) => {
+        const activities = await TripActivityService.getActivitiesByStopId(stop.id);
+        return {
+          ...stop,
+          trip_activities: activities,
+        };
+      })
+    );
+
+    // 4. Generate Day-by-Day Timeline
+    const days: any[] = [];
+    let totalEstimatedCost = 0;
+    let totalActivities = 0;
+
+    // Determine timeline date bounds
+    const startDateStr = trip.start_date || (stopsWithActivities.length > 0 ? stopsWithActivities[0].arrival_date : new Date().toISOString().split('T')[0]);
+    const endDateStr = trip.end_date || (stopsWithActivities.length > 0 ? stopsWithActivities[stopsWithActivities.length - 1].departure_date : startDateStr);
+
+    const curr = new Date(startDateStr);
+    const end = new Date(endDateStr);
+    let dayNumber = 1;
+
+    while (curr <= end) {
+      const dateStr = curr.toISOString().split('T')[0];
+
+      // Find which stop covers this date
+      const currentStop = stopsWithActivities.find(
+        (s) => dateStr >= s.arrival_date && dateStr <= s.departure_date
+      );
+
+      // Collect all activities scheduled on this date across stops
+      const dayActivities: any[] = [];
+      for (const s of stopsWithActivities) {
+        const acts = (s.trip_activities || []).filter((a: any) => a.scheduled_date === dateStr);
+        dayActivities.push(...acts);
+      }
+
+      // Sort by scheduled_time (nulls last)
+      dayActivities.sort((a, b) => {
+        if (!a.scheduled_time) return 1;
+        if (!b.scheduled_time) return -1;
+        return a.scheduled_time.localeCompare(b.scheduled_time);
+      });
+
+      // Sum costs
+      dayActivities.forEach((act) => {
+        const cost = act.custom_cost !== null && act.custom_cost !== undefined
+          ? Number(act.custom_cost)
+          : (act.activities?.cost ? Number(act.activities.cost) : 0);
+        totalEstimatedCost += cost;
+        totalActivities++;
+      });
+
+      days.push({
+        day_number: dayNumber,
+        date: dateStr,
+        stop_id: currentStop ? currentStop.id : null,
+        stop: currentStop || null,
+        city: currentStop ? currentStop.cities : null,
+        activities: dayActivities,
+      });
+
+      curr.setDate(curr.getDate() + 1);
+      dayNumber++;
+    }
+
+    // Add unassigned-date activities to the total if any
+    for (const s of stopsWithActivities) {
+      for (const act of s.trip_activities || []) {
+        if (!act.scheduled_date) {
+          const cost = act.custom_cost !== null && act.custom_cost !== undefined
+            ? Number(act.custom_cost)
+            : (act.activities?.cost ? Number(act.activities.cost) : 0);
+          totalEstimatedCost += cost;
+          totalActivities++;
+        }
+      }
+    }
+
+    return res.json({
+      trip,
+      days,
+      stops: stopsWithActivities,
+      summary: {
+        total_days: days.length,
+        total_stops: stopsWithActivities.length,
+        total_activities: totalActivities,
+        total_estimated_cost: totalEstimatedCost,
+      },
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Server error generating timeline' });
   }
 });

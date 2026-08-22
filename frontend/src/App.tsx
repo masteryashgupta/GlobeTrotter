@@ -11,6 +11,7 @@ import { PlaceholderPage } from './pages/PlaceholderPage';
 import { CitySearchPage } from './pages/CitySearchPage';
 import { ActivitySearchPage } from './pages/ActivitySearchPage';
 import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
+import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -105,7 +106,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="View Trip Details" part="Part B: Itinerary & Search" />
+                      <ItineraryViewPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }

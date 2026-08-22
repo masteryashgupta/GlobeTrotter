@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { City, Trip, Stop, Activity } from '../../../shared/types';
+import { City, Trip, Stop, Activity, TripActivity } from '../../../shared/types';
 import { StopCreateInput } from '../../../shared/validation';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -317,6 +317,33 @@ export const api = {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || err.message || `Failed to reorder activities (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async getTripTimeline(tripId: string): Promise<{
+    trip: Trip;
+    days: {
+      day_number: number;
+      date: string;
+      stop_id: string | null;
+      stop: (Stop & { cities?: City }) | null;
+      city: City | null;
+      activities: (TripActivity & { activities?: Activity })[];
+    }[];
+    stops: (Stop & { cities?: City; trip_activities?: (TripActivity & { activities?: Activity })[] })[];
+    summary: {
+      total_days: number;
+      total_stops: number;
+      total_activities: number;
+      total_estimated_cost: number;
+    };
+  }> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trips/${tripId}/timeline`, { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to load trip timeline (${res.status})`);
     }
     return res.json();
   },

@@ -65,6 +65,14 @@ Authorization: Bearer <supabase_access_token>
 - **Auth Required:** Yes (`requireAuth` + Owner Check)
 - **Response (200 OK):** `{ "message": "Trip deleted successfully", "id": "<trip_id>" }`
 
+### `GET /api/trips/:tripId/timeline`
+- **Auth Required:** Yes (`requireAuth` + Owner/Public Check)
+- **Response (200 OK):** Aggregated timeline object containing:
+  - `trip`: Full trip metadata
+  - `days`: Array of day objects from `start_date` to `end_date` with `day_number`, `date`, `city`, `stop`, and `activities` sorted by `scheduled_time`
+  - `stops`: Array of stops with nested `trip_activities`
+  - `summary`: Total days, total stops, total activities, and total estimated cost
+
 ---
 
 ## 3. Cities Endpoints (Part B - Fully Implemented)
