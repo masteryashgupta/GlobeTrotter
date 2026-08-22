@@ -4,7 +4,7 @@ import { StopCreateInput } from '../../../shared/validation';
 
 export const BACKEND_BASE_URL =
   import.meta.env.VITE_BACKEND_URL ||
-  (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : 'http://localhost:5000');
+  (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : 'https://globetrotter-production-4300.up.railway.app');
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || `${BACKEND_BASE_URL}/api`;
