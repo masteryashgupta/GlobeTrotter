@@ -18,6 +18,16 @@ tripsRouter.post(
       const payload: TripCreateInput = req.body;
       const ownerId = req.user!.id;
 
+      // Ensure user profile exists in database table before creating trip
+      await supabaseAdmin.from('profiles').upsert(
+        {
+          id: ownerId,
+          email: req.user!.email || '',
+          full_name: req.user!.user_metadata?.full_name || req.user!.email?.split('@')[0] || 'Traveler',
+        },
+        { onConflict: 'id', ignoreDuplicates: true }
+      );
+
       const { data: trip, error } = await supabaseAdmin
         .from('trips')
         .insert({

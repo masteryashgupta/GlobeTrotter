@@ -109,7 +109,8 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
 
       if (!response.ok) {
         const errRes = await response.json();
-        addToast('error', isEdit ? 'Update Failed' : 'Creation Failed', errRes.error || 'Server error');
+        const errorMessage = errRes.details ? `${errRes.error}: ${errRes.details}` : (errRes.error || 'Server error');
+        addToast('error', isEdit ? 'Update Failed' : 'Creation Failed', errorMessage);
         return;
       }
 
