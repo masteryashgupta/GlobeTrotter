@@ -206,12 +206,11 @@ tripsRouter.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: R
   }
 });
 
-// 6. POST /api/trips/:id/share - Toggle public sharing & generate share token
+// 6. POST /api/trips/:id/share - Generate share token and set trips.is_public = true
 tripsRouter.post('/:id/share', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const tripId = req.params.id;
     const userId = req.user!.id;
-    const { is_public } = req.body;
 
     const { data: existingTrip } = await supabaseAdmin
       .from('trips')
@@ -227,14 +226,14 @@ tripsRouter.post('/:id/share', requireAuth, async (req: AuthenticatedRequest, re
     }
 
     let shareToken = (existingTrip as any).share_token;
-    if (is_public && !shareToken) {
+    if (!shareToken) {
       shareToken = crypto.randomUUID();
     }
 
     const { data: updatedTrip, error } = await supabaseAdmin
       .from('trips')
       .update({
-        is_public: !!is_public,
+        is_public: true,
         share_token: shareToken,
         updated_at: new Date().toISOString(),
       } as any)
@@ -243,16 +242,62 @@ tripsRouter.post('/:id/share', requireAuth, async (req: AuthenticatedRequest, re
       .single();
 
     if (error) {
-      return res.status(400).json({ error: 'Failed to update share settings', details: error.message });
+      return res.status(400).json({ error: 'Failed to share trip', details: error.message });
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    return res.json({
+      id: updatedTrip.id,
+      is_public: true,
+      share_token: updatedTrip.share_token,
+      share_url: `${frontendUrl}/share/${updatedTrip.share_token}`,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Server error sharing trip', details: err.message });
+  }
+});
+
+// 6b. POST /api/trips/:id/unshare - Set is_public = false while preserving share_token
+tripsRouter.post('/:id/unshare', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = req.params.id;
+    const userId = req.user!.id;
+
+    const { data: existingTrip } = await supabaseAdmin
+      .from('trips')
+      .select('*')
+      .eq('id', tripId)
+      .single();
+
+    if (!existingTrip) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+    if ((existingTrip as any).owner_id !== userId) {
+      return res.status(403).json({ error: 'Forbidden: You do not own this trip' });
+    }
+
+    const { data: updatedTrip, error } = await supabaseAdmin
+      .from('trips')
+      .update({
+        is_public: false,
+        updated_at: new Date().toISOString(),
+      } as any)
+      .eq('id', tripId)
+      .select('*')
+      .single();
+
+    if (error) {
+      return res.status(400).json({ error: 'Failed to unshare trip', details: error.message });
     }
 
     return res.json({
       id: updatedTrip.id,
-      is_public: updatedTrip.is_public,
+      is_public: false,
       share_token: updatedTrip.share_token,
     });
   } catch (err: any) {
-    return res.status(500).json({ error: 'Server error updating share settings', details: err.message });
+    return res.status(500).json({ error: 'Server error unsharing trip', details: err.message });
   }
 });
 

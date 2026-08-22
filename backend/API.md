@@ -65,6 +65,22 @@ Authorization: Bearer <supabase_access_token>
 - **Auth Required:** Yes (`requireAuth` + Owner Check)
 - **Response (200 OK):** `{ "message": "Trip deleted successfully", "id": "<trip_id>" }`
 
+### `POST /api/trips/:id/share`
+- **Auth Required:** Yes (`requireAuth` + Owner Check)
+- **Response (200 OK):** `{ id, is_public: true, share_token, share_url }`
+
+### `POST /api/trips/:id/unshare`
+- **Auth Required:** Yes (`requireAuth` + Owner Check)
+- **Response (200 OK):** `{ id, is_public: false, share_token }`
+
+### `GET /api/share/:token`
+- **Auth Required:** None (Public read-only)
+- **Response (200 OK):** Full trip object with nested `stops` and `activities`. Excludes owner private info.
+
+### `POST /api/share/:token/copy`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (201 Created):** Cloned `Trip` object owned by caller, prefixed with `"Copy of "`, including all copied stops, activities, and audit record in `trip_copies`.
+
 ---
 
 ## 3. Cities Endpoints (Part B - Planned Stubs)

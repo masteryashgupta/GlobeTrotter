@@ -8,6 +8,7 @@ import { citiesRouter } from './routes/cities';
 import { budgetRouter } from './routes/budget';
 import { expensesRouter } from './routes/expenses';
 import { adminRouter } from './routes/admin';
+import { shareRouter } from './routes/share';
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use('/api/activities', activitiesRouter);
 app.use('/api/trip-activities', activitiesRouter);
 app.use('/api/cities', citiesRouter);
 app.use('/api/budget', budgetRouter);
+app.use('/api/share', shareRouter);
 app.use('/api', expensesRouter);
 app.use('/api/admin', adminRouter);
 
