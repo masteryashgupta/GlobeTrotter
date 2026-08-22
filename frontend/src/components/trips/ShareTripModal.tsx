@@ -34,17 +34,19 @@ export const ShareTripModal: React.FC<ShareTripModalProps> = ({
       setLoading(true);
       const newPublicState = !isPublic;
 
-      // Get session token
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      const res = await fetch(`http://localhost:5000/api/trips/${tripId}/share`, {
+      const endpoint = newPublicState
+        ? `http://localhost:5000/api/trips/${tripId}/share`
+        : `http://localhost:5000/api/trips/${tripId}/unshare`;
+
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ is_public: newPublicState }),
       });
 
       if (!res.ok) {
@@ -54,7 +56,9 @@ export const ShareTripModal: React.FC<ShareTripModalProps> = ({
 
       const data = await res.json();
       setIsPublic(data.is_public);
-      setShareToken(data.share_token);
+      if (data.share_token) {
+        setShareToken(data.share_token);
+      }
 
       if (onShareUpdated) {
         onShareUpdated({ is_public: data.is_public, share_token: data.share_token });
