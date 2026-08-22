@@ -142,8 +142,52 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 6. Admin Endpoints (Part D - Planned Stubs)
+## 6. Admin Endpoints (Part D - Fully Implemented)
+
+> **Auth Required:** All admin endpoints require `requireAuth` + `requireAdmin`.
+> The `requireAdmin` middleware fetches `profiles.is_admin` server-side from the DB via the service-role client; no client-sent flag is trusted. Returns `403` if `is_admin = false`.
 
 ### `GET /api/admin/stats`
-- **Auth Required:** Yes (`requireAuth` + Service Role/Admin Check)
-- **Response (200 OK):** Application platform metrics (total users, total trips, popular cities).
+- **Auth Required:** Yes (`requireAuth` + `requireAdmin`)
+- **Response (200 OK):**
+  ```json
+  {
+    "total_users": 142,
+    "total_trips": 389,
+    "trips_last_7_days": 14,
+    "trips_last_30_days": 61,
+    "avg_trip_duration_days": 8.4,
+    "top_cities": [
+      { "city_id": "uuid", "name": "Tokyo", "country": "Japan", "image_url": "...", "stop_count": 42 }
+    ],
+    "top_activities": [
+      { "activity_id": "uuid", "name": "Senso-ji Temple", "category": "culture", "image_url": "...", "booking_count": 31 }
+    ]
+  }
+  ```
+
+### `GET /api/admin/users?page=1&limit=20`
+- **Auth Required:** Yes (`requireAuth` + `requireAdmin`)
+- **Query Params:** `page` (default: 1), `limit` (default: 20, max: 100)
+- **Response (200 OK):**
+  ```json
+  {
+    "users": [
+      {
+        "id": "uuid",
+        "full_name": "Jane Doe",
+        "email": "jane@example.com",
+        "is_admin": false,
+        "created_at": "2026-08-01T...",
+        "trip_count": 5
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 142,
+      "total_pages": 8
+    }
+  }
+  ```
+
