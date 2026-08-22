@@ -80,7 +80,7 @@ export const ItineraryBuilderPage: React.FC = () => {
     if (!tripId) return;
 
     const channel = supabase
-      .channel(`stops_changes_${tripId}`)
+      .channel(`builder_realtime_${tripId}`)
       .on(
         'postgres_changes',
         {
@@ -93,6 +93,22 @@ export const ItineraryBuilderPage: React.FC = () => {
           // Invalidate cache when stops change in real-time
           queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
           queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['trip-timeline', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['stop-activities'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'trip_activities',
+        },
+        () => {
+          // Invalidate cache when activities change in real-time
+          queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['trip-timeline', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['stop-activities'] });
         }
       )
       .subscribe();

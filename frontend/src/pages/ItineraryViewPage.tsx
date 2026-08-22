@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { Button, Badge, Skeleton, EmptyState, Card } from '../components/ui';
 import { formatCost, getCategoryBadgeVariant } from '../components/activities/ActivityCard';
 import { Activity } from '../../../shared/types';
@@ -9,6 +10,7 @@ import { Activity } from '../../../shared/types';
 export const ItineraryViewPage: React.FC = () => {
   const { id: tripId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [viewMode, setViewMode] = useState<'timeline' | 'grouped'>('timeline');
 
@@ -22,6 +24,47 @@ export const ItineraryViewPage: React.FC = () => {
     queryFn: () => api.getTripTimeline(tripId!),
     enabled: Boolean(tripId),
   });
+
+  // Supabase Realtime Subscription for live updates across clients/tabs
+  useEffect(() => {
+    if (!tripId) return;
+
+    const channel = supabase
+      .channel(`view_realtime_${tripId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'stops',
+          filter: `trip_id=eq.${tripId}`,
+        },
+        () => {
+          // Live sync timeline when stops are added, edited, reordered, or deleted
+          queryClient.invalidateQueries({ queryKey: ['trip-timeline', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'trip_activities',
+        },
+        () => {
+          // Live sync timeline when activities are scheduled, edited, reordered, or deleted
+          queryClient.invalidateQueries({ queryKey: ['trip-timeline', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [tripId, queryClient]);
 
   if (error) {
     return (
