@@ -16,7 +16,7 @@ export interface TripFormProps {
 }
 
 export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = false, onSuccess }) => {
-  const { session } = useAuth();
+  useAuth(); // keep AuthContext subscription alive
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -86,7 +86,15 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
 
   const onSubmit = async (data: TripCreateInput) => {
     try {
-      const token = session?.access_token;
+      // Always fetch a fresh session so the token is never stale
+      const { data: { session: freshSession } } = await supabase.auth.getSession();
+      const token = freshSession?.access_token;
+
+      if (!token) {
+        addToast('error', 'Not Signed In', 'Please sign in again to create a trip.');
+        return;
+      }
+
       const endpoint = isEdit ? `${API_BASE_URL}/trips/${initialValues?.id}` : `${API_BASE_URL}/trips`;
       const method = isEdit ? 'PATCH' : 'POST';
 
