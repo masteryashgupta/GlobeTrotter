@@ -126,6 +126,43 @@ export const BudgetPage: React.FC = () => {
     enabled: !!tripId,
   });
 
+  // Supabase Realtime subscription on expenses and trip_activities for live budget updates
+  React.useEffect(() => {
+    if (!tripId) return;
+
+    const channel = supabase
+      .channel(`budget_realtime_${tripId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'expenses',
+          filter: `trip_id=eq.${tripId}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['trip-budget', tripId] });
+          queryClient.invalidateQueries({ queryKey: ['trip-expenses', tripId] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'trip_activities',
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['trip-budget', tripId] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [tripId, queryClient]);
+
   // React Hook Form for Add/Edit Expense
   const {
     register,
