@@ -9,7 +9,7 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
         <Skeleton variant="rectangular" width={180} height={40} className="mb-4" />
         <Skeleton variant="text" width={240} />
       </div>
@@ -28,7 +28,7 @@ export const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
         <Skeleton variant="rectangular" width={180} height={40} className="mb-4" />
       </div>
     );
@@ -52,7 +52,7 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
         <Skeleton variant="rectangular" width={180} height={40} className="mb-4" />
         <Skeleton variant="text" width={240} />
       </div>
@@ -71,7 +71,7 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
   // profile === null means still loading — show skeleton until resolved
   if (!profile) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
         <Skeleton variant="rectangular" width={180} height={40} className="mb-4" />
         <Skeleton variant="text" width={240} />
       </div>
