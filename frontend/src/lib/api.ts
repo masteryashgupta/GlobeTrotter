@@ -5,7 +5,8 @@ import { StopCreateInput } from '../../../shared/validation';
 const rawApiUrl = import.meta.env.VITE_API_URL || '';
 const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || '';
 
-const isInvalidDomain = (url: string) => !url || url.includes('globetrotter-backend-production') || url.includes('localhost');
+const isInvalidDomain = (url: string) => !url || url.includes('globetrotter-backend-production');
+
 
 export const BACKEND_BASE_URL =
   !isInvalidDomain(rawBackendUrl)
