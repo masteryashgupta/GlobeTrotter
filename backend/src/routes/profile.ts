@@ -52,6 +52,7 @@ profileRouter.patch(
       if (payload.full_name !== undefined) updateData.full_name = payload.full_name;
       if (payload.avatar_url !== undefined) updateData.avatar_url = payload.avatar_url;
       if (payload.language_pref !== undefined) updateData.language_pref = payload.language_pref;
+      if (payload.currency !== undefined) updateData.currency = payload.currency;
 
       if (Object.keys(updateData).length === 0) {
         return res.status(400).json({ error: 'No valid fields provided for update' });

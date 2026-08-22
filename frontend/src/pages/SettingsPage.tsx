@@ -29,7 +29,7 @@ const CURRENCY_OPTIONS = [
 ];
 
 export const SettingsPage: React.FC = () => {
-  const { user, session, profile, signOut } = useAuth();
+  const { user, session, profile, signOut, refreshProfile } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -241,6 +241,7 @@ export const SettingsPage: React.FC = () => {
         throw new Error(result.error || 'Failed to update profile');
       }
 
+      await refreshProfile();
       addToast('success', 'Profile Saved', 'Your settings and preferences have been updated.');
     } catch (err: any) {
       addToast('error', 'Update Error', err.message || 'An error occurred while updating profile.');
