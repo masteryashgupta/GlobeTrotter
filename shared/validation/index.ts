@@ -27,10 +27,23 @@ export const resetPasswordSchema = z.object({
 });
 
 // 4. Profile Update Schema
+// full_name: empty string → undefined (means "don't update"), so the optional() guard fires correctly.
+// avatar_url: empty string → null (means "clear avatar"), a valid URL → kept as-is.
 export const profileUpdateSchema = z.object({
-  full_name: z.string().trim().min(1, 'Full name is required'),
-  avatar_url: z.string().trim().url('Invalid image URL format').optional().or(z.literal('')),
-  language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).default('en'),
+  full_name: z.preprocess(
+    (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+    z.string().trim().min(1, 'Full name cannot be empty').optional()
+  ),
+  avatar_url: z.preprocess(
+    (val) => (typeof val === 'string' && val.trim() === '' ? null : val),
+    z.string().url('Must be a valid image URL (https://...)').nullable().optional()
+  ),
+  language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).optional(),
+});
+
+// 4b. Profile Delete Schema
+export const profileDeleteSchema = z.object({
+  confirm: z.literal(true, { message: 'Confirmation flag (confirm: true) is required to delete account' }),
 });
 
 // 5. Trip Create Schema
@@ -127,6 +140,7 @@ export type SignUpInput = z.infer<typeof signUpSchema>;
 export type SignInInput = z.infer<typeof signInSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
+export type ProfileDeleteInput = z.infer<typeof profileDeleteSchema>;
 export type TripCreateInput = z.infer<typeof tripCreateSchema>;
 export type TripUpdateInput = z.infer<typeof tripUpdateSchema>;
 export type StopCreateInput = z.infer<typeof stopCreateSchema>;

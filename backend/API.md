@@ -31,6 +31,35 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
+## 1b. User Profile & Settings Endpoints (Part D - Fully Implemented)
+
+### `GET /api/profile`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** `Profile` object for the current user.
+
+### `PATCH /api/profile`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(profileUpdateSchema)`)
+- **Body:**
+  ```json
+  {
+    "full_name": "Jane Doe",
+    "avatar_url": "https://images.unsplash.com/photo-1534528741775",
+    "language_pref": "en"
+  }
+  ```
+- **Response (200 OK):** Updated `Profile` object.
+
+### `DELETE /api/profile`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(profileDeleteSchema)`)
+- **Body:** `{ "confirm": true }`
+- **Response (200 OK):** `{ "message": "Account deleted successfully", "id": "<user_id>" }`
+
+### `GET /api/profile/saved-destinations`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of distinct `City` objects included across the user's trip stops.
+
+---
+
 ## 2. Trips Endpoints (Part A & C - Fully Implemented)
 
 ### `POST /api/trips`
@@ -142,8 +171,14 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 6. Admin Endpoints (Part D - Planned Stubs)
+## 6. Admin Endpoints (Part D - Fully Implemented)
+
+> **Auth Required:** All admin endpoints require `requireAuth` + `requireAdmin`.
 
 ### `GET /api/admin/stats`
-- **Auth Required:** Yes (`requireAuth` + Admin Check)
-- **Response (200 OK):** Application platform metrics.
+- **Auth Required:** Yes (`requireAuth` + `requireAdmin`)
+- **Response (200 OK):** Platform metrics (`total_users`, `total_trips`, `top_cities`, `top_activities`).
+
+### `GET /api/admin/users?page=1&limit=20`
+- **Auth Required:** Yes (`requireAuth` + `requireAdmin`)
+- **Response (200 OK):** Paginated list of users with trip counts.

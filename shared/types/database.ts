@@ -15,6 +15,7 @@ export interface Database {
           full_name: string | null
           avatar_url: string | null
           language_pref: string | null
+          is_admin: boolean
           created_at: string
         }
         Insert: {
@@ -22,6 +23,7 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           language_pref?: string | null
+          is_admin?: boolean
           created_at?: string
         }
         Update: {
@@ -29,6 +31,7 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           language_pref?: string | null
+          is_admin?: boolean
           created_at?: string
         }
       }

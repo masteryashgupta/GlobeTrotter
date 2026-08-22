@@ -8,6 +8,7 @@ import { citiesRouter } from './routes/cities';
 import { budgetRouter } from './routes/budget';
 import { expensesRouter } from './routes/expenses';
 import { adminRouter } from './routes/admin';
+import { profileRouter } from './routes/profile';
 import { shareRouter } from './routes/share';
 import { tripActivitiesRouter } from './routes/tripActivities';
 
@@ -36,6 +37,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 });
 
 // Route Mounting
+app.use('/api/profile', profileRouter);
 app.use('/api/trips', tripsRouter);
 app.use('/api/stops', stopsRouter);
 app.use('/api/activities', activitiesRouter);
