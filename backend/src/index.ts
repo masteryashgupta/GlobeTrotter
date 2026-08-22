@@ -7,6 +7,7 @@ import { activitiesRouter } from './routes/activities';
 import { citiesRouter } from './routes/cities';
 import { budgetRouter } from './routes/budget';
 import { adminRouter } from './routes/admin';
+import { profileRouter } from './routes/profile';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 });
 
 // Route Mounting
+app.use('/api/profile', profileRouter);
 app.use('/api/trips', tripsRouter);
 app.use('/api/stops', stopsRouter);
 app.use('/api/activities', activitiesRouter);

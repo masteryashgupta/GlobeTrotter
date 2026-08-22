@@ -31,6 +31,40 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
+## 1b. User Profile & Settings Endpoints (Part D - Fully Implemented)
+
+### `GET /api/profile`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** `Profile` object for the current user.
+
+### `PATCH /api/profile`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(profileUpdateSchema)`)
+- **Body:**
+  ```json
+  {
+    "full_name": "Jane Doe",
+    "avatar_url": "https://images.unsplash.com/photo-1534528741775",
+    "language_pref": "en"
+  }
+  ```
+- **Response (200 OK):** Updated `Profile` object.
+
+### `DELETE /api/profile`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(profileDeleteSchema)`)
+- **Body:**
+  ```json
+  {
+    "confirm": true
+  }
+  ```
+- **Response (200 OK):** `{ "message": "Account deleted successfully", "id": "<user_id>" }` (Cascades to profile, trips, stops, activities, expenses, trip copies).
+
+### `GET /api/profile/saved-destinations`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of distinct `City` objects included across the user's trip stops.
+
+---
+
 ## 2. Trips Endpoints (Part A - Fully Implemented)
 
 ### `POST /api/trips`
