@@ -4,22 +4,11 @@
     "module": "esnext",
     "lib": ["ES2023", "DOM"],
     "types": ["vite/client"],
-    "allowArbitraryExtensions": true,
     "skipLibCheck": true,
-
-    /* Bundler mode */
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false,
-    "moduleDetection": "force",
-    "noEmit": true,
-
-    /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noEmit": true
   },
-  "include": ["src"]
+  "include": ["src", "../shared/**/*"]
 }

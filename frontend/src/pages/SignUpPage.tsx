@@ -1,0 +1,120 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link, useNavigate } from 'react-router-dom';
+import { signUpSchema, SignUpInput } from '../../../shared/validation';
+import { supabase } from '../lib/supabase';
+import { Input, Button, Card, useToast } from '../components/ui';
+
+export const SignUpPage: React.FC = () => {
+  const { addToast } = useToast();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
+  });
+
+  const onSignUp = async (data: SignUpInput) => {
+    try {
+      // 1. Create auth user with metadata (trigger will auto-create profile, plus explicit fallback)
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.full_name,
+          },
+        },
+      });
+
+      if (authError) {
+        addToast('error', 'Sign Up Failed', authError.message || 'Could not register user.');
+        return;
+      }
+
+      if (authData.user) {
+        // Explicit profile fallback insert/upsert
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: authData.user.id,
+          full_name: data.full_name,
+          language_pref: 'en',
+        } as any);
+
+        if (profileError) {
+          console.warn('Profile fallback insert warning:', profileError.message);
+        }
+
+        addToast('success', 'Account Created!', 'Welcome to GlobeTrotter.');
+        navigate('/dashboard');
+      }
+    } catch (err: any) {
+      addToast('error', 'Registration Error', err.message || 'An unexpected error occurred.');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 font-sans">
+      <div className="w-full max-w-md space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <div className="inline-flex w-12 h-12 rounded-xl bg-teal-600 items-center justify-center text-white font-black text-2xl shadow-xl shadow-teal-900/30">
+            G
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Create your GlobeTrotter account</h1>
+          <p className="text-sm text-slate-400">Join travel enthusiasts and start planning your journeys</p>
+        </div>
+
+        {/* Form Card */}
+        <Card>
+          <form onSubmit={handleSubmit(onSignUp)} className="space-y-4" noValidate>
+            <Input
+              label="Full Name"
+              placeholder="Alex Morgan"
+              error={errors.full_name?.message}
+              {...register('full_name')}
+            />
+
+            <Input
+              label="Email Address"
+              type="email"
+              placeholder="you@example.com"
+              error={errors.email?.message}
+              {...register('email')}
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              placeholder="Min 8 chars, 1 number"
+              helperText="Must contain at least 8 characters and 1 digit"
+              error={errors.password?.message}
+              {...register('password')}
+            />
+
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full mt-2"
+              isLoading={isSubmitting}
+            >
+              Create Account
+            </Button>
+          </form>
+
+          <Card.Footer className="justify-center">
+            <p className="text-xs text-slate-400">
+              Already have an account?{' '}
+              <Link to="/login" className="text-teal-400 font-semibold hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </Card.Footer>
+        </Card>
+      </div>
+    </div>
+  );
+};

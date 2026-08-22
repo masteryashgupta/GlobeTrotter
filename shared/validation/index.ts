@@ -7,6 +7,7 @@ const isDateBeforeOrEqual = (start: string, end: string) => {
 
 // 1. Sign Up Schema
 export const signUpSchema = z.object({
+  full_name: z.string().trim().min(1, 'Full name is required'),
   email: z.string().trim().min(1, 'Email is required').email('Invalid email address format'),
   password: z
     .string()
@@ -46,7 +47,7 @@ export const tripCreateSchema = z
     cover_photo_url: z.string().trim().url('Invalid image URL format').optional().or(z.literal('')),
     is_public: z.boolean().default(false),
   })
-  .refine((data) => isDateBeforeOrEqual(data.start_date, data.end_date), {
+  .refine((data: { start_date: string; end_date: string }) => isDateBeforeOrEqual(data.start_date, data.end_date), {
     message: 'End date must be on or after start date',
     path: ['end_date'],
   });
@@ -62,7 +63,7 @@ export const tripUpdateSchema = z
     is_public: z.boolean().optional(),
   })
   .refine(
-    (data) => {
+    (data: { start_date?: string; end_date?: string }) => {
       if (data.start_date && data.end_date) {
         return isDateBeforeOrEqual(data.start_date, data.end_date);
       }
@@ -83,7 +84,7 @@ export const stopCreateSchema = z
     arrival_date: z.string().min(1, 'Arrival date is required'),
     departure_date: z.string().min(1, 'Departure date is required'),
   })
-  .refine((data) => isDateBeforeOrEqual(data.arrival_date, data.departure_date), {
+  .refine((data: { arrival_date: string; departure_date: string }) => isDateBeforeOrEqual(data.arrival_date, data.departure_date), {
     message: 'Departure date must be on or after arrival date',
     path: ['departure_date'],
   });
@@ -103,9 +104,7 @@ export const tripActivityCreateSchema = z.object({
 export const expenseCreateSchema = z.object({
   trip_id: z.string().uuid('Invalid trip ID format'),
   stop_id: z.string().uuid('Invalid stop ID format').optional(),
-  category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc'], {
-    required_error: 'Category is required',
-  }),
+  category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']),
   label: z.string().trim().optional(),
   amount: z.number().min(0, 'Amount must be non-negative'),
 });

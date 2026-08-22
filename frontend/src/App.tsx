@@ -4,7 +4,9 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './components/ui';
 import { AppLayout } from './components/layout/AppLayout';
 import { ProtectedRoute, PublicRoute } from './routes/RouteGuards';
-import { LoginPage, SignUpPage } from './pages/AuthPages';
+import { LoginPage } from './pages/LoginPage';
+import { SignUpPage } from './pages/SignUpPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 
 const queryClient = new QueryClient({
@@ -40,6 +42,7 @@ export function App() {
                   </PublicRoute>
                 }
               />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
 
               {/* Public Shared Trip Token Route */}
               <Route
