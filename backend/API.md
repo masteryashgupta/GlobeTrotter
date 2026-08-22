@@ -96,15 +96,28 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 5. Budget & Expense Endpoints (Part C - Planned Stubs)
+## 5. Budget & Expense Endpoints (Part C - Implemented)
+
+### `POST /api/trips/:tripId/expenses`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(expenseCreateSchema)` + Owner Check)
+- **Response (201 Created):** Created `Expense` object.
+
+### `GET /api/trips/:tripId/expenses`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of manual `Expense` objects for the trip.
+
+### `PATCH /api/expenses/:id`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(expenseUpdateSchema)` + Owner Check)
+- **Response (200 OK):** Updated `Expense` object.
+
+### `DELETE /api/expenses/:id`
+- **Auth Required:** Yes (`requireAuth` + Owner Check)
+- **Response (200 OK):** `{ "message": "Expense deleted successfully", "id": "<expense_id>" }`
 
 ### `GET /api/budget/trips/:tripId/expenses`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** Array of `Expense` objects + total cost summary.
+- **Response (200 OK):** Array of `Expense` objects + category breakdown + total cost summary.
 
-### `POST /api/budget/expenses`
-- **Auth Required:** Yes (`requireAuth` + `validateBody(expenseCreateSchema)`)
-- **Response (201 Created):** `Expense` object.
 
 ---
 

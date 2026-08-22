@@ -102,11 +102,24 @@ export const tripActivityCreateSchema = z.object({
 
 // 9. Expense Create Schema
 export const expenseCreateSchema = z.object({
-  trip_id: z.string().uuid('Invalid trip ID format'),
-  stop_id: z.string().uuid('Invalid stop ID format').optional(),
+  trip_id: z.string().uuid('Invalid trip ID format').optional(),
+  stop_id: z.string().uuid('Invalid stop ID format').nullable().optional(),
   category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']),
-  label: z.string().trim().optional(),
+  label: z.string().trim().min(1, 'Label/description is required'),
   amount: z.number().min(0, 'Amount must be non-negative'),
+});
+
+// 10. Expense Update Schema
+export const expenseUpdateSchema = z.object({
+  stop_id: z.string().uuid('Invalid stop ID format').nullable().optional(),
+  category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']).optional(),
+  label: z.string().trim().min(1, 'Label cannot be empty').optional(),
+  amount: z.number().min(0, 'Amount must be non-negative').optional(),
+});
+
+// 11. Trip Share Schema
+export const tripShareSchema = z.object({
+  is_public: z.boolean(),
 });
 
 // Inferred TypeScript Types
@@ -119,3 +132,6 @@ export type TripUpdateInput = z.infer<typeof tripUpdateSchema>;
 export type StopCreateInput = z.infer<typeof stopCreateSchema>;
 export type TripActivityCreateInput = z.infer<typeof tripActivityCreateSchema>;
 export type ExpenseCreateInput = z.infer<typeof expenseCreateSchema>;
+export type ExpenseUpdateInput = z.infer<typeof expenseUpdateSchema>;
+export type TripShareInput = z.infer<typeof tripShareSchema>;
+
