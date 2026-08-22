@@ -7,6 +7,9 @@ import { ProtectedRoute, PublicRoute } from './routes/RouteGuards';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { MyTripsPage } from './pages/MyTripsPage';
+import { CreateTripPage } from './pages/CreateTripPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 
 const queryClient = new QueryClient({
@@ -62,7 +65,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Dashboard" part="Part A: Auth & Dashboard" />
+                      <DashboardPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -72,7 +75,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="My Trips" part="Part A: Auth & Dashboard" />
+                      <MyTripsPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -82,7 +85,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Create New Trip" part="Part A / B" />
+                      <CreateTripPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
