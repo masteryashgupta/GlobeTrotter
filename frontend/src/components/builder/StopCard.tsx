@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Stop, City } from '../../../../shared/types';
+import { api } from '../../lib/api';
 import { Card, Badge, Button } from '../ui';
+import { StopActivityRow } from './StopActivityRow';
+import { AddActivityToStopModal } from './AddActivityToStopModal';
 
 interface StopCardProps {
   stop: Stop & { cities?: City; trip_activities?: any[] };
@@ -24,14 +28,22 @@ export const StopCard: React.FC<StopCardProps> = ({
   isDragging = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isAddActivityOpen, setIsAddActivityOpen] = useState<boolean>(false);
+
+  // Fetch live activities assigned to this stop
+  const { data: stopActivities = stop.trip_activities || [], isLoading: isActivitiesLoading } =
+    useQuery({
+      queryKey: ['stop-activities', stop.id],
+      queryFn: () => api.getStopActivities(stop.id),
+      enabled: isExpanded,
+      initialData: stop.trip_activities || [],
+    });
 
   // Calculate nights
   const arrival = new Date(stop.arrival_date);
   const departure = new Date(stop.departure_date);
   const diffTime = Math.abs(departure.getTime() - arrival.getTime());
   const nights = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-
-  const activities = stop.trip_activities || [];
 
   return (
     <Card
@@ -76,7 +88,7 @@ export const StopCard: React.FC<StopCardProps> = ({
               'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80'
             }
             alt={stop.cities?.name || 'City'}
-            className="w-16 h-16 rounded-xl object-cover bg-slate-950 border border-slate-800 shrink-0"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover bg-slate-950 border border-slate-800 shrink-0"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80';
@@ -86,11 +98,11 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* City Name & Country */}
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg font-bold text-white tracking-tight truncate">
+              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight truncate">
                 {stop.cities?.name || 'Unknown City'}
               </h3>
               {stop.cities?.region && (
-                <Badge variant="neutral" size="sm" className="hidden xs:inline-flex">
+                <Badge variant="neutral" size="sm" className="hidden xs:inline-flex text-[10px]">
                   {stop.cities.region}
                 </Badge>
               )}
@@ -120,23 +132,20 @@ export const StopCard: React.FC<StopCardProps> = ({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-          {/* Add Activities shortcut button */}
-          <Link
-            to={`/activities/search?cityId=${stop.city_id}&stopId=${stop.id}&tripId=${tripId}`}
+          {/* Add Activity Trigger (opens lightweight in-context picker modal) */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsAddActivityOpen(true)}
+            className="text-xs border-teal-500/40 text-teal-300 hover:bg-teal-500/10"
+            leftIcon={
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            }
           >
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs border-teal-500/40 text-teal-300 hover:bg-teal-500/10"
-              leftIcon={
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              }
-            >
-              Add Activity
-            </Button>
-          </Link>
+            Add Activity
+          </Button>
 
           {/* Edit Stop button */}
           <button
@@ -165,9 +174,12 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* Expand / Collapse toggle */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 text-xs font-semibold"
             aria-label="Toggle activities list"
           >
+            <span className="text-slate-500 text-[11px]">
+              {stopActivities.length} {stopActivities.length === 1 ? 'activity' : 'activities'}
+            </span>
             <svg
               className={`w-4 h-4 transform transition-transform duration-200 ${
                 isExpanded ? 'rotate-180' : ''
@@ -184,50 +196,64 @@ export const StopCard: React.FC<StopCardProps> = ({
 
       {/* Expandable Activities Drawer */}
       {isExpanded && (
-        <div className="bg-slate-950/80 border-t border-slate-800 p-4 sm:p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-              Assigned Activities ({activities.length})
+        <div className="bg-slate-950/80 border-t border-slate-800 p-4 sm:p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <span>Scheduled Experiences ({stopActivities.length})</span>
             </h4>
-            <Link
-              to={`/activities/search?cityId=${stop.city_id}&stopId=${stop.id}&tripId=${tripId}`}
-              className="text-xs font-semibold text-teal-400 hover:text-teal-300 transition-colors flex items-center gap-1"
-            >
-              <span>Explore more in {stop.cities?.name}</span>
-              <span>→</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsAddActivityOpen(true)}
+                className="text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors flex items-center gap-1"
+              >
+                <span>+ Add Experience</span>
+              </button>
+              <span className="text-slate-700">|</span>
+              <Link
+                to={`/activities/search?cityId=${stop.city_id}&stopId=${stop.id}&tripId=${tripId}`}
+                className="text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+              >
+                Browse Catalog →
+              </Link>
+            </div>
           </div>
 
-          {activities.length === 0 ? (
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-dashed border-slate-800 text-center">
+          {stopActivities.length === 0 ? (
+            <div className="p-5 rounded-xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-2">
               <p className="text-xs text-slate-400">
-                No activities scheduled for this stop yet. Click "Add Activity" to browse sightseeing and tours.
+                No activities scheduled for {stop.cities?.name || 'this stop'} yet.
               </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsAddActivityOpen(true)}
+                className="text-xs border-teal-500/30 text-teal-300"
+              >
+                Schedule First Activity
+              </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {activities.map((act: any, actIdx: number) => (
-                <div
-                  key={act.id || actIdx}
-                  className="flex items-center justify-between p-3 bg-slate-900 border border-slate-800 rounded-xl"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="w-2 h-2 rounded-full bg-teal-400 shrink-0" />
-                    <span className="text-xs font-bold text-white truncate">
-                      {act.activities?.name || act.name || 'Experience'}
-                    </span>
-                  </div>
-                  {act.scheduled_date && (
-                    <span className="text-[11px] text-slate-400 font-medium shrink-0">
-                      {act.scheduled_date}
-                    </span>
-                  )}
-                </div>
+            <div className="space-y-2.5">
+              {stopActivities.map((act: any) => (
+                <StopActivityRow
+                  key={act.id}
+                  tripActivity={act}
+                  stop={stop}
+                  tripId={tripId}
+                />
               ))}
             </div>
           )}
         </div>
       )}
+
+      {/* In-Context Add Activity Modal */}
+      <AddActivityToStopModal
+        isOpen={isAddActivityOpen}
+        onClose={() => setIsAddActivityOpen(false)}
+        stop={stop}
+        tripId={tripId}
+      />
     </Card>
   );
 };

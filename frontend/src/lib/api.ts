@@ -228,7 +228,7 @@ export const api = {
 
   async assignActivityToStop(data: {
     stop_id: string;
-    activity_id: string;
+    activity_id?: string;
     scheduled_date?: string;
     scheduled_time?: string;
     custom_cost?: number;
@@ -236,7 +236,7 @@ export const api = {
     order_index?: number;
   }): Promise<any> {
     const headers = await getAuthHeader();
-    const res = await fetch(`${BASE_URL}/activities/trip-activities`, {
+    const res = await fetch(`${BASE_URL}/stops/${data.stop_id}/activities`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -248,6 +248,75 @@ export const api = {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || err.message || `Failed to assign activity (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async getStopActivities(stopId: string): Promise<any[]> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/stops/${stopId}/activities`, { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to fetch stop activities (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async updateTripActivity(
+    id: string,
+    data: {
+      scheduled_date?: string | null;
+      scheduled_time?: string | null;
+      custom_cost?: number | null;
+      notes?: string | null;
+      order_index?: number;
+    }
+  ): Promise<any> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trip-activities/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to update activity (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async deleteTripActivity(id: string): Promise<{ message: string; id: string }> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trip-activities/${id}`, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to delete activity (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async reorderStopActivities(stopId: string, activityIds: string[]): Promise<any[]> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/stops/${stopId}/activities/reorder`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify({ activity_ids: activityIds }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to reorder activities (${res.status})`);
     }
     return res.json();
   },

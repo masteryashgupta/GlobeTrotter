@@ -110,9 +110,30 @@ Authorization: Bearer <supabase_access_token>
 - **Response (200 OK):** Single `Activity` object with city details.
 - **Response (404 Not Found):** `{ "error": "Activity not found" }`
 
-### `POST /api/activities/trip-activities`
+### `POST /api/stops/:stopId/activities` (and `POST /api/activities/trip-activities`)
 - **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
-- **Response (201 Created):** `TripActivity` object.
+- **Business Rules:** `scheduled_date` must fall within parent stop's `[arrival_date, departure_date]` range. Automatically sets `order_index`.
+- **Response (201 Created):** `TripActivity` object with joined `activities(*)` details.
+- **Response (400 Bad Request):** `{ "error": "Scheduled date (YYYY-MM-DD) must fall within stop stay dates" }`
+
+### `GET /api/stops/:stopId/activities`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of `TripActivity` objects assigned to `:stopId`, ordered by `order_index ASC` / `scheduled_time`.
+
+### `PATCH /api/trip-activities/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Body:** `{ "scheduled_date"?: string, "scheduled_time"?: string, "custom_cost"?: number, "notes"?: string, "order_index"?: number }`
+- **Business Rules:** Re-validates `scheduled_date` against parent stop's stay range.
+- **Response (200 OK):** Updated `TripActivity` object.
+
+### `DELETE /api/trip-activities/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** `{ "message": "Trip activity deleted successfully", "id": "<id>" }`
+
+### `PATCH /api/stops/:stopId/activities/reorder`
+- **Auth Required:** Yes (`requireAuth`)
+- **Body:** `{ "activity_ids": ["uuid1", "uuid2"] }`
+- **Response (200 OK):** Array of reordered `TripActivity` objects.
 
 ---
 
