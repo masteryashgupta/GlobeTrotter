@@ -58,7 +58,7 @@ export const tripCreateSchema = z
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().min(1, 'End date is required'),
     cover_photo_url: z.string().trim().url('Invalid image URL format').optional().or(z.literal('')),
-    is_public: z.boolean().default(false),
+    is_public: z.boolean().optional(),
   })
   .refine((data: { start_date: string; end_date: string }) => isDateBeforeOrEqual(data.start_date, data.end_date), {
     message: 'End date must be on or after start date',
@@ -115,11 +115,24 @@ export const tripActivityCreateSchema = z.object({
 
 // 9. Expense Create Schema
 export const expenseCreateSchema = z.object({
-  trip_id: z.string().uuid('Invalid trip ID format'),
-  stop_id: z.string().uuid('Invalid stop ID format').optional(),
+  trip_id: z.string().min(1, 'Invalid trip ID format').optional(),
+  stop_id: z.string().min(1, 'Invalid stop ID format').nullable().optional(),
   category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']),
-  label: z.string().trim().optional(),
-  amount: z.number().min(0, 'Amount must be non-negative'),
+  label: z.string().trim().min(1, 'Label/description is required'),
+  amount: z.number().gt(0, 'Amount must be greater than zero'),
+});
+
+// 10. Expense Update Schema
+export const expenseUpdateSchema = z.object({
+  stop_id: z.string().min(1, 'Invalid stop ID format').nullable().optional(),
+  category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']).optional(),
+  label: z.string().trim().min(1, 'Label cannot be empty').optional(),
+  amount: z.number().gt(0, 'Amount must be greater than zero').optional(),
+});
+
+// 11. Trip Share Schema
+export const tripShareSchema = z.object({
+  is_public: z.boolean(),
 });
 
 // Inferred TypeScript Types
@@ -133,3 +146,6 @@ export type TripUpdateInput = z.infer<typeof tripUpdateSchema>;
 export type StopCreateInput = z.infer<typeof stopCreateSchema>;
 export type TripActivityCreateInput = z.infer<typeof tripActivityCreateSchema>;
 export type ExpenseCreateInput = z.infer<typeof expenseCreateSchema>;
+export type ExpenseUpdateInput = z.infer<typeof expenseUpdateSchema>;
+export type TripShareInput = z.infer<typeof tripShareSchema>;
+

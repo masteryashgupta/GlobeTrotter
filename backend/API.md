@@ -51,13 +51,8 @@ Authorization: Bearer <supabase_access_token>
 
 ### `DELETE /api/profile`
 - **Auth Required:** Yes (`requireAuth` + `validateBody(profileDeleteSchema)`)
-- **Body:**
-  ```json
-  {
-    "confirm": true
-  }
-  ```
-- **Response (200 OK):** `{ "message": "Account deleted successfully", "id": "<user_id>" }` (Cascades to profile, trips, stops, activities, expenses, trip copies).
+- **Body:** `{ "confirm": true }`
+- **Response (200 OK):** `{ "message": "Account deleted successfully", "id": "<user_id>" }`
 
 ### `GET /api/profile/saved-destinations`
 - **Auth Required:** Yes (`requireAuth`)
@@ -65,21 +60,11 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 2. Trips Endpoints (Part A - Fully Implemented)
+## 2. Trips Endpoints (Part A & C - Fully Implemented)
 
 ### `POST /api/trips`
 - **Auth Required:** Yes (`requireAuth`)
 - **Body Validation:** `tripCreateSchema`
-  ```json
-  {
-    "name": "Japan Autumn Discovery",
-    "description": "7-day journey across Tokyo and Kyoto",
-    "start_date": "2026-10-15",
-    "end_date": "2026-10-22",
-    "cover_photo_url": "https://images.unsplash.com/photo-1540959733332",
-    "is_public": true
-  }
-  ```
 - **Response (201 Created):** `Trip` object
 
 ### `GET /api/trips`
@@ -99,95 +84,101 @@ Authorization: Bearer <supabase_access_token>
 - **Auth Required:** Yes (`requireAuth` + Owner Check)
 - **Response (200 OK):** `{ "message": "Trip deleted successfully", "id": "<trip_id>" }`
 
+### `POST /api/trips/:id/share`
+- **Auth Required:** Yes (`requireAuth` + Owner Check)
+- **Response (200 OK):** `{ id, is_public: true, share_token, share_url }`
+
+### `POST /api/trips/:id/unshare`
+- **Auth Required:** Yes (`requireAuth` + Owner Check)
+- **Response (200 OK):** `{ id, is_public: false, share_token }`
+
+### `GET /api/share/:token`
+- **Auth Required:** None (Public read-only)
+- **Response (200 OK):** Full trip object with nested `stops` and `activities`.
+
+### `POST /api/share/:token/copy`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (201 Created):** Cloned `Trip` object owned by caller.
+
+### `GET /api/trips/:tripId/timeline`
+- **Auth Required:** Yes (`requireAuth` + Owner/Public Check)
+- **Response (200 OK):** Aggregated timeline object (days, stops, activities, summary).
+
 ---
 
-## 3. Cities Endpoints (Part B - Planned Stubs)
+## 3. Cities Endpoints (Part B - Fully Implemented)
 
 ### `GET /api/cities/search`
-- **Auth Required:** Optional
-- **Query Params:** `?query=paris`
-- **Response (200 OK):** Array of matching `City` objects.
+- **Auth Required:** None (Public)
+- **Query Params:** `q`, `country`, `region`, `limit`
+- **Response (200 OK):** Array of `City` objects sorted by `popularity DESC`.
+
+### `GET /api/cities/popular`
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Top `City` objects.
 
 ### `GET /api/cities/:id`
-- **Auth Required:** Optional
-- **Response (200 OK):** `City` object with detailed description and image.
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Single `City` object.
 
 ---
 
-## 4. Itinerary & Stops Endpoints (Part B - Planned Stubs)
+## 4. Activities & Stops Endpoints (Part B - Fully Implemented)
 
-### `POST /api/stops`
+### `GET /api/activities/search`
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Array of `Activity` objects.
+
+### `POST /api/stops/:stopId/activities` (and `POST /api/activities/trip-activities`)
+- **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
+- **Response (201 Created):** `TripActivity` object.
+
+### `PATCH /api/trip-activities/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Updated `TripActivity` object.
+
+### `DELETE /api/trip-activities/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** `{ "message": "Trip activity deleted successfully", "id": "<id>" }`
+
+### `POST /api/trips/:tripId/stops`
 - **Auth Required:** Yes (`requireAuth` + `validateBody(stopCreateSchema)`)
 - **Response (201 Created):** `Stop` object.
 
 ### `DELETE /api/stops/:id`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** `{ "message": "Stop deleted" }`
-
-### `POST /api/activities/trip-activities`
-- **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
-- **Response (201 Created):** `TripActivity` object.
+- **Response (200 OK):** `{ "message": "Stop deleted successfully", "id": "<stopId>" }`
 
 ---
 
-## 5. Budget & Expense Endpoints (Part C - Planned Stubs)
+## 5. Budget & Expense Endpoints (Part C - Implemented)
 
-### `GET /api/budget/trips/:tripId/expenses`
-- **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** Array of `Expense` objects + total cost summary.
-
-### `POST /api/budget/expenses`
+### `POST /api/trips/:tripId/expenses`
 - **Auth Required:** Yes (`requireAuth` + `validateBody(expenseCreateSchema)`)
 - **Response (201 Created):** `Expense` object.
+
+### `GET /api/trips/:tripId/expenses`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of manual `Expense` objects.
+
+### `GET /api/trips/:tripId/budget`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** `{ byCategory, total, tripDurationDays, perDayAverage, perDay }`.
+
+### `GET /api/trips/:id/calendar`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of calendar event objects.
 
 ---
 
 ## 6. Admin Endpoints (Part D - Fully Implemented)
 
 > **Auth Required:** All admin endpoints require `requireAuth` + `requireAdmin`.
-> The `requireAdmin` middleware fetches `profiles.is_admin` server-side from the DB via the service-role client; no client-sent flag is trusted. Returns `403` if `is_admin = false`.
 
 ### `GET /api/admin/stats`
 - **Auth Required:** Yes (`requireAuth` + `requireAdmin`)
-- **Response (200 OK):**
-  ```json
-  {
-    "total_users": 142,
-    "total_trips": 389,
-    "trips_last_7_days": 14,
-    "trips_last_30_days": 61,
-    "avg_trip_duration_days": 8.4,
-    "top_cities": [
-      { "city_id": "uuid", "name": "Tokyo", "country": "Japan", "image_url": "...", "stop_count": 42 }
-    ],
-    "top_activities": [
-      { "activity_id": "uuid", "name": "Senso-ji Temple", "category": "culture", "image_url": "...", "booking_count": 31 }
-    ]
-  }
-  ```
+- **Response (200 OK):** Platform metrics (`total_users`, `total_trips`, `top_cities`, `top_activities`).
 
 ### `GET /api/admin/users?page=1&limit=20`
 - **Auth Required:** Yes (`requireAuth` + `requireAdmin`)
-- **Query Params:** `page` (default: 1), `limit` (default: 20, max: 100)
-- **Response (200 OK):**
-  ```json
-  {
-    "users": [
-      {
-        "id": "uuid",
-        "full_name": "Jane Doe",
-        "email": "jane@example.com",
-        "is_admin": false,
-        "created_at": "2026-08-01T...",
-        "trip_count": 5
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 142,
-      "total_pages": 8
-    }
-  }
-  ```
-
+- **Response (200 OK):** Paginated list of users with trip counts.

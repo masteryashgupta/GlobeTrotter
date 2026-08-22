@@ -8,9 +8,18 @@ import { ProtectedRoute, PublicRoute, AdminRoute } from './routes/RouteGuards';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { PlaceholderPage } from './pages/PlaceholderPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { MyTripsPage } from './pages/MyTripsPage';
+import { CreateTripPage } from './pages/CreateTripPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { AdminPage } from './pages/AdminPage';
+import { BudgetPage } from './pages/BudgetPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { SharedTripPage } from './pages/SharedTripPage';
+import { CitySearchPage } from './pages/CitySearchPage';
+import { ActivitySearchPage } from './pages/ActivitySearchPage';
+import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
+import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,8 +31,8 @@ const queryClient = new QueryClient({
 });
 
 /**
- * Thin wrapper for /dashboard that fires a Toast when redirected from AdminRoute
- * with state { adminDenied: true }.
+ * Wrapper for /dashboard that renders DashboardPage and fires a Toast if redirected
+ * from AdminRoute with state { adminDenied: true }.
  */
 function DashboardWithAdminDeniedToast() {
   const location = useLocation();
@@ -32,13 +41,12 @@ function DashboardWithAdminDeniedToast() {
   useEffect(() => {
     if ((location.state as any)?.adminDenied) {
       addToast('warning', 'Access Restricted', 'Admin panel is only accessible to platform administrators.');
-      // Clear state so Toast doesn't re-fire on subsequent navigations
       window.history.replaceState({}, '');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <PlaceholderPage title="Dashboard" part="Part A: Auth & Dashboard" />;
+  return <DashboardPage />;
 }
 
 export function App() {
@@ -68,16 +76,7 @@ export function App() {
               <Route path="/reset-password" element={<ResetPasswordPage />} />
 
               {/* Public Shared Trip Token Route */}
-              <Route
-                path="/share/:token"
-                element={
-                  <PlaceholderPage
-                    title="Shared Public Trip View"
-                    part="Part C: Budget / Calendar / Share"
-                    description="View shared public itinerary without requiring authentication."
-                  />
-                }
-              />
+              <Route path="/share/:token" element={<SharedTripPage />} />
 
               {/* Authenticated Protected Routes inside AppLayout */}
               <Route
@@ -95,7 +94,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="My Trips" part="Part A: Auth & Dashboard" />
+                      <MyTripsPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -105,7 +104,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Create New Trip" part="Part A / B" />
+                      <CreateTripPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -115,7 +114,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Itinerary Builder" part="Part B: Itinerary & Search" />
+                      <ItineraryBuilderPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -125,7 +124,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="View Trip Details" part="Part B: Itinerary & Search" />
+                      <ItineraryViewPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -135,7 +134,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Trip Budget & Expenses" part="Part C: Budget & Share" />
+                      <BudgetPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -145,17 +144,18 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Trip Calendar View" part="Part C: Calendar" />
+                      <CalendarPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="/cities/search"
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Search Cities" part="Part B: Itinerary & Search" />
+                      <CitySearchPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -165,7 +165,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Search Activities" part="Part B: Itinerary & Search" />
+                      <ActivitySearchPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
