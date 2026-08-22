@@ -1,22 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+  arrayMove,
+} from '@dnd-kit/sortable';
 import { Stop, City } from '../../../shared/types';
 import { api } from '../lib/api';
 import { supabase } from '../lib/supabase';
-import { StopCard } from '../components/builder/StopCard';
+import { SortableStopCard } from '../components/builder/SortableStopCard';
 import { StopModal } from '../components/builder/StopModal';
 import { DeleteStopModal } from '../components/builder/DeleteStopModal';
-import { Button, Skeleton, EmptyState, Badge } from '../components/ui';
+import { Button, Skeleton, EmptyState, Badge, useToast } from '../components/ui';
 
 export const ItineraryBuilderPage: React.FC = () => {
   const { id: tripId } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [isAddStopOpen, setIsAddStopOpen] = useState<boolean>(false);
   const [editingStop, setEditingStop] = useState<(Stop & { cities?: City }) | null>(null);
   const [deletingStop, setDeletingStop] = useState<(Stop & { cities?: City }) | null>(null);
+
+  // Configure DND Sensors for both Mouse & Mobile Touch gestures
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 6, // 6px movement required to prevent accidental drag during clicks
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150, // 150ms hold on touch devices
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // 1. Fetch Trip details
   const {
@@ -66,6 +101,48 @@ export const ItineraryBuilderPage: React.FC = () => {
       supabase.removeChannel(channel);
     };
   }, [tripId, queryClient]);
+
+  // Handle Drag to Reorder with Optimistic Updates & Server Sync
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !tripId) return;
+
+    const oldIndex = stops.findIndex((s) => s.id === active.id);
+    const newIndex = stops.findIndex((s) => s.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // Calculate reordered array with updated order_index
+    const previousStops = [...stops];
+    const newStops = arrayMove(stops, oldIndex, newIndex).map((s, idx) => ({
+      ...s,
+      order_index: idx,
+    }));
+
+    // 1. Optimistically update local query cache immediately
+    queryClient.setQueryData(['trip-stops', tripId], newStops);
+
+    // 2. Call backend PATCH /api/trips/:tripId/stops/reorder
+    try {
+      await api.reorderTripStops(
+        tripId,
+        newStops.map((s) => s.id)
+      );
+      addToast(
+        'success',
+        'Stops Sequence Updated',
+        'Your itinerary stop order was saved successfully.'
+      );
+    } catch (err: any) {
+      // 3. Roll back to previous state on failure
+      queryClient.setQueryData(['trip-stops', tripId], previousStops);
+      addToast(
+        'error',
+        'Failed to Reorder Stops',
+        err.message || 'Could not save new stop sequence. Reverting changes.'
+      );
+    }
+  };
 
   const isLoading = isTripLoading || isStopsLoading;
 
@@ -171,7 +248,15 @@ export const ItineraryBuilderPage: React.FC = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-slate-400">
+          <div className="flex items-center gap-4 text-xs text-slate-400">
+            {stops.length > 1 && (
+              <span className="hidden sm:inline-flex items-center gap-1 text-slate-500">
+                <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01" />
+                </svg>
+                Drag handles to reorder
+              </span>
+            )}
             <Link
               to="/cities/search"
               className="text-teal-400 hover:text-teal-300 font-semibold transition-colors"
@@ -222,25 +307,36 @@ export const ItineraryBuilderPage: React.FC = () => {
             }
           />
         ) : (
-          /* Stops List */
-          <div className="space-y-4">
-            {stops.map((stop, idx) => (
-              <StopCard
-                key={stop.id}
-                stop={stop}
-                index={idx}
-                totalStops={stops.length}
-                tripId={tripId!}
-                onEdit={(targetStop) => {
-                  setEditingStop(targetStop);
-                  setIsAddStopOpen(true);
-                }}
-                onDelete={(targetStop) => {
-                  setDeletingStop(targetStop);
-                }}
-              />
-            ))}
-          </div>
+          /* Drag-and-Drop Sortable Stops List */
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={stops.map((s) => s.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {stops.map((stop, idx) => (
+                  <SortableStopCard
+                    key={stop.id}
+                    stop={stop}
+                    index={idx}
+                    totalStops={stops.length}
+                    tripId={tripId!}
+                    onEdit={(targetStop) => {
+                      setEditingStop(targetStop);
+                      setIsAddStopOpen(true);
+                    }}
+                    onDelete={(targetStop) => {
+                      setDeletingStop(targetStop);
+                    }}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 

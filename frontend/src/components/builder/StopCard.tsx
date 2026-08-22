@@ -10,6 +10,8 @@ interface StopCardProps {
   tripId: string;
   onEdit: (stop: Stop & { cities?: City }) => void;
   onDelete: (stop: Stop & { cities?: City }) => void;
+  dragHandleProps?: Record<string, any>;
+  isDragging?: boolean;
 }
 
 export const StopCard: React.FC<StopCardProps> = ({
@@ -18,6 +20,8 @@ export const StopCard: React.FC<StopCardProps> = ({
   tripId,
   onEdit,
   onDelete,
+  dragHandleProps,
+  isDragging = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -30,13 +34,38 @@ export const StopCard: React.FC<StopCardProps> = ({
   const activities = stop.trip_activities || [];
 
   return (
-    <Card hoverable className="bg-slate-900/90 border-slate-800 p-0 overflow-hidden transition-all shadow-xl">
+    <Card
+      hoverable={!isDragging}
+      className={`bg-slate-900/90 border-slate-800 p-0 overflow-hidden transition-all shadow-xl ${
+        isDragging ? 'border-teal-500/80 ring-2 ring-teal-500/40 shadow-2xl' : ''
+      }`}
+    >
       {/* Top Main Row */}
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        {/* Left: Thumbnail & Destination Details */}
-        <div className="flex items-center gap-4 min-w-0">
+        {/* Left: Drag Handle, Thumbnail & Destination Details */}
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          {/* Visible Grip Drag Handle */}
+          {dragHandleProps && (
+            <button
+              type="button"
+              {...dragHandleProps}
+              className="cursor-grab active:cursor-grabbing p-1.5 -ml-1 text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition-colors touch-none select-none shrink-0"
+              title="Drag to reorder stop"
+              aria-label="Drag to reorder stop"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"
+                />
+              </svg>
+            </button>
+          )}
+
           {/* Stop Index Pill */}
-          <div className="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-black text-sm flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 font-black text-xs sm:text-sm flex items-center justify-center shrink-0">
             {index + 1}
           </div>
 
