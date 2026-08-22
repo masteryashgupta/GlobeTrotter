@@ -102,19 +102,19 @@ export const tripActivityCreateSchema = z.object({
 
 // 9. Expense Create Schema
 export const expenseCreateSchema = z.object({
-  trip_id: z.string().uuid('Invalid trip ID format').optional(),
-  stop_id: z.string().uuid('Invalid stop ID format').nullable().optional(),
+  trip_id: z.string().min(1, 'Invalid trip ID format').optional(),
+  stop_id: z.string().min(1, 'Invalid stop ID format').nullable().optional(),
   category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']),
   label: z.string().trim().min(1, 'Label/description is required'),
-  amount: z.number().min(0, 'Amount must be non-negative'),
+  amount: z.number({ invalid_type_error: 'Amount must be a number' }).gt(0, 'Amount must be greater than zero'),
 });
 
 // 10. Expense Update Schema
 export const expenseUpdateSchema = z.object({
-  stop_id: z.string().uuid('Invalid stop ID format').nullable().optional(),
+  stop_id: z.string().min(1, 'Invalid stop ID format').nullable().optional(),
   category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']).optional(),
   label: z.string().trim().min(1, 'Label cannot be empty').optional(),
-  amount: z.number().min(0, 'Amount must be non-negative').optional(),
+  amount: z.number({ invalid_type_error: 'Amount must be a number' }).gt(0, 'Amount must be greater than zero').optional(),
 });
 
 // 11. Trip Share Schema
