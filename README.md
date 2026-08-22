@@ -76,7 +76,14 @@ npm run seed:cloud
 - Node.js (v18+)
 - Supabase CLI / Docker (optional for offline dev)
 
-### 2. Installation & Running
+### 2. Initialize and start Supabase:
+   ```bash
+   npx supabase start
+   ```
+
+   > **Note:** Running `npx supabase start` will automatically run all migrations in `supabase/migrations`. This sets up your entire schema, applies RLS policies, and provisions the **`avatars`** and **`trip-covers`** storage buckets. No manual dashboard steps are required.
+
+### 3. Installation & Running
 ```bash
 # Install root/sub-project dependencies
 cd frontend && npm install

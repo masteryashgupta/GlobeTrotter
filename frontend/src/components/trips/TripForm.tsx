@@ -16,7 +16,7 @@ export interface TripFormProps {
 }
 
 export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = false, onSuccess }) => {
-  useAuth(); // keep AuthContext subscription alive
+  const { user } = useAuth(); // keep AuthContext subscription alive
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2, 9)}_${Date.now()}.${fileExt}`;
-      const filePath = `covers/${fileName}`;
+      const filePath = `covers/${user?.id || 'anonymous'}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('trip-covers')
