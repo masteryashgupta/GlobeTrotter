@@ -44,9 +44,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install Frontend Dependencies
-        working-directory: ./frontend
-        run: npm ci
+      - name: Install Dependencies
+        run: |
+          npm install --no-save
+          cd frontend && npm ci
 
       - name: Run Production Build Test
         working-directory: ./frontend
@@ -78,8 +79,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install Dependencies
-        working-directory: ./frontend
-        run: npm ci
+        run: |
+          npm install --no-save
+          cd frontend && npm ci
 
       - name: Build Frontend Production Artifact
         working-directory: ./frontend
