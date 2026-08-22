@@ -8,12 +8,14 @@ import { ActivityCard } from '../components/activities/ActivityCard';
 import { ActivityFilterPanel } from '../components/activities/ActivityFilterPanel';
 import { ActivityDetailModal } from '../components/activities/ActivityDetailModal';
 import { AddActivityModal } from '../components/activities/AddActivityModal';
+import { useCurrency } from '../hooks/useCurrency';
 import { Skeleton, EmptyState, Button, Badge, useToast } from '../components/ui';
 
 export const ActivitySearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { addToast } = useToast();
+  const { toUSD } = useCurrency();
 
   // Read URL query parameters
   const initialCityId = searchParams.get('cityId') || searchParams.get('city_id') || '';
@@ -73,7 +75,7 @@ export const ActivitySearchPage: React.FC = () => {
       api.searchActivities({
         cityId: selectedCityId || undefined,
         category: selectedCategories.length > 0 ? selectedCategories.join(',') : undefined,
-        maxCost: maxCost ? parseFloat(maxCost) : undefined,
+        maxCost: maxCost ? toUSD(parseFloat(maxCost)) : undefined,
         maxDuration: maxDuration ? parseInt(maxDuration, 10) : undefined,
         q: debouncedSearch || undefined,
         limit: 50,

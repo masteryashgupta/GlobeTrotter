@@ -1,6 +1,7 @@
 import React from 'react';
 import { City } from '../../../../shared/types';
 import { Select, Badge } from '../ui';
+import { useCurrency } from '../../hooks/useCurrency';
 
 export const ALL_CATEGORIES = [
   { id: 'sightseeing', label: 'Sightseeing', icon: '🏛️' },
@@ -39,6 +40,7 @@ export const ActivityFilterPanel: React.FC<ActivityFilterPanelProps> = ({
   onClearFilters,
   activeCount,
 }) => {
+  const { currencySymbol } = useCurrency();
   return (
     <div className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl p-5 space-y-6 shadow-sm">
       {/* Header */}

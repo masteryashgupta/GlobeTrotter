@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   full_name TEXT,
   avatar_url TEXT,
   language_pref TEXT DEFAULT 'en',
+  currency TEXT DEFAULT 'USD',
   is_admin BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
