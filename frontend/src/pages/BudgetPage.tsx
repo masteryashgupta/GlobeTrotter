@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { USD_TO_INR } from '../components/activities/ActivityCard';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -391,7 +390,7 @@ export const BudgetPage: React.FC = () => {
         <Card className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Grand Total Cost</p>
           <p className="text-3xl font-extrabold text-white mt-2">
-            ₹{Math.round((budgetData?.total || 0) * USD_TO_INR).toLocaleString('en-IN')}
+            ${(budgetData?.total || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
           <p className="text-xs text-slate-500 mt-1">Scheduled Activities + Manual Expenses</p>
         </Card>
@@ -407,7 +406,7 @@ export const BudgetPage: React.FC = () => {
         <Card className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Per-Day Average</p>
           <p className="text-3xl font-extrabold text-emerald-400 mt-2">
-            ₹{Math.round((budgetData?.perDayAverage || 0) * USD_TO_INR).toLocaleString('en-IN')}
+            ${(budgetData?.perDayAverage || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </p>
           <p className="text-xs text-slate-500 mt-1">Average daily cost</p>
         </Card>
@@ -503,7 +502,7 @@ export const BudgetPage: React.FC = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
-                    formatter={(value: any) => [`₹${Math.round(Number(value) * USD_TO_INR).toLocaleString('en-IN')}`, 'Cost']}
+                    formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Cost']}
                   />
                   <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
@@ -514,7 +513,7 @@ export const BudgetPage: React.FC = () => {
           {/* Bar Chart: Per-Day Timeline Costs with Overbudget Highlighting */}
           <Card className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-white">Daily Cost Timeline (₹)</h3>
+              <h3 className="text-base font-bold text-white">Daily Cost Timeline ($)</h3>
               <div className="flex items-center gap-3 text-xs">
                 <span className="flex items-center gap-1 text-slate-400">
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block" /> Within Target
@@ -533,7 +532,7 @@ export const BudgetPage: React.FC = () => {
                   <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
-                    formatter={(val: any) => [`₹${Math.round(Number(val) * USD_TO_INR).toLocaleString('en-IN')}`, 'Total Spent']}
+                    formatter={(val: any) => [`$${Number(val).toFixed(2)}`, 'Total Spent']}
                   />
                   {dailyThreshold > 0 && (
                     <ReferenceLine
@@ -634,7 +633,7 @@ export const BudgetPage: React.FC = () => {
                         {new Date(exp.created_at).toLocaleDateString()}
                       </td>
                       <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-400">
-                        ₹{Number(exp.amount).toLocaleString('en-IN')}
+                        ${Number(exp.amount).toFixed(2)}
                       </td>
                       <td className="py-3.5 px-4 text-right space-x-2">
                         <Button
