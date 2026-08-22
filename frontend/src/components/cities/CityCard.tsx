@@ -58,44 +58,57 @@ export const CityCard: React.FC<CityCardProps> = ({ city, onAddToTrip }) => {
       </div>
 
       {/* Card Content & Metrics */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          {/* Cost Index Indicator */}
-          <div className="bg-white rounded-lg p-2.5 border border-[#E9E4F5] shadow-sm">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] block mb-1">
+      <div className="p-4 flex-1 flex flex-col justify-between space-y-4 font-sans">
+        {/* Equal 2-Column Grid for Stat Boxes (1fr 1fr, gap-3) */}
+        <div className="grid grid-cols-2 gap-3 pt-1 w-full">
+          {/* Box 1: Affordability */}
+          <div className="bg-white rounded-xl p-2.5 border border-[#E9E4F5] shadow-sm flex flex-col justify-between min-w-0">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] block truncate">
               Affordability
             </span>
-            <div className="flex items-center gap-0.5 text-sm">
-              {[1, 2, 3, 4, 5].map((level) => (
-                <span
-                  key={level}
-                  className={`font-black ${
-                    level <= costIndex ? 'text-[#15803D]' : 'text-[#E9E4F5]'
-                  }`}
-                >
-                  $
+            <div className="space-y-1.5 mt-1">
+              <div className="flex items-center gap-0.5 text-xs sm:text-sm font-black tracking-tight">
+                {[1, 2, 3, 4, 5].map((level) => (
+                  <span
+                    key={level}
+                    className={level <= costIndex ? 'text-[#15803D]' : 'text-[#E9E4F5]'}
+                  >
+                    $
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center">
+                <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#7C3AED]/10 text-[#5B21B6] border border-[#7C3AED]/20 truncate max-w-full">
+                  {costIndex <= 1
+                    ? 'Budget'
+                    : costIndex <= 3
+                    ? 'Moderate'
+                    : 'Premium'}
                 </span>
-              ))}
-              <span className="text-xs text-[#6B7280] ml-1.5 font-medium">
-                {costIndex <= 1
-                  ? 'Budget'
-                  : costIndex <= 3
-                  ? 'Moderate'
-                  : 'Premium'}
-              </span>
+              </div>
             </div>
           </div>
 
-          {/* Popularity Metric */}
-          <div className="bg-white rounded-lg p-2.5 border border-[#E9E4F5] shadow-sm">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] block mb-1">
-              Popularity Score
-            </span>
-            <div className="w-full bg-[#F7F5FC] rounded-full h-2 mt-1.5 overflow-hidden border border-[#E9E4F5]">
-              <div
-                className="bg-gradient-to-r from-[#7C3AED] to-[#C084FC] h-2 rounded-full"
-                style={{ width: `${city.popularity || 50}%` }}
-              />
+          {/* Box 2: Popularity Score */}
+          <div className="bg-white rounded-xl p-2.5 border border-[#E9E4F5] shadow-sm flex flex-col justify-between min-w-0">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] block truncate">
+                Popularity
+              </span>
+              <span className="text-xs font-extrabold text-[#7C3AED] shrink-0">
+                {city.popularity ?? 0}%
+              </span>
+            </div>
+            <div className="space-y-1.5 mt-1">
+              <div className="w-full bg-[#F7F5FC] rounded-full h-2 overflow-hidden border border-[#E9E4F5]">
+                <div
+                  className="bg-gradient-to-r from-[#7C3AED] to-[#C084FC] h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${city.popularity || 50}%` }}
+                />
+              </div>
+              <span className="text-[10px] text-[#6B7280] font-medium block truncate">
+                {(city.popularity ?? 0) >= 80 ? 'High Demand' : (city.popularity ?? 0) >= 50 ? 'Popular' : 'Trending'}
+              </span>
             </div>
           </div>
         </div>
