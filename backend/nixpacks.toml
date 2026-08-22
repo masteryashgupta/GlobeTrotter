@@ -1,0 +1,15 @@
+# backend/nixpacks.toml — Explicit Nixpacks Configuration for Express Backend
+
+providers = ["node"]
+
+[phases.setup]
+nixPkgs = ["nodejs_22"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm run start"
