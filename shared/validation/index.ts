@@ -45,7 +45,7 @@ export const tripCreateSchema = z
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().min(1, 'End date is required'),
     cover_photo_url: z.string().trim().url('Invalid image URL format').optional().or(z.literal('')),
-    is_public: z.boolean().default(false),
+    is_public: z.boolean().optional(),
   })
   .refine((data: { start_date: string; end_date: string }) => isDateBeforeOrEqual(data.start_date, data.end_date), {
     message: 'End date must be on or after start date',
