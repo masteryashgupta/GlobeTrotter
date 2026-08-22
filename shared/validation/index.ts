@@ -31,11 +31,11 @@ export const resetPasswordSchema = z.object({
 // avatar_url: empty string → null (means "clear avatar"), a valid URL → kept as-is.
 export const profileUpdateSchema = z.object({
   full_name: z.preprocess(
-    (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+    (val: unknown) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
     z.string().trim().min(1, 'Full name cannot be empty').optional()
   ),
   avatar_url: z.preprocess(
-    (val) => (typeof val === 'string' && val.trim() === '' ? null : val),
+    (val: unknown) => (typeof val === 'string' && val.trim() === '' ? null : val),
     z.string().url('Must be a valid image URL (https://...)').nullable().optional()
   ),
   language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).optional(),
