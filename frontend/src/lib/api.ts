@@ -2,20 +2,25 @@ import { supabase } from './supabase';
 import { City, Trip, Stop, Activity, TripActivity } from '../../../shared/types';
 import { StopCreateInput } from '../../../shared/validation';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || '';
-const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || '';
+// The backend URL is baked into this bundle at build time by Vite from VITE_API_URL.
+// - Local dev: set in frontend/.env
+// - Production: injected by GitHub Actions from repository secrets (VITE_API_URL, VITE_BACKEND_URL)
+// If this is empty the build was misconfigured — fail loudly so it's caught immediately.
+const _viteApiUrl = import.meta.env.VITE_API_URL as string | undefined;
+const _viteBackendUrl = import.meta.env.VITE_BACKEND_URL as string | undefined;
 
-const isInvalidDomain = (url: string) => !url || url.includes('globetrotter-backend-production');
-
+if (!_viteApiUrl) {
+  console.error(
+    '[GlobeTrotter] VITE_API_URL is not set. ' +
+    'Add it to frontend/.env for local dev, or set the VITE_API_URL ' +
+    'repository secret in GitHub Actions for production builds.'
+  );
+}
 
 export const BACKEND_BASE_URL =
-  !isInvalidDomain(rawBackendUrl)
-    ? rawBackendUrl
-    : !isInvalidDomain(rawApiUrl)
-    ? rawApiUrl.replace(/\/api\/?$/, '')
-    : 'https://globetrotter-production-4300.up.railway.app';
+  _viteBackendUrl || (_viteApiUrl ? _viteApiUrl.replace(/\/api\/?$/, '') : '');
 
-export const API_BASE_URL = `${BACKEND_BASE_URL}/api`;
+export const API_BASE_URL = _viteApiUrl || `${BACKEND_BASE_URL}/api`;
 
 const BASE_URL = API_BASE_URL;
 

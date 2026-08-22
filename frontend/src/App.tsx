@@ -22,8 +22,8 @@ import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
 import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
 /**
- * GlobeTrotter Full-Stack App Root — v1.0.5 (Force GitHub Actions Rebuild)
- * Primary Live Backend Endpoint: https://globetrotter-production-4300.up.railway.app
+ * GlobeTrotter Full-Stack App Root
+ * Backend URL is injected at build time via VITE_API_URL (see .env or GitHub Actions secrets).
  */
 const queryClient = new QueryClient({
   defaultOptions: {
