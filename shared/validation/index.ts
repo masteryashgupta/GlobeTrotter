@@ -106,7 +106,7 @@ export const expenseCreateSchema = z.object({
   stop_id: z.string().min(1, 'Invalid stop ID format').nullable().optional(),
   category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']),
   label: z.string().trim().min(1, 'Label/description is required'),
-  amount: z.number({ invalid_type_error: 'Amount must be a number' }).gt(0, 'Amount must be greater than zero'),
+  amount: z.number().gt(0, 'Amount must be greater than zero'),
 });
 
 // 10. Expense Update Schema
@@ -114,7 +114,7 @@ export const expenseUpdateSchema = z.object({
   stop_id: z.string().min(1, 'Invalid stop ID format').nullable().optional(),
   category: z.enum(['transport', 'stay', 'activity', 'meals', 'misc']).optional(),
   label: z.string().trim().min(1, 'Label cannot be empty').optional(),
-  amount: z.number({ invalid_type_error: 'Amount must be a number' }).gt(0, 'Amount must be greater than zero').optional(),
+  amount: z.number().gt(0, 'Amount must be greater than zero').optional(),
 });
 
 // 11. Trip Share Schema
