@@ -19,36 +19,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS — explicit whitelist: local dev + production GitHub Pages
-// Do NOT use wildcard '*' — credentials (Authorization header) require an explicit origin.
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://localhost:5000',
-  'https://masteryashgupta.github.io',
-  process.env.FRONTEND_URL,
-].filter(Boolean) as string[];
-
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow no-origin requests (curl, Postman, Railway health checks)
-      if (!origin) return callback(null, true);
-
-      const allowed =
-        allowedOrigins.includes(origin) ||
-        allowedOrigins.some(o => origin.startsWith(o));
-
-      if (allowed) {
-        return callback(null, origin); // echo back exact origin (required for credentials)
-      }
-      return callback(new Error(`CORS: origin '${origin}' not allowed`));
-    },
+    origin: true, // Echo back incoming origin dynamically (supports credentials + gh-pages + local dev)
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
+app.options('*', cors()); // Enable pre-flight for all routes
 
 app.use(express.json());
 
