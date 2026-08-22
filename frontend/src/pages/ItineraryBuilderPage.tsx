@@ -179,7 +179,7 @@ export const ItineraryBuilderPage: React.FC = () => {
   }
 
   return (
-    <div className="py-6 space-y-8 font-sans">
+    <div className="py-4 sm:py-6 space-y-6 sm:space-y-8 font-sans max-w-full overflow-hidden">
       {/* Trip Header / Banner */}
       <div className="relative rounded-3xl bg-gradient-to-br from-[#7C3AED]/8 via-[#F7F5FC] to-white border border-[#E9E4F5] p-6 sm:p-8 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.10)]">
         <div

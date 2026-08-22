@@ -125,153 +125,160 @@ export const StopCard: React.FC<StopCardProps> = ({
   return (
     <Card
       hoverable={!isDragging}
-      className={`bg-[#F7F5FC] border-[#E9E4F5] p-0 overflow-hidden transition-all shadow-sm ${
+      className={`bg-[#F7F5FC] border-[#E9E4F5] p-0 overflow-hidden transition-all shadow-sm max-w-full ${
         isDragging ? 'border-[#7C3AED] ring-2 ring-[#7C3AED]/30 shadow-lg' : ''
       }`}
     >
-      {/* Top Main Row */}
-      <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-sans">
-        {/* Left: Drag Handle, Thumbnail & Destination Details */}
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          {/* Visible Grip Drag Handle */}
-          {dragHandleProps && (
-            <button
-              type="button"
-              {...dragHandleProps}
-              className="cursor-grab active:cursor-grabbing p-2 -ml-1 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#6B7280] hover:text-[#7C3AED] hover:bg-white rounded-lg transition-colors touch-none select-none shrink-0"
-              title="Drag to reorder stop"
-              aria-label="Drag to reorder stop"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2.5}
-                  d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"
-                />
-              </svg>
-            </button>
-          )}
+      {/* Main Card Body */}
+      <div className="p-3.5 sm:p-5 space-y-3 sm:space-y-4 font-sans max-w-full overflow-hidden">
+        {/* Row 1: Header (Drag Handle, Index Pill, City Image, Section Title & Description) */}
+        <div className="flex items-start justify-between gap-2.5 sm:gap-4 max-w-full w-full">
+          <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
+            {/* Visible Grip Drag Handle */}
+            {dragHandleProps && (
+              <button
+                type="button"
+                {...dragHandleProps}
+                className="cursor-grab active:cursor-grabbing p-1.5 sm:p-2 -ml-1 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#6B7280] hover:text-[#7C3AED] hover:bg-white rounded-lg transition-colors touch-none select-none shrink-0 mt-0.5 sm:mt-0"
+                title="Drag to reorder stop"
+                aria-label="Drag to reorder stop"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"
+                  />
+                </svg>
+              </button>
+            )}
 
-          {/* Stop Index Pill */}
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] font-black text-xs sm:text-sm flex items-center justify-center shrink-0">
-            {index + 1}
-          </div>
-
-          {/* City Thumbnail */}
-          <img
-            src={
-              stop.cities?.image_url ||
-              'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80'
-            }
-            alt={stop.cities?.name || stop.custom_city_name || 'City'}
-            className="w-16 h-16 rounded-xl object-cover border border-[#E9E4F5]"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80';
-            }}
-          />
-
-          {/* City Name & Section Description (Screen 5 Spec) */}
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h4 className="text-base font-bold text-[#1A1523] truncate font-heading">
-                Section {index + 1}: {stop.cities?.name || stop.custom_city_name || 'Destination'}
-              </h4>
-              {stop.cities?.region && (
-                <Badge variant="neutral" size="sm" className="hidden xs:inline-flex text-[10px]">
-                  {stop.cities.region}
-                </Badge>
-              )}
+            {/* Stop Index Pill */}
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl bg-[#7C3AED]/10 border border-[#7C3AED]/25 text-[#5B21B6] font-black text-xs sm:text-sm flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+              {index + 1}
             </div>
-            <p className="text-xs text-[#6B7280] truncate mt-0.5">
-              All necessary info about this section — travel, hotel, or any other activity
-            </p>
+
+            {/* City Thumbnail */}
+            <img
+              src={
+                stop.cities?.image_url ||
+                'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80'
+              }
+              alt={stop.cities?.name || stop.custom_city_name || 'City'}
+              className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover border border-[#E9E4F5] shrink-0"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80';
+              }}
+            />
+
+            {/* City Name & Section Description (Screen 5 Spec) */}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h4 className="text-sm sm:text-base font-bold text-[#1A1523] font-heading leading-tight break-words">
+                  Section {index + 1}: {stop.cities?.name || stop.custom_city_name || 'Destination'}
+                </h4>
+                {stop.cities?.region && (
+                  <Badge variant="neutral" size="sm" className="hidden xs:inline-flex text-[10px] py-0 px-1.5">
+                    {stop.cities.region}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-[11px] sm:text-xs text-[#6B7280] line-clamp-2 mt-0.5 leading-normal">
+                All necessary info about this section — travel, hotel, or any other activity
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Center: Side-by-side Date Range & Budget Inputs (Screen 5 Spec) */}
-        <div className="flex flex-wrap items-center gap-3 bg-white border border-[#E9E4F5] p-2.5 rounded-xl shrink-0 shadow-sm">
-          <div className="text-left">
-            <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Date Range</span>
-            <span className="text-xs font-semibold text-[#1A1523]">
-              {stop.arrival_date} to {stop.departure_date}
-            </span>
+        {/* Row 2: Date Range, Budget & Action Controls Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-1 w-full max-w-full">
+          {/* Side-by-side Date Range & Budget Inputs (Screen 5 Spec) */}
+          <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2.5 sm:gap-3 bg-white border border-[#E9E4F5] p-2.5 rounded-xl w-full lg:w-auto shrink-0 shadow-sm">
+            <div className="text-left">
+              <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Date Range</span>
+              <span className="text-xs font-semibold text-[#1A1523]">
+                {stop.arrival_date} to {stop.departure_date}
+              </span>
+            </div>
+
+            <div className="text-left border-l border-[#E9E4F5] pl-2.5 sm:pl-3">
+              <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Budget of Section</span>
+              <span className="text-xs font-bold text-[#7C3AED]">
+                ${stop.cities?.cost_index ? stop.cities.cost_index * 250 : 500}
+              </span>
+            </div>
+
+            <Badge variant="primary" size="sm" className="shrink-0 ml-auto sm:ml-1">
+              {nights} {nights === 1 ? 'Night' : 'Nights'}
+            </Badge>
           </div>
 
-          <div className="text-left border-l border-[#E9E4F5] pl-3">
-            <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Budget of Section</span>
-            <span className="text-xs font-bold text-[#7C3AED]">
-              ${stop.cities?.cost_index ? stop.cities.cost_index * 250 : 500}
-            </span>
-          </div>
-
-          <Badge variant="primary" size="sm" className="shrink-0 ml-1">
-            {nights} {nights === 1 ? 'Night' : 'Nights'}
-          </Badge>
-        </div>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-          {/* Add Activity Trigger */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsAddActivityOpen(true)}
-            className="text-xs"
-            leftIcon={
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            }
-          >
-            Add Activity
-          </Button>
-
-          {/* Edit Stop button */}
-          <button
-            onClick={() => onEdit(stop)}
-            className="p-2 rounded-lg text-[#6B7280] hover:text-[#1A1523] hover:bg-white transition-colors"
-            title="Edit stop dates"
-            aria-label="Edit stop"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </button>
-
-          {/* Delete Stop button */}
-          <button
-            onClick={() => onDelete(stop)}
-            className="p-2 rounded-lg text-[#6B7280] hover:text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors"
-            title="Delete stop"
-            aria-label="Delete stop"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
-
-          {/* Expand / Collapse toggle */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-lg text-[#6B7280] hover:text-[#1A1523] hover:bg-white transition-colors flex items-center gap-1.5 text-xs font-semibold"
-            aria-label="Toggle activities list"
-          >
-            <span className="text-[#6B7280] text-[11px]">
-              {stopActivities.length} {stopActivities.length === 1 ? 'activity' : 'activities'}
-            </span>
-            <svg
-              className={`w-4 h-4 transform transition-transform duration-200 ${
-                isExpanded ? 'rotate-180' : ''
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Action Row: Add Activity, Edit, Delete, Toggle Activities Dropdown */}
+          <div className="flex flex-wrap items-center justify-between lg:justify-end gap-2 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-[#E9E4F5]/80">
+            {/* Add Activity Trigger */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAddActivityOpen(true)}
+              className="text-xs min-h-[40px] px-3 flex items-center gap-1.5"
+              leftIcon={
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              }
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+              <span>+ Activity</span>
+            </Button>
+
+            <div className="flex items-center gap-1.5">
+              {/* Edit Stop button */}
+              <button
+                onClick={() => onEdit(stop)}
+                className="w-10 h-10 rounded-lg text-[#6B7280] hover:text-[#1A1523] hover:bg-white bg-white lg:bg-transparent border border-[#E9E4F5] lg:border-transparent transition-colors flex items-center justify-center shrink-0"
+                title="Edit stop dates"
+                aria-label="Edit stop"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+
+              {/* Delete Stop button */}
+              <button
+                onClick={() => onDelete(stop)}
+                className="w-10 h-10 rounded-lg text-[#6B7280] hover:text-[#EF4444] hover:bg-[#EF4444]/10 bg-white lg:bg-transparent border border-[#E9E4F5] lg:border-transparent transition-colors flex items-center justify-center shrink-0"
+                title="Delete stop"
+                aria-label="Delete stop"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+
+              {/* Expand / Collapse toggle */}
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="h-10 px-2.5 rounded-lg text-[#6B7280] hover:text-[#1A1523] hover:bg-white bg-white lg:bg-transparent border border-[#E9E4F5] lg:border-transparent transition-colors flex items-center gap-1.5 text-xs font-semibold shrink-0"
+                aria-label="Toggle activities list"
+              >
+                <span className="text-[#6B7280] text-[11px]">
+                  {stopActivities.length} {stopActivities.length === 1 ? 'activity' : 'activities'}
+                </span>
+                <svg
+                  className={`w-4 h-4 transform transition-transform duration-200 ${
+                    isExpanded ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
