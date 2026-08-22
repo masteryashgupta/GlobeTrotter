@@ -406,3 +406,133 @@ tripsRouter.post('/:id/copy', requireAuth, async (req: AuthenticatedRequest, res
   }
 });
 
+// 9. GET /api/trips/:id/budget - Detailed budget aggregation endpoint
+tripsRouter.get('/:id/budget', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = req.params.id;
+    const userId = req.user!.id;
+
+    // 1. Fetch trip & authorization check
+    const { data: trip, error: tripError } = await supabaseAdmin
+      .from('trips')
+      .select('id, owner_id, is_public, start_date, end_date')
+      .eq('id', tripId)
+      .single();
+
+    if (tripError || !trip) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+
+    if ((trip as any).owner_id !== userId && !trip.is_public) {
+      return res.status(403).json({ error: 'Forbidden: You do not have access to this trip' });
+    }
+
+    // 2. Compute trip duration in days
+    const startMs = new Date(trip.start_date).getTime();
+    const endMs = new Date(trip.end_date).getTime();
+    const tripDurationDays = Math.max(1, Math.round((endMs - startMs) / (1000 * 60 * 60 * 24)) + 1);
+
+    // 3. Fetch manual expenses
+    const { data: expenses } = await supabaseAdmin
+      .from('expenses')
+      .select('category, amount, created_at, stop_id, stops(arrival_date)')
+      .eq('trip_id', tripId);
+
+    const byCategory: Record<string, number> = {
+      transport: 0,
+      stay: 0,
+      activity: 0,
+      meals: 0,
+      misc: 0,
+    };
+
+    const perDayMap: Record<string, number> = {};
+
+    (expenses || []).forEach((exp: any) => {
+      const amt = Number(exp.amount || 0);
+      const cat = exp.category || 'misc';
+      if (byCategory[cat] !== undefined) {
+        byCategory[cat] += amt;
+      } else {
+        byCategory.misc += amt;
+      }
+
+      let dateKey = trip.start_date;
+      if (exp.stops?.arrival_date) {
+        dateKey = exp.stops.arrival_date;
+      } else if (exp.created_at) {
+        dateKey = exp.created_at.split('T')[0];
+      }
+
+      perDayMap[dateKey] = (perDayMap[dateKey] || 0) + amt;
+    });
+
+    // 4. Fetch scheduled activity costs across stops
+    const { data: stops } = await supabaseAdmin
+      .from('stops')
+      .select('id, arrival_date')
+      .eq('trip_id', tripId);
+
+    let scheduledActivitiesCost = 0;
+
+    if (stops && stops.length > 0) {
+      const stopIds = stops.map((s) => s.id);
+      const stopDateMap: Record<string, string> = {};
+      stops.forEach((s) => {
+        stopDateMap[s.id] = s.arrival_date;
+      });
+
+      const { data: tripActivities } = await supabaseAdmin
+        .from('trip_activities')
+        .select('stop_id, scheduled_date, custom_cost, activities(cost)')
+        .in('stop_id', stopIds);
+
+      (tripActivities || []).forEach((act: any) => {
+        const cost = Number(act.custom_cost ?? act.activities?.cost ?? 0);
+        scheduledActivitiesCost += cost;
+
+        const dateKey = act.scheduled_date || stopDateMap[act.stop_id] || trip.start_date;
+        if (dateKey) {
+          perDayMap[dateKey] = (perDayMap[dateKey] || 0) + cost;
+        }
+      });
+    }
+
+    // Add scheduled activity cost into 'activity' category
+    byCategory.activity += scheduledActivitiesCost;
+
+    // Round values in byCategory
+    Object.keys(byCategory).forEach((key) => {
+      byCategory[key] = Number(byCategory[key].toFixed(2));
+    });
+
+    // 5. Compute Grand Total and Per-Day Average
+    const total = Number(
+      (byCategory.transport + byCategory.stay + byCategory.activity + byCategory.meals + byCategory.misc).toFixed(2)
+    );
+    const perDayAverage = Number((total / tripDurationDays).toFixed(2));
+
+    // 6. Generate perDay breakdown array across all days in trip range
+    const perDay: Array<{ date: string; total: number }> = [];
+    const startDate = new Date(trip.start_date);
+    for (let i = 0; i < tripDurationDays; i++) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayTotal = Number((perDayMap[dateStr] || 0).toFixed(2));
+      perDay.push({ date: dateStr, total: dayTotal });
+    }
+
+    return res.json({
+      byCategory,
+      total,
+      tripDurationDays,
+      perDayAverage,
+      perDay,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Server error computing trip budget breakdown', details: err.message });
+  }
+});
+
+
