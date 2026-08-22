@@ -92,26 +92,37 @@ export const tripUpdateSchema = z
 export const stopCreateSchema = z
   .object({
     trip_id: z.string().uuid('Invalid trip ID format'),
-    city_id: z.string().uuid('Invalid city ID format'),
+    city_id: z.string().uuid('Invalid city ID format').optional().nullable(),
+    custom_city_name: z.string().trim().optional(),
     order_index: z.number().int().min(0, 'Order index must be non-negative'),
     arrival_date: z.string().min(1, 'Arrival date is required'),
     departure_date: z.string().min(1, 'Departure date is required'),
   })
-  .refine((data: { arrival_date: string; departure_date: string }) => isDateBeforeOrEqual(data.arrival_date, data.departure_date), {
+  .refine((data) => data.city_id || data.custom_city_name, {
+    message: 'Either a city ID or a custom city name is required',
+    path: ['custom_city_name'],
+  })
+  .refine((data) => isDateBeforeOrEqual(data.arrival_date, data.departure_date), {
     message: 'Departure date must be on or after arrival date',
     path: ['departure_date'],
   });
 
 // 8. Trip Activity Create Schema
-export const tripActivityCreateSchema = z.object({
-  stop_id: z.string().uuid('Invalid stop ID format'),
-  activity_id: z.string().uuid('Invalid activity ID format').optional(),
-  scheduled_date: z.string().optional(),
-  scheduled_time: z.string().optional(),
-  custom_cost: z.number().min(0, 'Cost must be non-negative').optional(),
-  notes: z.string().trim().optional(),
-  order_index: z.number().int().min(0).optional(),
-});
+export const tripActivityCreateSchema = z
+  .object({
+    stop_id: z.string().uuid('Invalid stop ID format'),
+    activity_id: z.string().uuid('Invalid activity ID format').optional().nullable(),
+    custom_activity_name: z.string().trim().optional(),
+    scheduled_date: z.string().optional(),
+    scheduled_time: z.string().optional(),
+    custom_cost: z.number().min(0, 'Cost must be non-negative').optional(),
+    notes: z.string().trim().optional(),
+    order_index: z.number().int().min(0).optional(),
+  })
+  .refine((data) => data.activity_id || data.custom_activity_name, {
+    message: 'Either an activity ID or a custom activity name is required',
+    path: ['custom_activity_name'],
+  });
 
 // 9. Expense Create Schema
 export const expenseCreateSchema = z.object({

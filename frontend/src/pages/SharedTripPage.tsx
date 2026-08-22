@@ -230,7 +230,7 @@ export const SharedTripPage: React.FC = () => {
             </Card>
           ) : (
             stops.map((stop: any, idx: number) => {
-              const cityName = stop.cities?.name || `Stop ${idx + 1}`;
+              const cityName = stop.cities?.name || stop.custom_city_name || `Stop ${idx + 1}`;
               const cityCountry = stop.cities?.country || '';
               const activities = stop.activities || [];
 
@@ -258,7 +258,7 @@ export const SharedTripPage: React.FC = () => {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                       {activities.map((act: any) => {
-                        const actName = act.activities?.name || 'Scheduled Activity';
+                        const actName = act.activities?.name || act.custom_activity_name || 'Scheduled Activity';
                         const cat = act.activities?.category || 'other';
                         const cost = act.custom_cost ?? act.activities?.cost ?? 0;
 

@@ -61,7 +61,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
   const assignMutation = useMutation({
     mutationFn: async () => {
       if (!stop) throw new Error('Missing stop');
-      if (!selectedActivity) throw new Error('Please select an activity');
+      if (!selectedActivity && !searchTerm.trim()) throw new Error('Please select or enter an activity');
 
       if (scheduledDate) {
         if (scheduledDate < stop.arrival_date || scheduledDate > stop.departure_date) {
@@ -73,7 +73,8 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
 
       return api.assignActivityToStop({
         stop_id: stop.id,
-        activity_id: selectedActivity.id,
+        activity_id: selectedActivity?.id || undefined,
+        custom_activity_name: !selectedActivity ? searchTerm.trim() : undefined,
         scheduled_date: scheduledDate || undefined,
         scheduled_time: scheduledTime || undefined,
         custom_cost: customCost ? parseFloat(customCost) : undefined,
@@ -84,7 +85,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
       addToast(
         'success',
         'Activity Added!',
-        `"${selectedActivity?.name}" was added to ${stop?.cities?.name || 'this stop'}.`
+        `"${selectedActivity?.name || searchTerm.trim()}" was added to ${stop?.cities?.name || stop?.custom_city_name || 'this stop'}.`
       );
       queryClient.invalidateQueries({ queryKey: ['stop-activities', stop?.id] });
       queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
@@ -111,8 +112,8 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedActivity) {
-      setDateError('Please select an activity from the list.');
+    if (!selectedActivity && !searchTerm.trim()) {
+      setDateError('Please select an activity from the list or type a custom one.');
       return;
     }
     if (stop && scheduledDate) {
@@ -132,15 +133,15 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Add Activity in ${stop.cities?.name || 'Destination'}`}
+      title={`Add Activity in ${stop.cities?.name || stop.custom_city_name || 'Destination'}`}
       size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-4 font-sans">
         {/* Destination Header Banner */}
         <div className="flex items-center justify-between p-3 bg-[#F7F5FC] border border-[#E9E4F5] rounded-xl text-xs">
           <div className="flex items-center gap-2 text-[#6B7280]">
-            <span className="font-bold text-[#1A1523]">📍 {stop.cities?.name}</span>
-            <span>({stop.cities?.country})</span>
+            <span className="font-bold text-[#1A1523]">📍 {stop.cities?.name || stop.custom_city_name}</span>
+            {stop.cities?.country && <span>({stop.cities.country})</span>}
           </div>
           <div className="text-[#7C3AED] font-semibold">
             Stay window: {stop.arrival_date} → {stop.departure_date}
@@ -174,7 +175,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
         {/* Activity Selection List */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-[#1A1523] uppercase tracking-wide">
-            Select Activity {selectedActivity && <span className="text-[#7C3AED] font-bold">• 1 Selected</span>}
+            Select Activity {(selectedActivity || (!selectedActivity && searchTerm.trim())) && <span className="text-[#7C3AED] font-bold">• 1 Selected</span>}
           </label>
 
           <div className="max-h-48 overflow-y-auto border border-[#E9E4F5] bg-white rounded-xl p-2 space-y-2">
@@ -184,12 +185,39 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
                 <Skeleton variant="rectangular" height={36} />
                 <Skeleton variant="rectangular" height={36} />
               </div>
-            ) : activities.length === 0 ? (
+            ) : activities.length === 0 && !searchTerm.trim() ? (
               <div className="text-center py-6 text-xs text-[#6B7280]">
                 No activities found matching your search.
               </div>
             ) : (
-              activities.map((act) => {
+              <>
+                {searchTerm.trim() && (
+                  <div
+                    onClick={() => setSelectedActivity(null)}
+                    className={`flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition-all ${
+                      !selectedActivity
+                        ? 'bg-[#10B981]/15 border-[#34D399] ring-1 ring-[#10B981]/30'
+                        : 'bg-[#F7F5FC] border-[#E9E4F5] hover:border-[#34D399]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="min-w-0">
+                        <h5 className="text-xs font-bold text-[#047857] truncate">"{searchTerm.trim()}"</h5>
+                        <div className="text-[11px] text-[#059669] mt-0.5">Custom Activity</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span
+                        className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                          !selectedActivity ? 'bg-[#10B981] text-white' : 'bg-[#E9E4F5] text-[#6B7280]'
+                        }`}
+                      >
+                        {!selectedActivity ? '✓' : '+'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {activities.map((act) => {
                 const isSelected = selectedActivity?.id === act.id;
                 return (
                   <div
@@ -232,7 +260,8 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
                     </div>
                   </div>
                 );
-              })
+              })}
+              </>
             )}
           </div>
         </div>
@@ -300,7 +329,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
             variant="primary"
             type="submit"
             isLoading={assignMutation.isPending}
-            disabled={!selectedActivity || Boolean(dateError)}
+            disabled={(!selectedActivity && !searchTerm.trim()) || Boolean(dateError)}
           >
             Add to Itinerary Stop
           </Button>

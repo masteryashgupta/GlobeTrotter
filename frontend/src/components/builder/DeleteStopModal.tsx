@@ -29,7 +29,7 @@ export const DeleteStopModal: React.FC<DeleteStopModalProps> = ({
       addToast(
         'success',
         'Stop Removed',
-        `${stop?.cities?.name || 'Stop'} has been removed from your trip itinerary.`
+        `${stop?.cities?.name || stop?.custom_city_name || 'Stop'} has been removed from your trip itinerary.`
       );
       queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
@@ -65,7 +65,7 @@ export const DeleteStopModal: React.FC<DeleteStopModalProps> = ({
     >
       <div className="space-y-3 py-1 font-sans">
         <p className="text-sm text-[#1A1523]">
-          Are you sure you want to remove <strong className="text-[#1A1523] font-bold">{stop.cities?.name || 'this destination'}</strong> from your trip itinerary?
+          Are you sure you want to remove <strong className="text-[#1A1523] font-bold">{stop.cities?.name || stop.custom_city_name || 'this destination'}</strong> from your trip itinerary?
         </p>
         <div className="p-3 bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-xl text-xs text-[#EF4444]">
           ⚠️ This will also delete any scheduled activities and day plans assigned to this stop.

@@ -445,7 +445,7 @@ export const ItineraryViewPage: React.FC = () => {
                           stop.cities?.image_url ||
                           'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80'
                         }
-                        alt={stop.cities?.name || 'City'}
+                        alt={stop.cities?.name || stop.custom_city_name || 'City'}
                         className="w-14 h-14 rounded-2xl object-cover bg-[#F7F5FC] border border-[#E9E4F5] shrink-0"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
@@ -455,8 +455,8 @@ export const ItineraryViewPage: React.FC = () => {
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-xl font-extrabold text-[#1A1523] tracking-tight font-heading">
-                            {stop.cities?.name || 'Destination'}
+                          <h3 className="text-xl sm:text-2xl font-bold text-[#1A1523] truncate">
+                            {stop.cities?.name || stop.custom_city_name || 'Destination'}
                           </h3>
                           {stop.cities?.region && (
                             <Badge variant="neutral" size="sm">
@@ -493,7 +493,7 @@ export const ItineraryViewPage: React.FC = () => {
                     {activities.length === 0 ? (
                       <div className="p-4 rounded-2xl bg-white border border-dashed border-[#E9E4F5] text-center">
                         <p className="text-xs text-[#6B7280]">
-                          No activities scheduled in {stop.cities?.name} yet.
+                          No activities scheduled in {stop.cities?.name || stop.custom_city_name} yet.
                         </p>
                       </div>
                     ) : (

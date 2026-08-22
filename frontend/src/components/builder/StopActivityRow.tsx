@@ -28,6 +28,8 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
   const [inlineDateError, setInlineDateError] = useState<string>('');
 
   const activity = tripActivity.activities || {};
+  const isCustomActivity = !tripActivity.activities;
+  const activityName = activity.name || tripActivity.custom_activity_name || 'Custom Activity';
   const categoryVariant = getCategoryBadgeVariant(activity.category);
 
   // Update Activity Mutation
@@ -119,17 +121,22 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
           }}
         />
 
-        <div className="min-w-0 space-y-0.5">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h5 className="text-xs sm:text-sm font-bold text-[#1A1523] truncate">
-              {activity.name || 'Custom Activity'}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h5 className="text-xs font-bold text-[#1A1523] truncate">
+              {activityName}
             </h5>
-            {activity.category && (
-              <Badge variant={categoryVariant} size="sm" className="capitalize text-[10px]">
-                {activity.category}
+            {isCustomActivity && (
+              <Badge variant="neutral" size="sm">
+                Custom
               </Badge>
             )}
           </div>
+          {activity.category && (
+            <Badge variant={categoryVariant} size="sm" className="capitalize text-[10px]">
+              {activity.category}
+            </Badge>
+          )}
           {tripActivity.notes && (
             <p className="text-[11px] text-[#6B7280] truncate max-w-xs">
               📝 {tripActivity.notes}

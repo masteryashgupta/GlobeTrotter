@@ -48,7 +48,7 @@ export const StopModal: React.FC<StopModalProps> = ({
     if (isOpen) {
       if (editingStop) {
         setSelectedCityId(editingStop.city_id || '');
-        setCitySearch(editingStop.cities?.name || '');
+        setCitySearch(editingStop.cities?.name || editingStop.custom_city_name || '');
         setArrivalDate(editingStop.arrival_date);
         setDepartureDate(editingStop.departure_date);
       } else {
@@ -64,8 +64,8 @@ export const StopModal: React.FC<StopModalProps> = ({
   // Mutation for adding or editing a stop
   const stopMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedCityId) {
-        throw new Error('Please select a destination city.');
+      if (!selectedCityId && !citySearch.trim()) {
+        throw new Error('Please select or enter a destination city.');
       }
       if (!arrivalDate || !departureDate) {
         throw new Error('Please enter both arrival and departure dates.');
@@ -77,14 +77,16 @@ export const StopModal: React.FC<StopModalProps> = ({
       if (editingStop) {
         // Edit existing stop
         return api.updateStop(editingStop.id, {
-          city_id: selectedCityId,
+          city_id: selectedCityId || null,
+          custom_city_name: !selectedCityId ? citySearch.trim() : undefined,
           arrival_date: arrivalDate,
           departure_date: departureDate,
         });
       } else {
         // Create new stop
         return api.addTripStop(tripId, {
-          city_id: selectedCityId,
+          city_id: selectedCityId || null,
+          custom_city_name: !selectedCityId ? citySearch.trim() : undefined,
           arrival_date: arrivalDate,
           departure_date: departureDate,
         });
@@ -97,7 +99,7 @@ export const StopModal: React.FC<StopModalProps> = ({
         isEdit ? 'Stop Updated' : 'Stop Added to Itinerary',
         isEdit
           ? 'The stop dates and details were updated successfully.'
-          : `${savedStop.cities?.name || 'City'} has been added to your itinerary.`
+          : `${savedStop.cities?.name || savedStop.custom_city_name || 'City'} has been added to your itinerary.`
       );
 
       queryClient.invalidateQueries({ queryKey: ['trip-stops', tripId] });
@@ -119,6 +121,7 @@ export const StopModal: React.FC<StopModalProps> = ({
 
   const isEditMode = Boolean(editingStop);
   const selectedCityObj = cities.find((c) => c.id === selectedCityId) || editingStop?.cities;
+  const isCustomCity = !selectedCityId && citySearch.trim().length > 0;
 
   return (
     <Modal
@@ -186,6 +189,12 @@ export const StopModal: React.FC<StopModalProps> = ({
               <span className="ml-auto text-[11px] text-[#7C3AED] font-semibold">✓ Selected</span>
             </div>
           )}
+          {!selectedCityObj && isCustomCity && (
+            <div className="flex items-center gap-2.5 p-2 bg-[#10B981]/10 border border-[#10B981]/40 rounded-lg text-xs text-[#047857]">
+              <span className="font-bold">{citySearch.trim()}</span>
+              <span className="ml-auto text-[11px] text-[#10B981] font-semibold">✓ Custom Entry</span>
+            </div>
+          )}
         </div>
 
         {/* Stay Date Range Pickers */}
@@ -221,7 +230,7 @@ export const StopModal: React.FC<StopModalProps> = ({
             variant="primary"
             type="submit"
             isLoading={stopMutation.isPending}
-            disabled={!selectedCityId || !arrivalDate || !departureDate}
+            disabled={(!selectedCityId && !citySearch.trim()) || !arrivalDate || !departureDate}
           >
             {isEditMode ? 'Save Changes' : 'Add Stop'}
           </Button>

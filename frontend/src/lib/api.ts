@@ -113,7 +113,7 @@ export const api = {
 
   async addTripStop(
     tripId: string,
-    data: { city_id: string; arrival_date: string; departure_date: string; order_index?: number }
+    data: { city_id?: string | null; custom_city_name?: string; arrival_date: string; departure_date: string; order_index?: number }
   ): Promise<Stop & { cities?: City }> {
     const headers = await getAuthHeader();
     const res = await fetch(`${BASE_URL}/trips/${tripId}/stops`, {
@@ -152,7 +152,7 @@ export const api = {
 
   async updateStop(
     stopId: string,
-    data: { city_id?: string; arrival_date?: string; departure_date?: string; order_index?: number }
+    data: { city_id?: string | null; custom_city_name?: string; arrival_date?: string; departure_date?: string; order_index?: number }
   ): Promise<Stop & { cities?: City }> {
     const headers = await getAuthHeader();
     const res = await fetch(`${BASE_URL}/stops/${stopId}`, {
@@ -239,7 +239,8 @@ export const api = {
 
   async assignActivityToStop(data: {
     stop_id: string;
-    activity_id?: string;
+    activity_id?: string | null;
+    custom_activity_name?: string;
     scheduled_date?: string;
     scheduled_time?: string;
     custom_cost?: number;

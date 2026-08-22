@@ -108,8 +108,8 @@ export const StopCard: React.FC<StopCardProps> = ({
       );
       addToast(
         'success',
-        'Activities Reordered',
-        `Activity sequence updated for ${stop.cities?.name || 'this stop'}.`
+        'Reordered',
+        `Activity sequence updated for ${stop.cities?.name || stop.custom_city_name || 'this stop'}.`
       );
     } catch (err: any) {
       // 3. Roll back on failure
@@ -162,10 +162,10 @@ export const StopCard: React.FC<StopCardProps> = ({
           <img
             src={
               stop.cities?.image_url ||
-              'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80'
+              'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80'
             }
-            alt={stop.cities?.name || 'City'}
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover bg-[#F7F5FC] border border-[#E9E4F5] shrink-0"
+            alt={stop.cities?.name || stop.custom_city_name || 'City'}
+            className="w-16 h-16 rounded-xl object-cover border border-[#E9E4F5]"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80';
@@ -173,11 +173,11 @@ export const StopCard: React.FC<StopCardProps> = ({
           />
 
           {/* City Name & Country */}
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base sm:text-lg font-bold text-[#1A1523] tracking-tight truncate font-heading">
-                {stop.cities?.name || 'Unknown City'}
-              </h3>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h4 className="text-base font-bold text-[#1A1523] truncate">
+                {stop.cities?.name || stop.custom_city_name || 'Unknown City'}
+              </h4>
               {stop.cities?.region && (
                 <Badge variant="neutral" size="sm" className="hidden xs:inline-flex text-[10px]">
                   {stop.cities.region}
@@ -305,9 +305,11 @@ export const StopCard: React.FC<StopCardProps> = ({
 
           {stopActivities.length === 0 ? (
             <div className="p-5 rounded-xl bg-[#F7F5FC] border border-dashed border-[#E9E4F5] text-center space-y-2">
-              <p className="text-xs text-[#6B7280]">
-                No activities scheduled for {stop.cities?.name || 'this stop'} yet.
-              </p>
+              <div className="py-4 text-center">
+                <p className="text-xs text-[#6B7280]">
+                  No activities scheduled for {stop.cities?.name || stop.custom_city_name || 'this stop'} yet.
+                </p>
+              </div>
               <Button
                 variant="outline"
                 size="sm"
