@@ -1,14 +1,16 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
-import { ToastProvider } from './components/ui';
+import { ToastProvider, useToast } from './components/ui';
 import { AppLayout } from './components/layout/AppLayout';
-import { ProtectedRoute, PublicRoute } from './routes/RouteGuards';
+import { ProtectedRoute, PublicRoute, AdminRoute } from './routes/RouteGuards';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { AdminPage } from './pages/AdminPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +20,26 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+/**
+ * Thin wrapper for /dashboard that fires a Toast when redirected from AdminRoute
+ * with state { adminDenied: true }.
+ */
+function DashboardWithAdminDeniedToast() {
+  const location = useLocation();
+  const { addToast } = useToast();
+
+  useEffect(() => {
+    if ((location.state as any)?.adminDenied) {
+      addToast('warning', 'Access Restricted', 'Admin panel is only accessible to platform administrators.');
+      // Clear state so Toast doesn't re-fire on subsequent navigations
+      window.history.replaceState({}, '');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return <PlaceholderPage title="Dashboard" part="Part A: Auth &amp; Dashboard" />;
+}
 
 export function App() {
   return (
@@ -63,7 +85,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Dashboard" part="Part A: Auth & Dashboard" />
+                      <DashboardWithAdminDeniedToast />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -158,14 +180,16 @@ export function App() {
                   </ProtectedRoute>
                 }
               />
+
+              {/* Admin-Only Route */}
               <Route
                 path="/admin"
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Admin Panel" part="Part D: Settings & Admin" />
+                      <AdminPage />
                     </AppLayout>
-                  </ProtectedRoute>
+                  </AdminRoute>
                 }
               />
 
