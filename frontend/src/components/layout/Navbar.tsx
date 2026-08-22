@@ -17,7 +17,12 @@ export const Navbar = () => {
     { name: 'Settings', path: '/settings' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/trips' && location.pathname.startsWith('/trips')) {
+      return true;
+    }
+    return location.pathname === path;
+  };
 
   return (
     <nav className="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">

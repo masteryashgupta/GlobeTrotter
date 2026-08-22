@@ -2,6 +2,9 @@ import { Router, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { TripActivityService } from '../services/tripActivityService';
 
+import { tripActivityCreateSchema } from '../../../shared/validation';
+import { validateBody } from '../middleware/validateBody';
+
 export const tripActivitiesRouter = Router({ mergeParams: true });
 
 /**
@@ -22,7 +25,11 @@ tripActivitiesRouter.get('/stops/:stopId/activities', requireAuth, async (req: A
  * POST /api/stops/:stopId/activities
  * Assign an activity to a stop with scheduled_date boundary validation.
  */
-tripActivitiesRouter.post('/stops/:stopId/activities', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+tripActivitiesRouter.post(
+  '/stops/:stopId/activities',
+  requireAuth,
+  validateBody(tripActivityCreateSchema),
+  async (req: AuthenticatedRequest, res: Response) => {
   try {
     const stopId = Array.isArray(req.params.stopId) ? req.params.stopId[0] : (req.params.stopId as string);
     const { activity_id, scheduled_date, scheduled_time, custom_cost, notes, order_index } = req.body;

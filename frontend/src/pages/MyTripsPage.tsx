@@ -108,11 +108,13 @@ export const MyTripsPage: React.FC = () => {
         </div>
       ) : trips.length === 0 ? (
         <EmptyState
-          title="No trips found"
-          description="You haven't created any travel itineraries yet."
+          title="No Travel Itineraries Yet"
+          description="Start planning your adventure by defining trip dates, cover photos, and destinations."
           action={
             <Link to="/trips/new">
-              <Button variant="primary">Create First Trip</Button>
+              <Button variant="primary" size="lg">
+                + Create Your First Trip
+              </Button>
             </Link>
           }
         />

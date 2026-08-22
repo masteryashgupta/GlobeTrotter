@@ -1,87 +1,102 @@
-# GlobeTrotter
+# GlobeTrotter — Smart Travel Planning & Itinerary Platform
 
-GlobeTrotter is a full-stack travel planning platform designed to allow users to explore destinations, build dynamic itineraries, manage travel budgets, and share plans seamlessly.
+GlobeTrotter is a full-stack travel planning platform designed to allow users to explore destinations, build dynamic itineraries with drag-and-drop sequencing, manage trip budgets with visual charts, and share read-only public trip links seamlessly.
 
-## Directory Structure
+---
+
+## 🚀 Live Production Deployments
+
+- **Frontend (Vercel):** [https://globetrotter-app.vercel.app](https://globetrotter-app.vercel.app)
+- **Backend API (Railway):** [https://globetrotter-backend-production.up.railway.app/api](https://globetrotter-backend-production.up.railway.app/api)
+- **Backend Health Check:** [https://globetrotter-backend-production.up.railway.app/api/health](https://globetrotter-backend-production.up.railway.app/api/health)
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+- **Frontend:** React (Vite, TypeScript), Tailwind CSS, React Query (`@tanstack/react-query`), Recharts, `@dnd-kit` (drag-and-drop), React Big Calendar.
+- **Backend:** Node.js, Express, TypeScript, Zod schema validation (`validateBody` middleware).
+- **Database & Auth:** Supabase (PostgreSQL, Row Level Security, Supabase Auth, Supabase Storage `trip-covers` bucket, Realtime subscriptions).
+- **Deployment & Hosting:** Vercel (SPA Rewrites), Railway (Express container), Supabase Cloud.
+
+---
+
+## 📁 Directory Structure
 
 ```text
 /globetrotter
-  /frontend        (Vite + React + TypeScript + Tailwind CSS)
-  /backend         (Node.js + Express + TypeScript)
-  /shared          (shared TypeScript types + Zod validation schemas)
-  /supabase        (Supabase CLI project: migrations/, seed.sql)
+  /frontend        (Vite + React + TypeScript + Tailwind CSS + vercel.json SPA rewrites)
+  /backend         (Node.js + Express + TypeScript + Zod middleware)
+  /shared          (Shared TypeScript types + Zod validation schemas)
+  /supabase        (Supabase CLI migrations: 0001-0003 sql files, storage bucket setup)
   README.md
 ```
 
-## Getting Started
+---
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
+## ⚡ Production Deployment Configuration
 
-### Frontend Setup
+### 1. Frontend (Vercel)
+- **Root Directory:** `/frontend`
+- **Build Command:** `npm run build` (`tsc && vite build`)
+- **Output Directory:** `dist`
+- **Environment Variables:**
+  - `VITE_SUPABASE_URL`: `<your-supabase-url>`
+  - `VITE_SUPABASE_ANON_KEY`: `<your-supabase-anon-key>`
+  - `VITE_BACKEND_URL`: `https://globetrotter-backend-production.up.railway.app`
+- **SPA Rewrites (`vercel.json`):**
+  ```json
+  {
+    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  }
+  ```
 
+### 2. Backend (Railway)
+- **Root Directory:** `/backend`
+- **Start Command:** `npm start` (`node dist/index.js`)
+- **Environment Variables:**
+  - `PORT`: `5000` (or injected by Railway `$PORT`)
+  - `SUPABASE_URL`: `<your-supabase-url>`
+  - `SUPABASE_SERVICE_ROLE_KEY`: `<your-supabase-service-role-key>`
+  - `FRONTEND_URL`: `https://globetrotter-app.vercel.app`
+
+### 3. Production Database Migrations & Seeding
+All database migrations (`0001_initial_schema.sql`, `0002_create_profile_trigger.sql`, `0003_storage_trip_covers.sql`) and cloud master seeds (56 cities, 224 activities) are executed against Supabase Cloud:
 ```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend development server will start at `http://localhost:5173`.
-
-### Backend Setup
-
-```bash
+# Apply SQL Migrations & Seed Data
 cd backend
-npm install
-npm run dev
+npm run seed:cloud
 ```
 
-The backend API server will start at `http://localhost:5000`. You can verify it by navigating to `http://localhost:5000/api/health`.
+---
 
-## Environment Variables
+## 💻 Local Development Setup
 
-Copy `.env.example` to `.env` in both `/frontend` and `/backend` directories and configure your environment variables:
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `PORT`
+### 1. Prerequisites
+- Node.js (v18+)
+- Supabase CLI / Docker (optional for offline dev)
 
-## Database Setup & Local Docker / Cloud Seeding
-
-### 1. Local Supabase Docker Stack (Offline Development)
-To run a complete local Postgres + Auth + Storage stack in Docker for offline development:
+### 2. Installation & Running
 ```bash
-npx supabase start
+# Install root/sub-project dependencies
+cd frontend && npm install
+cd ../backend && npm install
+
+# Start Backend (http://localhost:5000)
+cd backend && npm run dev
+
+# Start Frontend (http://localhost:5173)
+cd frontend && npm run dev
 ```
 
-To stop the local Supabase stack:
-```bash
-npx supabase stop
-```
+---
 
-### 2. Database Seeding (`cities` & `activities`)
-Master data (56 cities, 224 activities) is seeded directly into Postgres tables. The seed is **idempotent** (using `ON CONFLICT DO UPDATE` / `ON CONFLICT DO NOTHING`), so running it multiple times will not duplicate records.
+## 🌿 Git Integration Strategy & Release Milestone
 
-- **Seed Local Docker Postgres:**
-  ```bash
-  cd backend
-  npm run seed:local
-  ```
-  *(Alternatively: `npx supabase db reset` or `npx supabase db seed`)*
+This project follows a 4-part modular integration lifecycle:
+- `part-a/auth-dashboard`: Auth, profiles, CRUD trips, design system.
+- `part-b/itinerary-search`: City & activity catalog, drag-and-drop stops, timelines.
+- `part-c/budget-calendar-share`: Recharts expense breakdown, calendar, public sharing/cloning.
+- `part-d/settings-admin-polish`: User settings, admin metrics, full-app responsive/validation QA audits.
 
-- **Seed Cloud Supabase:**
-  ```bash
-  cd backend
-  npm run seed:cloud
-  ```
-
-## Git Workflow & Branch Strategy
-
-This project follows a 4-branch parallel development workflow across contributors:
-- `part-a/auth-dashboard`: Authentication, user profiles, and main dashboard features.
-- `part-b/itinerary-search`: City search, activity discovery, and itinerary builders.
-- `part-c/budget-calendar-share`: Calendar views, expense tracking, and social trip sharing.
-- `part-d/settings-admin-polish`: Settings, admin controls, and UI polish.
-
-All feature branches sync into `main` hourly with formal reviewed Pull Requests at final integration.
+**Integrated Release Tag:** `v1.0-integrated`

@@ -11,8 +11,7 @@ import {
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/ui';
-import { Card, Skeleton } from '../components/ui';
-import { Button } from '../components/ui';
+import { Card, Skeleton, Button, EmptyState } from '../components/ui';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -353,75 +352,89 @@ export const AdminPage: React.FC = () => {
           </Card.Header>
 
           {/* Horizontal-scroll wrapper for mobile */}
-          <div className="mt-2 overflow-x-auto rounded-lg">
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-700/60">
-                  {['Name', 'Email', 'Joined', 'Trips', 'Role'].map((h) => (
-                    <th
-                      key={h}
-                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500 whitespace-nowrap"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {isLoadingUsers
-                  ? Array.from({ length: 8 }).map((_, i) => (
-                      <tr key={i}>
-                        {Array.from({ length: 5 }).map((__, j) => (
-                          <td key={j} className="px-4 py-3">
-                            <Skeleton variant="text" width={j === 1 ? 180 : j === 0 ? 130 : 70} />
-                          </td>
-                        ))}
-                      </tr>
-                    ))
-                  : users.map((u) => (
-                      <tr
-                        key={u.id}
-                        className="hover:bg-slate-800/40 transition-colors"
+          {!isLoadingUsers && users.length === 0 ? (
+            <div className="py-6">
+              <EmptyState
+                title="No Users Registered"
+                description="User account profiles will appear here as users sign up for GlobeTrotter."
+                action={
+                  <Button variant="outline" size="sm" onClick={() => fetchUsers(1)}>
+                    Refresh Users List
+                  </Button>
+                }
+              />
+            </div>
+          ) : (
+            <div className="mt-2 overflow-x-auto rounded-lg">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-700/60">
+                    {['Name', 'Email', 'Joined', 'Trips', 'Role'].map((h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500 whitespace-nowrap"
                       >
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-full bg-teal-900/50 border border-teal-700/50 flex items-center justify-center text-xs font-bold text-teal-400 flex-shrink-0">
-                              {(u.full_name || u.email || '?').charAt(0).toUpperCase()}
-                            </div>
-                            <span className="font-medium text-slate-200 truncate max-w-[140px]">
-                              {u.full_name || <span className="text-slate-500 italic">No name</span>}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-slate-400 whitespace-nowrap truncate max-w-[200px]">
-                          {u.email || <span className="text-slate-600">—</span>}
-                        </td>
-                        <td className="px-4 py-3 text-slate-400 whitespace-nowrap">
-                          {new Date(u.created_at).toLocaleDateString('en-GB', {
-                            day: '2-digit', month: 'short', year: 'numeric',
-                          })}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="inline-flex items-center justify-center w-8 h-6 rounded-md bg-slate-700/60 text-xs font-bold text-slate-300">
-                            {u.trip_count}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          {u.is_admin ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-900/40 border border-teal-700/50 text-xs font-semibold text-teal-400">
-                              Admin
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-medium text-slate-500">
-                              User
-                            </span>
-                          )}
-                        </td>
-                      </tr>
+                        {h}
+                      </th>
                     ))}
-              </tbody>
-            </table>
-          </div>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {isLoadingUsers
+                    ? Array.from({ length: 8 }).map((_, i) => (
+                        <tr key={i}>
+                          {Array.from({ length: 5 }).map((__, j) => (
+                            <td key={j} className="px-4 py-3">
+                              <Skeleton variant="text" width={j === 1 ? 180 : j === 0 ? 130 : 70} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    : users.map((u) => (
+                        <tr
+                          key={u.id}
+                          className="hover:bg-slate-800/40 transition-colors"
+                        >
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-7 h-7 rounded-full bg-teal-900/50 border border-teal-700/50 flex items-center justify-center text-xs font-bold text-teal-400 flex-shrink-0">
+                                {(u.full_name || u.email || '?').charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-medium text-slate-200 truncate max-w-[140px]">
+                                {u.full_name || <span className="text-slate-500 italic">No name</span>}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-slate-400 whitespace-nowrap truncate max-w-[200px]">
+                            {u.email || <span className="text-slate-600">—</span>}
+                          </td>
+                          <td className="px-4 py-3 text-slate-400 whitespace-nowrap">
+                            {new Date(u.created_at).toLocaleDateString('en-GB', {
+                              day: '2-digit', month: 'short', year: 'numeric',
+                            })}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className="inline-flex items-center justify-center w-8 h-6 rounded-md bg-slate-700/60 text-xs font-bold text-slate-300">
+                              {u.trip_count}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            {u.is_admin ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-900/40 border border-teal-700/50 text-xs font-semibold text-teal-400">
+                                Admin
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-medium text-slate-500">
+                                User
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {/* Pagination controls */}
           {!isLoadingUsers && pagination.total_pages > 1 && (
