@@ -116,15 +116,35 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 5. Itinerary & Stops Endpoints (Part B - Planned Stubs)
+## 5. Itinerary & Stops Endpoints (Part B - Fully Implemented)
 
-### `POST /api/stops`
+### `POST /api/trips/:tripId/stops` (and `POST /api/stops`)
 - **Auth Required:** Yes (`requireAuth` + `validateBody(stopCreateSchema)`)
-- **Response (201 Created):** `Stop` object.
+- **Ownership:** User must own `:tripId`.
+- **Business Rules:**
+  - `[arrival_date, departure_date]` must not overlap with any existing stop in the trip.
+  - Automatically calculates `order_index` to next available index if omitted.
+- **Response (201 Created):** `Stop` object with joined `cities(*)` metadata.
+- **Response (400 Bad Request):** `{ "error": "Stop dates overlap with existing stop in <City> (<arrival> to <departure>)" }`
+
+### `GET /api/trips/:tripId/stops` (and `GET /api/stops?trip_id=...`)
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of `Stop` objects for the trip, sorted by `order_index ASC`, each with joined `cities(*)` data.
+
+### `PATCH /api/stops/:id`
+- **Auth Required:** Yes (`requireAuth`)
+- **Body:** `{ "city_id"?: string, "arrival_date"?: string, "departure_date"?: string, "order_index"?: number }`
+- **Business Rules:** Re-runs date overlap check against other stops in the trip (excluding itself).
+- **Response (200 OK):** Updated `Stop` object.
 
 ### `DELETE /api/stops/:id`
 - **Auth Required:** Yes (`requireAuth`)
-- **Response (200 OK):** `{ "message": "Stop deleted" }`
+- **Response (200 OK):** `{ "message": "Stop deleted successfully", "id": "<stopId>" }` (cascades to child `trip_activities`).
+
+### `PATCH /api/trips/:tripId/stops/reorder`
+- **Auth Required:** Yes (`requireAuth`)
+- **Body:** `{ "stop_ids": ["uuid1", "uuid2", "uuid3"] }`
+- **Response (200 OK):** Array of reordered `Stop` objects with updated `order_index` values.
 
 ---
 

@@ -1,55 +1,55 @@
 import { Router, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { validateBody } from '../middleware/validateBody';
-import { stopCreateSchema, StopCreateInput } from '../../../shared/validation';
-import { supabaseAdmin } from '../lib/supabaseAdmin';
-import { Stop } from '../../../shared/types';
-import { CatalogService } from '../services/catalogService';
+import { stopCreateSchema } from '../../../shared/validation';
+import { StopService } from '../services/stopService';
 
 export const stopsRouter = Router();
 
-// In-memory fallback for local offline development
-const inMemoryStops: (Stop & { cities?: any })[] = [];
-
 /**
  * GET /api/stops?trip_id=...
- * Fetch all stops for a specific trip, ordered by order_index.
+ * List all stops for a specific trip, ordered by order_index ASC.
  */
 stopsRouter.get('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const tripId = req.query.trip_id as string;
-
     if (!tripId) {
       return res.status(400).json({ error: 'Missing trip_id query parameter' });
     }
 
-    try {
-      const { data, error } = await supabaseAdmin
-        .from('stops')
-        .select('*, cities(*)')
-        .eq('trip_id', tripId)
-        .order('order_index', { ascending: true });
+    const stops = await StopService.getStopsByTripId(tripId);
+    return res.json(stops);
+  } catch (err: any) {
+    return res
+      .status(err.statusCode || 500)
+      .json({ error: err.message || 'Server error fetching stops' });
+  }
+});
 
-      if (!error && data) {
-        return res.json(data);
-      }
-    } catch {
-      // Fall through to in-memory store
+/**
+ * GET /api/stops/:id
+ * Fetch single stop with joined city info.
+ */
+stopsRouter.get('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id as string);
+    const stop = await StopService.getStopById(id);
+
+    if (!stop) {
+      return res.status(404).json({ error: 'Stop not found' });
     }
 
-    const matchedStops = inMemoryStops
-      .filter((s) => s.trip_id === tripId)
-      .sort((a, b) => a.order_index - b.order_index);
-
-    return res.json(matchedStops);
+    return res.json(stop);
   } catch (err: any) {
-    return res.status(500).json({ error: 'Server error fetching stops', details: err.message });
+    return res
+      .status(err.statusCode || 500)
+      .json({ error: err.message || 'Server error fetching stop' });
   }
 });
 
 /**
  * POST /api/stops
- * Add a stop to a trip's itinerary.
+ * Create a new stop for a trip (with overlap validation and auto order_index).
  */
 stopsRouter.post(
   '/',
@@ -57,90 +57,70 @@ stopsRouter.post(
   validateBody(stopCreateSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const payload: StopCreateInput = req.body;
-      const ownerId = req.user!.id;
+      const { trip_id, city_id, arrival_date, departure_date, order_index } = req.body;
+      const userId = req.user!.id;
 
-      // Verify trip exists and user is owner
-      try {
-        const { data: trip } = await supabaseAdmin
-          .from('trips')
-          .select('owner_id')
-          .eq('id', payload.trip_id)
-          .single();
+      const stop = await StopService.createStop({
+        tripId: trip_id,
+        cityId: city_id,
+        arrivalDate: arrival_date,
+        departureDate: departure_date,
+        orderIndex: order_index,
+        userId,
+      });
 
-        if (trip && (trip as any).owner_id !== ownerId) {
-          return res.status(403).json({ error: 'Forbidden: You do not own this trip' });
-        }
-      } catch {
-        // Fall through
-      }
-
-      // Live Supabase Insert
-      try {
-        const { data: stop, error } = await supabaseAdmin
-          .from('stops')
-          .insert({
-            trip_id: payload.trip_id,
-            city_id: payload.city_id,
-            order_index: payload.order_index,
-            arrival_date: payload.arrival_date,
-            departure_date: payload.departure_date,
-          } as any)
-          .select('*, cities(*)')
-          .single();
-
-        if (!error && stop) {
-          return res.status(201).json(stop);
-        }
-      } catch {
-        // Fall through to in-memory
-      }
-
-      // In-Memory Fallback
-      const city = await CatalogService.getCityById(payload.city_id);
-      const newStop: Stop & { cities?: any } = {
-        id: `stop-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-        trip_id: payload.trip_id,
-        city_id: payload.city_id,
-        order_index: payload.order_index,
-        arrival_date: payload.arrival_date,
-        departure_date: payload.departure_date,
-        created_at: new Date().toISOString(),
-        cities: city,
-      };
-
-      inMemoryStops.push(newStop);
-      return res.status(201).json(newStop);
+      return res.status(201).json(stop);
     } catch (err: any) {
-      return res.status(500).json({ error: 'Server error creating stop', details: err.message });
+      return res
+        .status(err.statusCode || 500)
+        .json({ error: err.message || 'Server error creating stop' });
     }
   }
 );
 
 /**
+ * PATCH /api/stops/:id
+ * Update stop dates, city, or order_index, re-running overlap check excluding itself.
+ */
+stopsRouter.patch('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id as string);
+    const { city_id, arrival_date, departure_date, order_index } = req.body;
+    const userId = req.user!.id;
+
+    const updated = await StopService.updateStop(
+      id,
+      {
+        city_id,
+        arrival_date,
+        departure_date,
+        order_index,
+      },
+      userId
+    );
+
+    return res.json(updated);
+  } catch (err: any) {
+    return res
+      .status(err.statusCode || 500)
+      .json({ error: err.message || 'Server error updating stop' });
+  }
+});
+
+/**
  * DELETE /api/stops/:id
- * Remove a stop from a trip.
+ * Delete stop (cascades to trip_activities).
  */
 stopsRouter.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id as string);
+    const userId = req.user!.id;
 
-    try {
-      const { error } = await supabaseAdmin.from('stops').delete().eq('id', id);
-      if (!error) {
-        return res.json({ message: 'Stop deleted successfully', id });
-      }
-    } catch {
-      // Fall through to in-memory
-    }
-
-    const idx = inMemoryStops.findIndex((s) => s.id === id);
-    if (idx !== -1) {
-      inMemoryStops.splice(idx, 1);
-    }
-
-    return res.json({ message: 'Stop deleted successfully', id });
+    const result = await StopService.deleteStop(id, userId);
+    return res.json(result);
   } catch (err: any) {
-    return res.status(500).json({ error: 'Server error deleting stop', details: err.message });
+    return res
+      .status(err.statusCode || 500)
+      .json({ error: err.message || 'Server error deleting stop' });
   }
 });

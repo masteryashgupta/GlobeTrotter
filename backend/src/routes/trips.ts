@@ -3,6 +3,7 @@ import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { validateBody } from '../middleware/validateBody';
 import { tripCreateSchema, tripUpdateSchema, TripCreateInput, TripUpdateInput } from '../../../shared/validation';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
+import { StopService } from '../services/stopService';
 
 export const tripsRouter = Router();
 
@@ -203,5 +204,60 @@ tripsRouter.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: R
     return res.status(200).json({ message: 'Trip deleted successfully', id: tripId });
   } catch (err: any) {
     return res.status(500).json({ error: 'Server error deleting trip', details: err.message });
+  }
+});
+
+// 6. GET /api/trips/:tripId/stops - List stops for a trip
+tripsRouter.get('/:tripId/stops', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = Array.isArray(req.params.tripId) ? req.params.tripId[0] : (req.params.tripId as string);
+    const stops = await StopService.getStopsByTripId(tripId);
+    return res.json(stops);
+  } catch (err: any) {
+    return res.status(err.statusCode || 500).json({ error: err.message || 'Server error fetching trip stops' });
+  }
+});
+
+// 7. POST /api/trips/:tripId/stops - Create stop for a trip with overlap validation
+tripsRouter.post('/:tripId/stops', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = Array.isArray(req.params.tripId) ? req.params.tripId[0] : (req.params.tripId as string);
+    const { city_id, arrival_date, departure_date, order_index } = req.body;
+    const userId = req.user!.id;
+
+    if (!city_id || !arrival_date || !departure_date) {
+      return res.status(400).json({ error: 'city_id, arrival_date, and departure_date are required' });
+    }
+
+    const stop = await StopService.createStop({
+      tripId,
+      cityId: city_id,
+      arrivalDate: arrival_date,
+      departureDate: departure_date,
+      orderIndex: order_index,
+      userId,
+    });
+
+    return res.status(201).json(stop);
+  } catch (err: any) {
+    return res.status(err.statusCode || 500).json({ error: err.message || 'Server error creating stop' });
+  }
+});
+
+// 8. PATCH /api/trips/:tripId/stops/reorder - Bulk reorder stops
+tripsRouter.patch('/:tripId/stops/reorder', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = Array.isArray(req.params.tripId) ? req.params.tripId[0] : (req.params.tripId as string);
+    const stopIds = req.body.stop_ids || req.body.stopIds || req.body;
+    const userId = req.user!.id;
+
+    if (!Array.isArray(stopIds)) {
+      return res.status(400).json({ error: 'stop_ids must be an array of stop UUIDs' });
+    }
+
+    const reordered = await StopService.reorderStops(tripId, stopIds, userId);
+    return res.json(reordered);
+  } catch (err: any) {
+    return res.status(err.statusCode || 500).json({ error: err.message || 'Server error reordering stops' });
   }
 });
