@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Button, Badge, useToast, Skeleton } from '../components/ui';
+import { formatCost, getCategoryBadgeVariant, USD_TO_INR } from '../components/activities/ActivityCard';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../lib/api';
@@ -174,7 +175,7 @@ export const SharedTripPage: React.FC = () => {
 
             <div className="bg-slate-900/80 backdrop-blur border border-slate-800 p-4 rounded-2xl text-right">
               <span className="text-xs uppercase text-slate-400 font-bold tracking-wider">Est. Activity Cost</span>
-              <p className="text-2xl font-mono font-extrabold text-emerald-400">₹{totalCost.toFixed(2)}</p>
+              <p className="text-2xl font-mono font-extrabold text-emerald-400">₹{Math.round(totalCost * USD_TO_INR).toLocaleString('en-IN')}</p>
             </div>
           </div>
         </div>
@@ -270,7 +271,7 @@ export const SharedTripPage: React.FC = () => {
                                 {cat}
                               </span>
                               <span className="text-xs font-mono font-bold text-emerald-400">
-                                ₹{Number(cost).toFixed(2)}
+                                ₹{Math.round(Number(cost) * USD_TO_INR).toLocaleString('en-IN')}
                               </span>
                             </div>
 

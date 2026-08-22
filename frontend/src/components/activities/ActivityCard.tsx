@@ -38,9 +38,14 @@ export const formatDuration = (minutes?: number | null): string => {
   return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
 };
 
+// Costs in the database are stored in USD. This converts to INR for display.
+// 1 USD ≈ ₹83 (approximate). Update this constant to change the rate globally.
+export const USD_TO_INR = 83;
+
 export const formatCost = (cost?: number | null): string => {
   if (cost === undefined || cost === null || cost === 0) return 'Free';
-  return `₹${Number(cost).toFixed(0)}`;
+  const inr = Math.round(Number(cost) * USD_TO_INR);
+  return `₹${inr.toLocaleString('en-IN')}`;
 };
 
 export const ActivityCard: React.FC<ActivityCardProps> = ({
