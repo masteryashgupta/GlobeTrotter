@@ -44,6 +44,20 @@ citiesRouter.get('/popular', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/cities/filters
+ * Returns distinct list of countries and regions for filter dropdowns.
+ * Public route.
+ */
+citiesRouter.get('/filters', async (_req: Request, res: Response) => {
+  try {
+    const filters = await CatalogService.getCityFilters();
+    return res.json(filters);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Server error fetching city filters', details: err.message });
+  }
+});
+
+/**
  * GET /api/cities/:id
  * Single city detail.
  * Public route.

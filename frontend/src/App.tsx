@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { CitySearchPage } from './pages/CitySearchPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -132,7 +133,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Search Cities" part="Part B: Itinerary & Search" />
+                      <CitySearchPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }

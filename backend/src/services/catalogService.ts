@@ -267,6 +267,18 @@ export class CatalogService {
   }
 
   /**
+   * Get distinct countries and regions for search filter dropdowns.
+   */
+  static async getCityFilters(): Promise<{ countries: string[]; regions: string[] }> {
+    const cities = await this.searchCities({ limit: 200 });
+    const countries = Array.from(new Set(cities.map((c) => c.country).filter(Boolean))).sort();
+    const regions = Array.from(
+      new Set(cities.map((c) => c.region).filter((r): r is string => Boolean(r)))
+    ).sort();
+    return { countries, regions };
+  }
+
+  /**
    * Get single activity by ID.
    */
   static async getActivityById(id: string): Promise<ActivityWithCity | null> {
