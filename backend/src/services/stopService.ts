@@ -336,11 +336,11 @@ export class StopService {
   }
 
   /**
-   * Bulk reorder stops for a trip in a single operation.
+   * Bulk reorder stops for a trip in a single operation, reassigning chronological dates to slot positions.
    */
   static async reorderStops(
     tripId: string,
-    stopIds: string[],
+    stopItems: (string | { id: string; arrival_date?: string; departure_date?: string })[],
     userId: string
   ): Promise<StopWithCity[]> {
     const isOwner = await this.verifyTripOwnership(tripId, userId);
@@ -350,25 +350,33 @@ export class StopService {
       throw err;
     }
 
-    // Update in Supabase
+    // Update in Supabase & in-memory
     try {
-      for (let i = 0; i < stopIds.length; i++) {
+      for (let i = 0; i < stopItems.length; i++) {
+        const item = stopItems[i];
+        const id = typeof item === 'string' ? item : item.id;
+        const arrivalDate = typeof item === 'object' ? item.arrival_date : undefined;
+        const departureDate = typeof item === 'object' ? item.departure_date : undefined;
+
+        const updateData: any = { order_index: i };
+        if (arrivalDate) updateData.arrival_date = arrivalDate;
+        if (departureDate) updateData.departure_date = departureDate;
+
         await supabaseAdmin
           .from('stops')
-          .update({ order_index: i } as any)
-          .eq('id', stopIds[i])
+          .update(updateData)
+          .eq('id', id)
           .eq('trip_id', tripId);
+
+        const memoryStop = inMemoryStops.find((s) => s.id === id && s.trip_id === tripId);
+        if (memoryStop) {
+          memoryStop.order_index = i;
+          if (arrivalDate) memoryStop.arrival_date = arrivalDate;
+          if (departureDate) memoryStop.departure_date = departureDate;
+        }
       }
     } catch {
       // Fall through
-    }
-
-    // Update in-memory
-    for (let i = 0; i < stopIds.length; i++) {
-      const stop = inMemoryStops.find((s) => s.id === stopIds[i] && s.trip_id === tripId);
-      if (stop) {
-        stop.order_index = i;
-      }
     }
 
     return this.getStopsByTripId(tripId);

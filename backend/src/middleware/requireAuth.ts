@@ -32,3 +32,21 @@ export const requireAuth = async (
     return res.status(401).json({ error: 'Unauthorized: Authentication error', details: err.message });
   }
 };
+
+export const optionalAuth = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const { data: { user } } = await supabaseAdmin.auth.getUser(token);
+      if (user) req.user = user;
+    } catch {
+      // Ignore invalid optional tokens
+    }
+  }
+  next();
+};

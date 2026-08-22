@@ -128,11 +128,22 @@ export const ItineraryBuilderPage: React.FC = () => {
 
     if (oldIndex === -1 || newIndex === -1) return;
 
-    // Calculate reordered array with updated order_index
     const previousStops = [...stops];
-    const newStops = arrayMove(stops, oldIndex, newIndex).map((s, idx) => ({
+
+    // Capture the existing chronological date slot of each position before reordering
+    const slotDates = stops.map((s) => ({
+      arrival_date: s.arrival_date,
+      departure_date: s.departure_date,
+    }));
+
+    const reorderedStops = arrayMove(stops, oldIndex, newIndex);
+
+    // Assign slotDates[idx] to reorderedStops[idx] so position idx keeps the chronological date slot of position idx
+    const newStops = reorderedStops.map((s, idx) => ({
       ...s,
       order_index: idx,
+      arrival_date: slotDates[idx].arrival_date,
+      departure_date: slotDates[idx].departure_date,
     }));
 
     // 1. Optimistically update local query cache immediately
@@ -142,12 +153,16 @@ export const ItineraryBuilderPage: React.FC = () => {
     try {
       await api.reorderTripStops(
         tripId,
-        newStops.map((s) => s.id)
+        newStops.map((s) => ({
+          id: s.id,
+          arrival_date: s.arrival_date,
+          departure_date: s.departure_date,
+        }))
       );
       addToast(
         'success',
         'Stops Sequence Updated',
-        'Your itinerary stop order was saved successfully.'
+        'Your itinerary stop order and dates were updated successfully.'
       );
     } catch (err: any) {
       // 3. Roll back to previous state on failure

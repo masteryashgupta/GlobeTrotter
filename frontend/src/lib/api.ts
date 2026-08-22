@@ -185,7 +185,10 @@ export const api = {
     return res.json();
   },
 
-  async reorderTripStops(tripId: string, stopIds: string[]): Promise<(Stop & { cities?: City })[]> {
+  async reorderTripStops(
+    tripId: string,
+    stops: (string | { id: string; arrival_date?: string; departure_date?: string })[]
+  ): Promise<(Stop & { cities?: City })[]> {
     const headers = await getAuthHeader();
     const res = await fetch(`${BASE_URL}/trips/${tripId}/stops/reorder`, {
       method: 'PATCH',
@@ -193,7 +196,7 @@ export const api = {
         'Content-Type': 'application/json',
         ...headers,
       },
-      body: JSON.stringify({ stop_ids: stopIds }),
+      body: JSON.stringify({ stops, stop_ids: stops }),
     });
 
     if (!res.ok) {
