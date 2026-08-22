@@ -7,6 +7,7 @@ import { ProtectedRoute, PublicRoute } from './routes/RouteGuards';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { DashboardPage } from './pages/DashboardPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 
 const queryClient = new QueryClient({
@@ -62,7 +63,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Dashboard" part="Part A: Auth & Dashboard" />
+                      <DashboardPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
