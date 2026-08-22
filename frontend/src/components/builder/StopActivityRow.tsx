@@ -91,7 +91,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
           <button
             type="button"
             {...dragHandleProps}
-            className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors touch-none select-none shrink-0"
+            className="cursor-grab active:cursor-grabbing p-1.5 -ml-1 min-w-[32px] min-h-[32px] flex items-center justify-center text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors touch-none select-none shrink-0"
             title="Drag to reorder activity"
             aria-label="Drag to reorder activity"
           >

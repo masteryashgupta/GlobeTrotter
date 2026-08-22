@@ -138,7 +138,7 @@ export const StopCard: React.FC<StopCardProps> = ({
             <button
               type="button"
               {...dragHandleProps}
-              className="cursor-grab active:cursor-grabbing p-1.5 -ml-1 text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition-colors touch-none select-none shrink-0"
+              className="cursor-grab active:cursor-grabbing p-2 -ml-1 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded-lg transition-colors touch-none select-none shrink-0"
               title="Drag to reorder stop"
               aria-label="Drag to reorder stop"
             >
