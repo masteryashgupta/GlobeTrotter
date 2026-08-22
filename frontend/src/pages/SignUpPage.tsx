@@ -108,36 +108,82 @@ export const SignUpPage: React.FC = () => {
         }}
       />
 
-      <div className="w-full max-w-md space-y-6 relative z-10 animate-fade-up">
+      <div className="w-full max-w-xl space-y-6 relative z-10 animate-fade-up">
         {/* ── Header ── */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7C3AED] to-[#C084FC] items-center justify-center text-white font-black text-2xl shadow-xl shadow-[rgba(124,58,237,0.25)] font-heading">
-            G
-          </div>
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">
-            Create your GlobeTrotter account
+            Register Account
           </h1>
           <p className="text-sm text-[#6B7280]">Join travel enthusiasts and start planning your journeys</p>
         </div>
 
-        {/* ── Form Card ── */}
+        {/* ── Form Card (Screen 2 Spec) ── */}
         <Card>
+          {/* Top Avatar Circle Icon */}
+          <div className="flex flex-col items-center justify-center pb-4 pt-2">
+            <div className="w-20 h-20 rounded-full bg-[#F7F5FC] border-2 border-dashed border-[#7C3AED] flex flex-col items-center justify-center text-[#7C3AED] font-bold text-xs shadow-sm hover:border-[#5B21B6] transition-colors cursor-pointer group">
+              <svg className="w-6 h-6 text-[#7C3AED] group-hover:scale-110 transition-transform mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>Photo</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit(onSignUp)} className="space-y-4" noValidate>
-            <Input
-              label="Full Name"
-              placeholder="Alex Morgan"
-              error={errors.full_name?.message}
-              {...register('full_name')}
-            />
+            {/* 2-Column Field Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="First Name"
+                placeholder="Alex"
+                error={errors.full_name?.message}
+                {...register('full_name')}
+              />
+              <Input
+                label="Last Name"
+                placeholder="Morgan"
+              />
+            </div>
 
-            <Input
-              label="Email Address"
-              type="email"
-              placeholder="you@example.com"
-              error={errors.email?.message}
-              {...register('email')}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Email Address"
+                type="email"
+                placeholder="you@example.com"
+                error={errors.email?.message}
+                {...register('email')}
+              />
+              <Input
+                label="Phone Number"
+                type="tel"
+                placeholder="+1 (555) 000-0000"
+              />
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="City"
+                placeholder="San Francisco"
+              />
+              <Input
+                label="Country"
+                placeholder="United States"
+              />
+            </div>
+
+            {/* Additional Information Textarea */}
+            <div>
+              <label className="block text-xs font-semibold text-[#1A1523] uppercase tracking-wide mb-1">
+                Additional Information
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Travel preferences, favorite activities, bio..."
+                className="w-full px-3.5 py-2.5 bg-[#F7F5FC] border border-[#E9E4F5] rounded-xl text-sm text-[#1A1523] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all resize-none"
+              />
+            </div>
+
+            {/* Password Field */}
             <Input
               label="Password"
               type="password"
@@ -147,14 +193,18 @@ export const SignUpPage: React.FC = () => {
               {...register('password')}
             />
 
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-full mt-2"
-              isLoading={isSubmitting}
-            >
-              Create Account
-            </Button>
+            {/* Centered Register Users CTA Button */}
+            <div className="pt-2 flex justify-center">
+              <Button
+                variant="primary"
+                type="submit"
+                size="lg"
+                className="w-full sm:w-auto px-8"
+                isLoading={isSubmitting}
+              >
+                Register Users
+              </Button>
+            </div>
           </form>
 
           <Card.Footer className="justify-center">

@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
 import { Trip } from '../../../shared/types';
-import { Card, Button, Badge, Skeleton, EmptyState, Modal, useToast } from '../components/ui';
+import { Card, Button, Badge, Skeleton, EmptyState, Modal, useToast, FilterControlBar } from '../components/ui';
 import { TripForm } from '../components/trips/TripForm';
 
 export const MyTripsPage: React.FC = () => {
@@ -82,7 +82,7 @@ export const MyTripsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E9E4F5] pb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">My Trips</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A1523] tracking-tight font-heading">User Trip Listing</h1>
           <p className="text-sm text-[#6B7280] mt-1">
             Manage your travel itineraries, edit details, or build out daily stops
           </p>
@@ -93,6 +93,11 @@ export const MyTripsPage: React.FC = () => {
           </Button>
         </Link>
       </div>
+
+      {/* Top Search Bar + Group by / Filter / Sort by controls (Screen 6 Spec) */}
+      <FilterControlBar
+        searchPlaceholder="Search trip listings by city, name, or description..."
+      />
 
       {/* Grid / Content */}
       {isLoading ? (

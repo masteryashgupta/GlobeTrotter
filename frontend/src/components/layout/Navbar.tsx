@@ -14,6 +14,7 @@ export const Navbar = () => {
     { name: 'My Trips', path: '/trips' },
     { name: 'Search Cities', path: '/cities/search' },
     { name: 'Search Activities', path: '/activities/search' },
+    { name: 'Community', path: '/community' },
     { name: 'Settings', path: '/settings' },
     ...(profile?.is_admin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
   ];

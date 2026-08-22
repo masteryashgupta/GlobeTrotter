@@ -172,11 +172,11 @@ export const StopCard: React.FC<StopCardProps> = ({
             }}
           />
 
-          {/* City Name & Country */}
+          {/* City Name & Section Description (Screen 5 Spec) */}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h4 className="text-base font-bold text-[#1A1523] truncate">
-                {stop.cities?.name || stop.custom_city_name || 'Unknown City'}
+              <h4 className="text-base font-bold text-[#1A1523] truncate font-heading">
+                Section {index + 1}: {stop.cities?.name || stop.custom_city_name || 'Destination'}
               </h4>
               {stop.cities?.region && (
                 <Badge variant="neutral" size="sm" className="hidden xs:inline-flex text-[10px]">
@@ -184,25 +184,29 @@ export const StopCard: React.FC<StopCardProps> = ({
                 </Badge>
               )}
             </div>
-            <p className="text-xs font-semibold text-[#6B7280] flex items-center gap-1 mt-0.5">
-              <svg className="w-3.5 h-3.5 text-[#7C3AED]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {stop.cities?.country || 'Destination'}
+            <p className="text-xs text-[#6B7280] truncate mt-0.5">
+              All necessary info about this section — travel, hotel, or any other activity
             </p>
           </div>
         </div>
 
-        {/* Center: Stay Dates & Duration */}
-        <div className="flex items-center gap-3 bg-white border border-[#E9E4F5] px-3.5 py-2 rounded-xl shrink-0 shadow-sm">
+        {/* Center: Side-by-side Date Range & Budget Inputs (Screen 5 Spec) */}
+        <div className="flex flex-wrap items-center gap-3 bg-white border border-[#E9E4F5] p-2.5 rounded-xl shrink-0 shadow-sm">
           <div className="text-left">
-            <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Stay Window</span>
-            <span className="text-xs sm:text-sm font-semibold text-[#1A1523]">
-              {stop.arrival_date} → {stop.departure_date}
+            <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Date Range</span>
+            <span className="text-xs font-semibold text-[#1A1523]">
+              {stop.arrival_date} to {stop.departure_date}
             </span>
           </div>
-          <Badge variant="primary" size="sm" className="shrink-0">
+
+          <div className="text-left border-l border-[#E9E4F5] pl-3">
+            <span className="text-[10px] uppercase font-bold text-[#6B7280] block tracking-wider">Budget of Section</span>
+            <span className="text-xs font-bold text-[#7C3AED]">
+              ${stop.cities?.cost_index ? stop.cities.cost_index * 250 : 500}
+            </span>
+          </div>
+
+          <Badge variant="primary" size="sm" className="shrink-0 ml-1">
             {nights} {nights === 1 ? 'Night' : 'Nights'}
           </Badge>
         </div>

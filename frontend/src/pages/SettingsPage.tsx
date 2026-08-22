@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileUpdateSchema, ProfileUpdateInput } from '../../../shared/validation';
@@ -8,7 +9,7 @@ import { useToast } from '../components/ui';
 import { Button, Card, Input, Select, Modal, Skeleton, EmptyState, Badge } from '../components/ui';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
-import { City } from '../../../shared/types';
+import { City, Trip } from '../../../shared/types';
 
 const LANGUAGE_OPTIONS = [
   { label: 'English (US)', value: 'en' },
@@ -36,7 +37,8 @@ export const SettingsPage: React.FC = () => {
   const [isLoadingDestinations, setIsLoadingDestinations] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState<boolean>(false);
-  
+  const [isEditingInfo, setIsEditingInfo] = useState<boolean>(false);
+
   const [savedDestinations, setSavedDestinations] = useState<City[]>([]);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
 
@@ -44,6 +46,34 @@ export const SettingsPage: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [confirmText, setConfirmText] = useState<string>('');
   const [isDeletingAccount, setIsDeletingAccount] = useState<boolean>(false);
+
+  // Fetch user trips for Preplanned / Previous sections
+  const { data: userTrips = [] } = useQuery<Trip[]>({
+    queryKey: ['user-profile-trips', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const token = session?.access_token;
+      try {
+        const res = await fetch(`${API_BASE_URL}/trips`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn('Backend fetch failed, using fallback query');
+      }
+      const { data } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('owner_id', user.id)
+        .order('created_at', { ascending: false });
+      return (data || []) as Trip[];
+    },
+    enabled: !!user,
+  });
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const preplannedTrips = userTrips.filter((t) => t.start_date >= todayStr);
+  const previousTrips = userTrips.filter((t) => t.start_date < todayStr);
 
   const {
     register,
@@ -251,88 +281,100 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-4 animate-fade-up">
+    <div className="max-w-5xl mx-auto space-y-8 py-4 animate-fade-up">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-extrabold text-[#1A1523] tracking-tight sm:text-3xl font-heading">
-          Account Settings &amp; Profile
+          User Profile Page
         </h1>
         <p className="text-sm text-[#6B7280] mt-1">
-          Manage your personal details, preferred language, saved trip destinations, and account lifecycle.
+          Personal user profile details, preplanned itineraries, and previous trips overview.
         </p>
       </div>
 
-      {/* 1. Profile Information & Preferences Form */}
+      {/* ── 1. Top Section: Circular Profile Image Left, User Details + Edit Option Right (Screen 7 Spec) ── */}
       <Card>
-        <Card.Header>
-          <Card.Title>Personal Information</Card.Title>
-          <Card.Description>Update your profile information and language preferences.</Card.Description>
-        </Card.Header>
-
-        {isLoadingProfile ? (
-          <div className="space-y-4 py-2">
-            <Skeleton variant="rectangular" height={40} />
-            <Skeleton variant="rectangular" height={40} />
-            <Skeleton variant="rectangular" height={40} />
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Avatar Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6 border-b border-[#E9E4F5]">
-              <div className="relative group">
-                {avatarPreview || watchAvatarUrl ? (
-                  <img
-                    src={(avatarPreview || watchAvatarUrl) ?? undefined}
-                    alt="Avatar preview"
-                    className="w-20 h-20 rounded-full object-cover border-2 border-[#7C3AED] shadow-md"
-                    onError={() => setAvatarPreview('')}
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-[#F7F5FC] flex items-center justify-center text-[#7C3AED] font-bold text-2xl border-2 border-[#E9E4F5]">
-                    {user?.email?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex-1 space-y-3">
-                <label className="block text-xs font-semibold text-[#1A1523] uppercase tracking-wide">
-                  Profile Avatar
-                </label>
-                <div className="flex flex-wrap items-center gap-3">
-                  <label className="cursor-pointer">
-                    <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium bg-[#F7F5FC] hover:bg-[#E9E4F5] text-[#1A1523] rounded-lg transition-colors border border-[#E9E4F5]">
-                      {isUploadingAvatar ? 'Uploading...' : 'Upload New Photo'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleAvatarUpload}
-                      disabled={isUploadingAvatar}
-                      className="hidden"
-                    />
-                  </label>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-2">
+          <div className="flex items-center gap-5">
+            {/* Circular Profile Image */}
+            <div className="relative group shrink-0">
+              {avatarPreview || watchAvatarUrl ? (
+                <img
+                  src={(avatarPreview || watchAvatarUrl) ?? undefined}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-[#7C3AED]/20 shadow-md"
+                  onError={() => setAvatarPreview('')}
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-[#F7F5FC] flex items-center justify-center text-[#7C3AED] font-black text-3xl border-4 border-[#E9E4F5]">
+                  {user?.email?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <input type="hidden" {...register('avatar_url')} />
-              </div>
+              )}
             </div>
 
-            {/* Email (Read-Only) & Full Name */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <Input
-                label="Email Address"
-                value={user?.email || ''}
-                readOnly
-                disabled
-                helperText="Email is managed via Supabase Auth"
-                className="bg-[#F7F5FC] text-[#6B7280] cursor-not-allowed border-[#E9E4F5]"
-              />
-              <Input
-                label="Full Name"
-                placeholder="Jane Doe"
-                error={errors.full_name?.message}
-                {...register('full_name')}
-              />
+            {/* User Details */}
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold text-[#1A1523] tracking-tight font-heading">
+                {profile?.full_name || user?.email?.split('@')[0] || 'Traveler'}
+              </h2>
+              <p className="text-xs text-[#6B7280]">
+                {user?.email}
+              </p>
+              <div className="flex items-center gap-2 pt-1">
+                <Badge variant="primary" size="sm">
+                  🌐 Language: {profile?.language_pref?.toUpperCase() || 'EN'}
+                </Badge>
+                <Badge variant="success" size="sm">
+                  Active Traveler
+                </Badge>
+              </div>
             </div>
+          </div>
+
+          {/* Edit Info Trigger Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditingInfo(!isEditingInfo)}
+          >
+            {isEditingInfo ? 'Hide Edit Form' : '✏️ Edit Profile Info'}
+          </Button>
+        </div>
+
+        {/* Collapsible Edit Profile Form */}
+        {isEditingInfo && (
+          <div className="mt-6 pt-6 border-t border-[#E9E4F5]">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="flex items-center gap-3">
+                <label className="cursor-pointer">
+                  <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium bg-[#F7F5FC] hover:bg-[#E9E4F5] text-[#1A1523] rounded-lg transition-colors border border-[#E9E4F5]">
+                    {isUploadingAvatar ? 'Uploading...' : 'Upload New Avatar Photo'}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    disabled={isUploadingAvatar}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <Input
+                  label="Email Address"
+                  value={user?.email || ''}
+                  readOnly
+                  disabled
+                  className="bg-[#F7F5FC] text-[#6B7280] cursor-not-allowed border-[#E9E4F5]"
+                />
+                <Input
+                  label="Full Name"
+                  placeholder="Jane Doe"
+                  error={errors.full_name?.message}
+                  {...register('full_name')}
+                />
+              </div>
 
             {/* Language & Currency Preferences */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
@@ -340,7 +382,6 @@ export const SettingsPage: React.FC = () => {
                 label="Language Preference"
                 options={LANGUAGE_OPTIONS}
                 error={errors.language_pref?.message}
-                helperText="Application display language preference"
                 {...register('language_pref')}
               />
               <Select
@@ -352,15 +393,106 @@ export const SettingsPage: React.FC = () => {
               />
             </div>
 
-            {/* Form Submit Footer */}
-            <div className="pt-4 border-t border-[#E9E4F5] flex justify-end">
-              <Button type="submit" isLoading={isSubmitting}>
-                Save Profile Changes
-              </Button>
-            </div>
-          </form>
+              <div className="flex justify-end">
+                <Button type="submit" isLoading={isSubmitting}>
+                  Save Profile Changes
+                </Button>
+              </div>
+            </form>
+          </div>
         )}
       </Card>
+
+      {/* ── 2. Preplanned Trips Section (Screen 7 Spec: Horizontal Row + View Buttons + Create Card) ── */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-[#1A1523] tracking-tight font-heading">Preplanned Trips</h2>
+          <span className="text-xs text-[#6B7280]">{preplannedTrips.length} Upcoming Journeys</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {/* Card to Create/Add a New Trip (Screen 7 Spec) */}
+          <Link
+            to="/trips/new"
+            className="rounded-2xl border-2 border-dashed border-[#7C3AED]/40 bg-[#F7F5FC] p-6 flex flex-col items-center justify-center text-center hover:border-[#7C3AED] hover:bg-[#7C3AED]/5 transition-all group min-h-[220px]"
+          >
+            <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center font-bold text-2xl group-hover:scale-110 transition-transform mb-2">
+              +
+            </div>
+            <span className="font-bold text-sm text-[#1A1523] font-heading">Add / Create New Trip</span>
+            <span className="text-xs text-[#6B7280] mt-1">Plan dates, stops & activities</span>
+          </Link>
+
+          {/* Preplanned Trip Cards */}
+          {preplannedTrips.map((trip) => (
+            <Card key={trip.id} hoverable className="flex flex-col justify-between overflow-hidden">
+              <div>
+                <div className="h-32 -mx-6 -mt-6 mb-3 overflow-hidden bg-[#F7F5FC] relative">
+                  <img
+                    src={trip.cover_photo_url || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80'}
+                    alt={trip.name || 'Trip'}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h4 className="font-bold text-sm text-[#1A1523] font-heading line-clamp-1">{trip.name || 'Untitled Trip'}</h4>
+                <p className="text-xs text-[#6B7280] mt-1">📅 {trip.start_date}</p>
+              </div>
+              <Card.Footer className="mt-4 pt-2 border-t border-[#E9E4F5]">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => navigate(`/trips/${trip.id}/view`)}
+                >
+                  View
+                </Button>
+              </Card.Footer>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* ── 3. Previous Trips Section (Screen 7 Spec: Horizontal Row + View Buttons) ── */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-[#1A1523] tracking-tight font-heading">Previous Trips</h2>
+          <span className="text-xs text-[#6B7280]">{previousTrips.length} Completed Journeys</span>
+        </div>
+
+        {previousTrips.length === 0 ? (
+          <p className="text-xs text-[#6B7280] italic bg-[#F7F5FC] p-4 rounded-xl border border-[#E9E4F5]">
+            No previous completed trips logged yet.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {previousTrips.map((trip) => (
+              <Card key={trip.id} hoverable className="flex flex-col justify-between overflow-hidden">
+                <div>
+                  <div className="h-32 -mx-6 -mt-6 mb-3 overflow-hidden bg-[#F7F5FC] relative">
+                    <img
+                      src={trip.cover_photo_url || 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80'}
+                      alt={trip.name || 'Trip'}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h4 className="font-bold text-sm text-[#1A1523] font-heading line-clamp-1">{trip.name}</h4>
+                  <p className="text-xs text-[#6B7280] mt-1">📅 {trip.start_date} to {trip.end_date}</p>
+                </div>
+                <Card.Footer className="mt-4 pt-2 border-t border-[#E9E4F5]">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => navigate(`/trips/${trip.id}/view`)}
+                  >
+                    View
+                  </Button>
+                </Card.Footer>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* 2. Saved Destinations Section */}
       <Card>
