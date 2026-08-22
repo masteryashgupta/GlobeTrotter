@@ -132,7 +132,7 @@ export const MyTripsPage: React.FC = () => {
                   // [STYLING] Stagger animation + violet hover colors
                   <Card key={trip.id} hoverable className={`flex flex-col justify-between group overflow-hidden animate-fade-up animate-stagger-${Math.min(i + 1, 6) as 1 | 2 | 3 | 4 | 5 | 6}`}>
                     <div>
-                      <div className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden bg-slate-800 relative">
+                      <div className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden bg-[#F7F5FC] relative">
                         <img
                           src={
                             trip.cover_photo_url ||
