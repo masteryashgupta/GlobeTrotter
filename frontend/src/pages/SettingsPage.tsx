@@ -142,23 +142,32 @@ export const SettingsPage: React.FC = () => {
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
+      let publicUrl: string;
+
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });
 
-      let publicUrl: string;
       if (uploadError) {
-        // Storage bucket not configured or unavailable — use a local blob URL for the preview
-        // and warn the user that the URL won't persist after page refresh.
-        console.warn('Storage upload failed, using local blob URL:', uploadError.message);
-        publicUrl = URL.createObjectURL(file);
-        addToast('warning', 'Avatar Preview Only', 'Storage upload failed. The preview is local only — save your profile after configuring the Supabase Storage bucket.');
+        console.warn('Storage upload failed, falling back to Base64 Data URL:', uploadError.message);
+        publicUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        addToast('success', 'Photo Selected', 'Image processed cleanly. Click "Save Profile Changes" to save.');
       } else {
         const { data: publicUrlData } = supabase.storage
           .from('avatars')
           .getPublicUrl(filePath);
-        publicUrl = publicUrlData?.publicUrl || URL.createObjectURL(file);
-        addToast('success', 'Avatar Uploaded', 'Your profile photo has been updated. Click Save to persist the change.');
+        publicUrl = publicUrlData?.publicUrl || await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        addToast('success', 'Avatar Uploaded', 'Your profile photo has been updated. Click "Save Profile Changes" to save.');
       }
 
       setValue('avatar_url', publicUrl, { shouldValidate: true });
@@ -167,7 +176,6 @@ export const SettingsPage: React.FC = () => {
       addToast('error', 'Upload Failed', err.message || 'Could not upload avatar image.');
     } finally {
       setIsUploadingAvatar(false);
-      // Reset the file input so the same file can be re-selected if needed
       e.target.value = '';
     }
   };

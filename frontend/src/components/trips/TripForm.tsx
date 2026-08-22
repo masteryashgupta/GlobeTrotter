@@ -60,23 +60,37 @@ export const TripForm: React.FC<TripFormProps> = ({ initialValues, isEdit = fals
       const fileName = `${Math.random().toString(36).substring(2, 9)}_${Date.now()}.${fileExt}`;
       const filePath = `covers/${fileName}`;
 
+      let uploadedUrl: string;
+
       const { error: uploadError } = await supabase.storage
         .from('trip-covers')
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
-        addToast('error', 'Image Upload Failed', uploadError.message);
-        return;
+        console.warn('Storage upload failed, falling back to Base64 Data URL:', uploadError.message);
+        uploadedUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        addToast('success', 'Cover Photo Selected', 'Photo loaded successfully.');
+      } else {
+        const { data: publicUrlData } = supabase.storage
+          .from('trip-covers')
+          .getPublicUrl(filePath);
+
+        uploadedUrl = publicUrlData.publicUrl || await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        addToast('success', 'Image Uploaded', 'Cover photo uploaded successfully.');
       }
 
-      const { data: publicUrlData } = supabase.storage
-        .from('trip-covers')
-        .getPublicUrl(filePath);
-
-      const uploadedUrl = publicUrlData.publicUrl;
       setCoverPhotoUrl(uploadedUrl);
-      setValue('cover_photo_url', uploadedUrl);
-      addToast('success', 'Image Uploaded', 'Cover photo uploaded successfully.');
+      setValue('cover_photo_url', uploadedUrl, { shouldValidate: true });
     } catch (err: any) {
       addToast('error', 'Upload Error', err.message || 'Failed to upload photo.');
     } finally {

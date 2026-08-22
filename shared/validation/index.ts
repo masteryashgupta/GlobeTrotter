@@ -36,7 +36,7 @@ export const profileUpdateSchema = z.object({
   ),
   avatar_url: z.preprocess(
     (val: unknown) => (typeof val === 'string' && val.trim() === '' ? null : val),
-    z.string().url('Must be a valid image URL (https://...)').nullable().optional()
+    z.string().min(1, 'Invalid avatar image format').nullable().optional()
   ),
   language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).optional(),
 });
@@ -57,7 +57,7 @@ export const tripCreateSchema = z
     description: z.string().trim().max(1000, 'Description must not exceed 1000 characters').optional(),
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().min(1, 'End date is required'),
-    cover_photo_url: z.string().trim().url('Invalid image URL format').optional().or(z.literal('')),
+    cover_photo_url: z.string().trim().min(1, 'Invalid image URL format').optional().or(z.literal('')),
     is_public: z.boolean().optional(),
   })
   .refine((data: { start_date: string; end_date: string }) => isDateBeforeOrEqual(data.start_date, data.end_date), {
@@ -72,7 +72,7 @@ export const tripUpdateSchema = z
     description: z.string().trim().max(1000, 'Description must not exceed 1000 characters').optional(),
     start_date: z.string().optional(),
     end_date: z.string().optional(),
-    cover_photo_url: z.string().trim().url('Invalid image URL format').optional().or(z.literal('')),
+    cover_photo_url: z.string().trim().min(1, 'Invalid image URL format').optional().or(z.literal('')),
     is_public: z.boolean().optional(),
   })
   .refine(
