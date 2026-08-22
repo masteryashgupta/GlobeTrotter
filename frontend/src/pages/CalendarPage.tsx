@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, dateFnsLocalizer, View, Views } from 'react-big-calendar';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import withDragAndDropFromLib from 'react-big-calendar/lib/addons/dragAndDrop';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -24,6 +24,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const withDragAndDrop = (withDragAndDropFromLib as any).default || withDragAndDropFromLib;
 const DnDCalendar = withDragAndDrop(Calendar as any);
 
 const CATEGORY_COLORS: Record<string, string> = {
