@@ -21,6 +21,10 @@ import { ActivitySearchPage } from './pages/ActivitySearchPage';
 import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
 import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
+/**
+ * GlobeTrotter Full-Stack App Root
+ * Auto-deployed via GitHub Actions Workflow (.github/workflows/deploy-frontend.yml)
+ */
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
