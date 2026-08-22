@@ -67,20 +67,56 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 3. Cities Endpoints (Part B - Planned Stubs)
+## 3. Cities Endpoints (Part B - Fully Implemented)
 
 ### `GET /api/cities/search`
-- **Auth Required:** Optional
-- **Query Params:** `?query=paris`
-- **Response (200 OK):** Array of matching `City` objects.
+- **Auth Required:** None (Public)
+- **Query Params:**
+  - `q` or `query`: (optional) Case-insensitive search on city name (e.g. `?q=paris`)
+  - `country`: (optional) Filter by country name (e.g. `?country=France`)
+  - `region`: (optional) Filter by region (e.g. `?region=Europe`)
+  - `limit`: (optional, default 20) Maximum number of cities to return
+- **Response (200 OK):** Array of matching `City` objects sorted by `popularity DESC`.
+
+### `GET /api/cities/popular`
+- **Auth Required:** None (Public)
+- **Query Params:**
+  - `limit`: (optional, default 10)
+- **Response (200 OK):** Top `City` objects ordered by `popularity DESC`.
 
 ### `GET /api/cities/:id`
-- **Auth Required:** Optional
-- **Response (200 OK):** `City` object with detailed description and image.
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Single `City` object.
+- **Response (404 Not Found):** `{ "error": "City not found" }`
 
 ---
 
-## 4. Itinerary & Stops Endpoints (Part B - Planned Stubs)
+## 4. Activities Endpoints (Part B - Search Implemented)
+
+### `GET /api/activities/search`
+- **Auth Required:** None (Public)
+- **Query Params:**
+  - `cityId` or `city_id`: (optional) UUID or name of the city
+  - `category`: (optional) One of `sightseeing`, `food`, `adventure`, `nightlife`, `culture`, `shopping`, `other`
+  - `minCost` or `min_cost`: (optional) Minimum activity cost
+  - `maxCost` or `max_cost`: (optional) Maximum activity cost
+  - `maxDuration` or `max_duration`: (optional) Maximum duration in minutes
+  - `q` or `query`: (optional) Full-text search on activity name or description
+  - `limit`: (optional, default 20) Maximum results
+- **Response (200 OK):** Array of `Activity` objects (with nested `cities` details).
+
+### `GET /api/activities/:id`
+- **Auth Required:** None (Public)
+- **Response (200 OK):** Single `Activity` object with city details.
+- **Response (404 Not Found):** `{ "error": "Activity not found" }`
+
+### `POST /api/activities/trip-activities`
+- **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
+- **Response (201 Created):** `TripActivity` object.
+
+---
+
+## 5. Itinerary & Stops Endpoints (Part B - Planned Stubs)
 
 ### `POST /api/stops`
 - **Auth Required:** Yes (`requireAuth` + `validateBody(stopCreateSchema)`)
@@ -90,13 +126,9 @@ Authorization: Bearer <supabase_access_token>
 - **Auth Required:** Yes (`requireAuth`)
 - **Response (200 OK):** `{ "message": "Stop deleted" }`
 
-### `POST /api/activities/trip-activities`
-- **Auth Required:** Yes (`requireAuth` + `validateBody(tripActivityCreateSchema)`)
-- **Response (201 Created):** `TripActivity` object.
-
 ---
 
-## 5. Budget & Expense Endpoints (Part C - Planned Stubs)
+## 6. Budget & Expense Endpoints (Part C - Planned Stubs)
 
 ### `GET /api/budget/trips/:tripId/expenses`
 - **Auth Required:** Yes (`requireAuth`)
@@ -108,7 +140,7 @@ Authorization: Bearer <supabase_access_token>
 
 ---
 
-## 6. Admin Endpoints (Part D - Planned Stubs)
+## 7. Admin Endpoints (Part D - Planned Stubs)
 
 ### `GET /api/admin/stats`
 - **Auth Required:** Yes (`requireAuth` + Service Role/Admin Check)
