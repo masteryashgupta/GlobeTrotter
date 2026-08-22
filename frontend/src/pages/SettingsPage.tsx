@@ -10,6 +10,7 @@ import { Button, Card, Input, Select, Modal, Skeleton, EmptyState, Badge } from 
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
 import { City, Trip } from '../../../shared/types';
+import { useTranslation } from 'react-i18next';
 
 const LANGUAGE_OPTIONS = [
   { label: 'English (US)', value: 'en' },
@@ -33,6 +34,7 @@ export const SettingsPage: React.FC = () => {
   const { user, session, profile, signOut, refreshProfile } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(true);
   const [isLoadingDestinations, setIsLoadingDestinations] = useState<boolean>(true);
@@ -107,6 +109,9 @@ export const SettingsPage: React.FC = () => {
         currency: (profile?.currency as any) || 'USD',
       });
       setAvatarPreview(profile.avatar_url || '');
+      if (profile.language_pref) {
+        i18n.changeLanguage(profile.language_pref);
+      }
       setIsLoadingProfile(false);
     } else {
       fetchProfile();
@@ -134,6 +139,9 @@ export const SettingsPage: React.FC = () => {
           currency: data.currency || 'USD',
         });
         setAvatarPreview(data.avatar_url || '');
+        if (data.language_pref) {
+          i18n.changeLanguage(data.language_pref);
+        }
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -239,13 +247,18 @@ export const SettingsPage: React.FC = () => {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || 'Failed to update profile');
+        throw new Error(result.error || t('profile.errors.updateFailed'));
+      }
+
+      if (result.language_pref) {
+        i18n.changeLanguage(result.language_pref);
       }
 
       await refreshProfile();
-      addToast('success', 'Profile Saved', 'Your settings and preferences have been updated.');
+      setIsEditingInfo(false);
+      addToast('success', t('common.success'), t('profile.messages.profileSaved'));
     } catch (err: any) {
-      addToast('error', 'Update Error', err.message || 'An error occurred while updating profile.');
+      addToast('error', t('common.error'), err.message || t('profile.errors.updateError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -285,14 +298,14 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 py-4 animate-fade-up">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-extrabold text-[#1A1523] tracking-tight sm:text-3xl font-heading">
-          User Profile Page
-        </h1>
-        <p className="text-sm text-[#6B7280] mt-1">
-          Personal user profile details, preplanned itineraries, and previous trips overview.
-        </p>
-      </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight font-heading">
+            {t("User Profile Page")}
+          </h1>
+          <p className="text-slate-500 mt-2 text-sm leading-relaxed max-w-2xl">
+            {t("Personal user profile details")}
+          </p>
+        </div>
 
       {/* ── 1. Top Section: Circular Profile Image Left, User Details + Edit Option Right (Screen 7 Spec) ── */}
       <Card>
@@ -334,13 +347,18 @@ export const SettingsPage: React.FC = () => {
           </div>
 
           {/* Edit Info Trigger Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsEditingInfo(!isEditingInfo)}
-          >
-            {isEditingInfo ? 'Hide Edit Form' : '✏️ Edit Profile Info'}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsEditingInfo(!isEditingInfo);
+                reset(); // Reset form when toggling
+              }}
+              className="text-xs font-semibold px-4 py-2 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition-all shadow-sm"
+            >
+              {isEditingInfo ? t("Hide Edit Form") : t("Show Edit Form")}
+            </Button>
+          </div>
         </div>
 
         {/* Collapsible Edit Profile Form */}
@@ -349,57 +367,66 @@ export const SettingsPage: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="flex items-center gap-3">
                 <label className="cursor-pointer">
-                  <span className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium bg-[#F7F5FC] hover:bg-[#E9E4F5] text-[#1A1523] rounded-lg transition-colors border border-[#E9E4F5]">
-                    {isUploadingAvatar ? 'Uploading...' : 'Upload New Avatar Photo'}
-                  </span>
+                  <Button
+                  variant="outline"
+                  className="text-xs px-3 py-1.5 font-medium border-slate-200 hover:bg-slate-50 shadow-sm relative overflow-hidden group"
+                  disabled={isUploadingAvatar}
+                >
+                  <span className="relative z-10 text-slate-700 group-hover:text-slate-900">{isUploadingAvatar ? 'Uploading...' : t('Upload New Avatar Photo')}</span>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleAvatarUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer z-20"
                     disabled={isUploadingAvatar}
-                    className="hidden"
                   />
+                </Button>
                 </label>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                 <Input
-                  label="Email Address"
+                  label={t('EMAIL ADDRESS')}
+                  type="email"
                   value={user?.email || ''}
-                  readOnly
                   disabled
-                  className="bg-[#F7F5FC] text-[#6B7280] cursor-not-allowed border-[#E9E4F5]"
+                  className="bg-slate-50/50 cursor-not-allowed opacity-70"
                 />
                 <Input
-                  label="Full Name"
-                  placeholder="Jane Doe"
-                  error={errors.full_name?.message}
+                  label={t('FULL NAME')}
                   {...register('full_name')}
+                  error={errors.full_name?.message}
+                  placeholder="How you'd like to be called"
+                  disabled={!isEditingInfo}
                 />
               </div>
 
             {/* Language & Currency Preferences */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Select
-                label="Language Preference"
+                label={t('LANGUAGE PREFERENCE')}
                 options={LANGUAGE_OPTIONS}
                 error={errors.language_pref?.message}
                 {...register('language_pref')}
+                disabled={!isEditingInfo}
               />
               <Select
-                label="Currency Preference"
+                label={t('CURRENCY PREFERENCE')}
                 options={CURRENCY_OPTIONS}
                 error={errors.currency?.message}
-                helperText="Display currency for costs and budgets"
                 {...register('currency')}
+                helpText="Display currency for costs and budgets"
+                disabled={!isEditingInfo}
               />
             </div>
 
-              <div className="flex justify-end">
-                <Button type="submit" isLoading={isSubmitting}>
-                  Save Profile Changes
-                </Button>
-              </div>
+              {isEditingInfo && (
+                <div className="pt-4 border-t border-slate-100 flex justify-end">
+                  <Button variant="primary" type="submit" isLoading={isSubmitting} className="shadow-lg shadow-primary/20">
+                    {t('Save Profile Changes')}
+                  </Button>
+                </div>
+              )}
             </form>
           </div>
         )}
@@ -407,9 +434,11 @@ export const SettingsPage: React.FC = () => {
 
       {/* ── 2. Preplanned Trips Section (Screen 7 Spec: Horizontal Row + View Buttons + Create Card) ── */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-[#1A1523] tracking-tight font-heading">Preplanned Trips</h2>
-          <span className="text-xs text-[#6B7280]">{preplannedTrips.length} Upcoming Journeys</span>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">{t("Preplanned Trips")}</h2>
+            <p className="text-sm text-slate-500 mt-1">{preplannedTrips.length} {t("Upcoming Journeys")}</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
