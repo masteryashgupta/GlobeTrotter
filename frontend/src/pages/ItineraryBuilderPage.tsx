@@ -193,6 +193,11 @@ export const ItineraryBuilderPage: React.FC = () => {
         ) : (
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                <Link to="/trips" className="hover:text-emerald-400 transition-colors">My Trips</Link>
+                <span>/</span>
+                <span>Itinerary Builder</span>
+              </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <Badge variant="primary" size="sm">
                   🗺️ Itinerary Builder
