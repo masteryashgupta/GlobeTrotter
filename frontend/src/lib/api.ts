@@ -79,7 +79,49 @@ export const api = {
     return res.json();
   },
 
-  async addStop(data: StopCreateInput): Promise<Stop> {
+  async getTripById(tripId: string): Promise<Trip & { stops?: (Stop & { cities?: City })[] }> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trips/${tripId}`, { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to fetch trip (${res.status})`);
+    }
+    return res.json();
+  },
+
+  // Stops
+  async getTripStops(tripId: string): Promise<(Stop & { cities?: City })[]> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trips/${tripId}/stops`, { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to fetch stops (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async addTripStop(
+    tripId: string,
+    data: { city_id: string; arrival_date: string; departure_date: string; order_index?: number }
+  ): Promise<Stop & { cities?: City }> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trips/${tripId}/stops`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to add stop (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async addStop(data: StopCreateInput): Promise<Stop & { cities?: City }> {
     const headers = await getAuthHeader();
     const res = await fetch(`${BASE_URL}/stops`, {
       method: 'POST',
@@ -93,6 +135,59 @@ export const api = {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || err.message || `Failed to add stop to trip (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async updateStop(
+    stopId: string,
+    data: { city_id?: string; arrival_date?: string; departure_date?: string; order_index?: number }
+  ): Promise<Stop & { cities?: City }> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/stops/${stopId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to update stop (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async deleteStop(stopId: string): Promise<{ message: string; id: string }> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/stops/${stopId}`, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to delete stop (${res.status})`);
+    }
+    return res.json();
+  },
+
+  async reorderTripStops(tripId: string, stopIds: string[]): Promise<(Stop & { cities?: City })[]> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/trips/${tripId}/stops/reorder`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify({ stop_ids: stopIds }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to reorder stops (${res.status})`);
     }
     return res.json();
   },
