@@ -22,7 +22,7 @@ import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
 import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
 /**
- * GlobeTrotter Full-Stack App Root — v1.0.4 (Cache Invalidation Build)
+ * GlobeTrotter Full-Stack App Root — v1.0.5 (Force GitHub Actions Rebuild)
  * Primary Live Backend Endpoint: https://globetrotter-production-4300.up.railway.app
  */
 const queryClient = new QueryClient({
