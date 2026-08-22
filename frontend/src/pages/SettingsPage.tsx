@@ -13,10 +13,19 @@ import { City, Trip } from '../../../shared/types';
 
 const LANGUAGE_OPTIONS = [
   { label: 'English (US)', value: 'en' },
-  { label: 'Español', value: 'es' },
-  { label: 'Français', value: 'fr' },
-  { label: 'Deutsch', value: 'de' },
-  { label: '日本語', value: 'ja' },
+  { label: 'Spanish (ES)', value: 'es' },
+  { label: 'French (FR)', value: 'fr' },
+  { label: 'German (DE)', value: 'de' },
+  { label: 'Japanese (JA)', value: 'ja' },
+];
+
+const CURRENCY_OPTIONS = [
+  { label: 'US Dollar (USD)', value: 'USD' },
+  { label: 'Indian Rupee (INR)', value: 'INR' },
+  { label: 'Euro (EUR)', value: 'EUR' },
+  { label: 'British Pound (GBP)', value: 'GBP' },
+  { label: 'Japanese Yen (JPY)', value: 'JPY' },
+  { label: 'Australian Dollar (AUD)', value: 'AUD' },
 ];
 
 export const SettingsPage: React.FC = () => {
@@ -92,8 +101,9 @@ export const SettingsPage: React.FC = () => {
     if (profile) {
       reset({
         full_name: profile.full_name || '',
-        avatar_url: profile.avatar_url || '',
-        language_pref: (profile.language_pref as any) || 'en',
+        avatar_url: profile?.avatar_url || '',
+        language_pref: (profile?.language_pref as any) || 'en',
+        currency: (profile?.currency as any) || 'USD',
       });
       setAvatarPreview(profile.avatar_url || '');
       setIsLoadingProfile(false);
@@ -120,6 +130,7 @@ export const SettingsPage: React.FC = () => {
           full_name: data.full_name || '',
           avatar_url: data.avatar_url || '',
           language_pref: data.language_pref || 'en',
+          currency: data.currency || 'USD',
         });
         setAvatarPreview(data.avatar_url || '');
       }
@@ -365,12 +376,22 @@ export const SettingsPage: React.FC = () => {
                 />
               </div>
 
+            {/* Language & Currency Preferences */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
               <Select
                 label="Language Preference"
                 options={LANGUAGE_OPTIONS}
                 error={errors.language_pref?.message}
                 {...register('language_pref')}
               />
+              <Select
+                label="Currency Preference"
+                options={CURRENCY_OPTIONS}
+                error={errors.currency?.message}
+                helperText="Display currency for costs and budgets"
+                {...register('currency')}
+              />
+            </div>
 
               <div className="flex justify-end">
                 <Button type="submit" isLoading={isSubmitting}>

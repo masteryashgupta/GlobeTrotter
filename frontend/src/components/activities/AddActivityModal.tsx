@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Activity, City, Trip } from '../../../../shared/types';
 import { api } from '../../lib/api';
 import { Modal, Button, Select, Input, useToast, Skeleton } from '../ui';
-import { formatCost } from './ActivityCard';
+import { useCurrency } from '../../hooks/useCurrency';
 
 interface AddActivityModalProps {
   activity: (Activity & { cities?: City }) | null;
@@ -20,6 +20,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { formatCost } = useCurrency();
 
   const [selectedTripId, setSelectedTripId] = useState<string>('');
   const [scheduledDate, setScheduledDate] = useState<string>('');

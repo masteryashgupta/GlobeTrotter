@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Button, Badge, useToast, Skeleton } from '../components/ui';
+import { useCurrency } from '../hooks/useCurrency';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../lib/api';
@@ -10,6 +11,7 @@ export const SharedTripPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addToast } = useToast();
+  const { formatCost } = useCurrency();
 
   const [trip, setTrip] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

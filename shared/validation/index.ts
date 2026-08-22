@@ -39,6 +39,7 @@ export const profileUpdateSchema = z.object({
     z.string().min(1, 'Invalid avatar image format').nullable().optional()
   ),
   language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).optional(),
+  currency: z.enum(['USD', 'INR', 'EUR', 'GBP', 'JPY', 'AUD']).optional(),
 });
 
 // 4b. Profile Delete Schema

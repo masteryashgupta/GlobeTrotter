@@ -38,10 +38,7 @@ export const formatDuration = (minutes?: number | null): string => {
   return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
 };
 
-export const formatCost = (cost?: number | null): string => {
-  if (cost === undefined || cost === null || cost === 0) return 'Free';
-  return `₹${Number(cost).toFixed(0)}`;
-};
+import { useCurrency } from '../../hooks/useCurrency';
 
 export const ActivityCard: React.FC<ActivityCardProps> = ({
   activity,
@@ -49,6 +46,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   onAddClick,
   isAdding = false,
 }) => {
+  const { formatCost } = useCurrency();
   const categoryVariant = getCategoryBadgeVariant(activity.category);
 
   return (

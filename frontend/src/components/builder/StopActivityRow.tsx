@@ -3,7 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Stop, City } from '../../../../shared/types';
 import { api } from '../../lib/api';
 import { Badge, useToast } from '../ui';
-import { formatCost, getCategoryBadgeVariant } from '../activities/ActivityCard';
+import { getCategoryBadgeVariant } from '../activities/ActivityCard';
+import { useCurrency } from '../../hooks/useCurrency';
 
 interface StopActivityRowProps {
   tripActivity: any;
@@ -22,6 +23,7 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
+  const { formatCost } = useCurrency();
 
   const [scheduledDate, setScheduledDate] = useState<string>(tripActivity.scheduled_date || '');
   const [scheduledTime, setScheduledTime] = useState<string>(tripActivity.scheduled_time || '');

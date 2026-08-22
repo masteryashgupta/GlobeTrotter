@@ -1,7 +1,8 @@
 import React from 'react';
 import { Activity, City } from '../../../../shared/types';
 import { Modal, Badge, Button } from '../ui';
-import { getCategoryBadgeVariant, formatDuration, formatCost } from './ActivityCard';
+import { getCategoryBadgeVariant, formatDuration } from './ActivityCard';
+import { useCurrency } from '../../hooks/useCurrency';
 
 interface ActivityDetailModalProps {
   activity: (Activity & { cities?: City }) | null;
@@ -18,6 +19,7 @@ export const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({
   onAddClick,
   isAdding = false,
 }) => {
+  const { formatCost } = useCurrency();
   if (!activity) return null;
 
   const categoryVariant = getCategoryBadgeVariant(activity.category);

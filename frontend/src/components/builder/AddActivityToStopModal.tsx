@@ -5,7 +5,8 @@ import { api } from '../../lib/api';
 import { Modal, Button, Input, Select, Badge, useToast, Skeleton } from '../ui';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ALL_CATEGORIES } from '../activities/ActivityFilterPanel';
-import { formatCost, formatDuration, getCategoryBadgeVariant } from '../activities/ActivityCard';
+import { formatDuration, getCategoryBadgeVariant } from '../activities/ActivityCard';
+import { useCurrency } from '../../hooks/useCurrency';
 
 interface AddActivityToStopModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
+  const { formatCost, toUSD, currencySymbol } = useCurrency();
 
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -77,7 +79,7 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
         custom_activity_name: !selectedActivity ? searchTerm.trim() : undefined,
         scheduled_date: scheduledDate || undefined,
         scheduled_time: scheduledTime || undefined,
-        custom_cost: customCost ? parseFloat(customCost) : undefined,
+        custom_cost: customCost ? toUSD(parseFloat(customCost)) : undefined,
         notes: notes.trim() || undefined,
       });
     },
@@ -291,9 +293,9 @@ export const AddActivityToStopModal: React.FC<AddActivityToStopModalProps> = ({
 
           <div>
             <Input
+              label={`Custom Cost (${currencySymbol}) (Optional)`}
               type="number"
-              label="Cost ($ USD)"
-              placeholder="e.g. 25"
+              placeholder="e.g. 50"
               value={customCost}
               onChange={(e) => setCustomCost(e.target.value)}
             />

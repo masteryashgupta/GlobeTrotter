@@ -4,12 +4,17 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import { Button, Badge, Skeleton, EmptyState, Card, FilterControlBar } from '../components/ui';
-import { formatCost, getCategoryBadgeVariant } from '../components/activities/ActivityCard';
+import { getCategoryBadgeVariant } from '../components/activities/ActivityCard';
+import { useCurrency } from '../hooks/useCurrency';
+import { useAuth } from '../context/AuthContext';
 import { Activity } from '../../../shared/types';
 
 export const ItineraryViewPage: React.FC = () => {
-  const { id: tripId } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
+  const tripId = id as string;
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { formatCost } = useCurrency();
   const queryClient = useQueryClient();
 
   const [viewMode, setViewMode] = useState<'timeline' | 'grouped'>('timeline');
