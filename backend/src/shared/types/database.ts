@@ -151,6 +151,7 @@ export interface Database {
           id: string
           trip_id: string
           city_id: string | null
+          custom_city_name: string | null
           order_index: number
           arrival_date: string
           departure_date: string
@@ -160,6 +161,7 @@ export interface Database {
           id?: string
           trip_id: string
           city_id?: string | null
+          custom_city_name?: string | null
           order_index: number
           arrival_date: string
           departure_date: string
@@ -169,6 +171,7 @@ export interface Database {
           id?: string
           trip_id?: string
           city_id?: string | null
+          custom_city_name?: string | null
           order_index?: number
           arrival_date?: string
           departure_date?: string

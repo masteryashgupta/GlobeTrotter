@@ -17,6 +17,7 @@ const LANGUAGE_OPTIONS = [
   { label: 'French (FR)', value: 'fr' },
   { label: 'German (DE)', value: 'de' },
   { label: 'Japanese (JA)', value: 'ja' },
+  { label: 'Hindi (HI)', value: 'hi' },
 ];
 
 const CURRENCY_OPTIONS = [

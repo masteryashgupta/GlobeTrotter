@@ -86,13 +86,14 @@ stopsRouter.post(
 stopsRouter.patch('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id as string);
-    const { city_id, arrival_date, departure_date, order_index } = req.body;
+    const { city_id, custom_city_name, arrival_date, departure_date, order_index } = req.body;
     const userId = req.user!.id;
 
     const updated = await StopService.updateStop(
       id,
       {
         city_id,
+        custom_city_name,
         arrival_date,
         departure_date,
         order_index,
