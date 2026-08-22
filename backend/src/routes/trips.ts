@@ -535,4 +535,85 @@ tripsRouter.get('/:id/budget', requireAuth, async (req: AuthenticatedRequest, re
   }
 });
 
+// 10. GET /api/trips/:id/calendar - Return scheduled activities formatted for calendar timeline view
+tripsRouter.get('/:id/calendar', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tripId = req.params.id;
+    const userId = req.user!.id;
+
+    // 1. Fetch trip & verify ownership or public access
+    const { data: trip, error: tripError } = await supabaseAdmin
+      .from('trips')
+      .select('id, owner_id, is_public, start_date, end_date')
+      .eq('id', tripId)
+      .single();
+
+    if (tripError || !trip) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+
+    if ((trip as any).owner_id !== userId && !trip.is_public) {
+      return res.status(403).json({ error: 'Forbidden: You do not have access to this trip' });
+    }
+
+    // 2. Fetch stops with city details
+    const { data: stops } = await supabaseAdmin
+      .from('stops')
+      .select('id, arrival_date, departure_date, cities(name)')
+      .eq('trip_id', tripId);
+
+    if (!stops || stops.length === 0) {
+      return res.json([]);
+    }
+
+    const stopIds = stops.map((s) => s.id);
+    const stopMap: Record<string, any> = {};
+    stops.forEach((s) => {
+      stopMap[s.id] = s;
+    });
+
+    // 3. Fetch scheduled activities for these stops
+    const { data: tripActivities, error: actError } = await supabaseAdmin
+      .from('trip_activities')
+      .select('id, stop_id, scheduled_date, scheduled_time, custom_cost, notes, order_index, activities(id, name, category, duration_minutes, cost)')
+      .in('stop_id', stopIds);
+
+    if (actError) {
+      return res.status(400).json({ error: 'Failed to fetch trip activities', details: actError.message });
+    }
+
+    // 4. Format each activity into calendar event object
+    const calendarEvents = (tripActivities || []).map((ta: any) => {
+      const parentStop = stopMap[ta.stop_id];
+      const dateStr = ta.scheduled_date || parentStop?.arrival_date || trip.start_date;
+      const timeStr = ta.scheduled_time || '09:00:00';
+
+      const startDateTimeStr = `${dateStr}T${timeStr.length === 5 ? `${timeStr}:00` : timeStr}`;
+      const startDateObj = new Date(startDateTimeStr);
+
+      const durationMins = ta.activities?.duration_minutes || 60;
+      const endDateObj = new Date(startDateObj.getTime() + durationMins * 60 * 1000);
+
+      const cost = Number(ta.custom_cost ?? ta.activities?.cost ?? 0);
+      const stopCity = parentStop?.cities?.name || 'Destination';
+
+      return {
+        id: ta.id,
+        title: ta.activities?.name || 'Scheduled Activity',
+        start: startDateObj.toISOString(),
+        end: endDateObj.toISOString(),
+        stopCity,
+        cost,
+        category: ta.activities?.category || 'sightseeing',
+        notes: ta.notes || '',
+      };
+    });
+
+    return res.json(calendarEvents);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Server error fetching calendar events', details: err.message });
+  }
+});
+
+
 

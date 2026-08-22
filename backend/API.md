@@ -118,6 +118,14 @@ Authorization: Bearer <supabase_access_token>
 - **Auth Required:** Yes (`requireAuth`)
 - **Response (200 OK):** Array of `Expense` objects + category breakdown + total cost summary.
 
+### `GET /api/trips/:tripId/budget`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Comprehensive JSON shape `{ byCategory, total, tripDurationDays, perDayAverage, perDay }`.
+
+### `GET /api/trips/:tripId/calendar`
+- **Auth Required:** Yes (`requireAuth`)
+- **Response (200 OK):** Array of calendar event objects `{ id, title, start, end, stopCity, cost, category, notes }`.
+
 
 ---
 
