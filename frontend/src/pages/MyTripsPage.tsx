@@ -118,67 +118,135 @@ export const MyTripsPage: React.FC = () => {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map((trip) => (
-            <Card key={trip.id} hoverable className="flex flex-col justify-between group overflow-hidden">
-              <div>
-                <div className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden bg-slate-800 relative">
-                  <img
-                    src={
-                      trip.cover_photo_url ||
-                      'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80'
-                    }
-                    alt={trip.name || 'Trip Cover'}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-3 right-3">
-                    <Badge variant={trip.is_public ? 'success' : 'neutral'}>
-                      {trip.is_public ? 'Public' : 'Private'}
-                    </Badge>
-                  </div>
-                </div>
+        <div className="space-y-10">
+          {/* Wireframe Screen 6 Categorized Layout */}
+          {(() => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const ongoing = trips.filter(t => t.start_date <= todayStr && t.end_date >= todayStr);
+            const upcoming = trips.filter(t => t.start_date > todayStr);
+            const completed = trips.filter(t => t.end_date < todayStr);
 
-                <Card.Title className="group-hover:text-teal-400 transition-colors">
-                  {trip.name || 'Untitled Trip'}
-                </Card.Title>
-                <p className="text-xs text-slate-400 mt-1">
-                  📅 {trip.start_date} to {trip.end_date}
-                </p>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  📍 0 Stops (Part B Itinerary Integration)
-                </p>
-                {trip.description && (
-                  <p className="text-xs text-slate-300 mt-2 line-clamp-2">{trip.description}</p>
-                )}
+            const renderCardList = (items: Trip[]) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((trip) => (
+                  <Card key={trip.id} hoverable className="flex flex-col justify-between group overflow-hidden border-slate-800 bg-slate-900/60">
+                    <div>
+                      <div className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden bg-slate-800 relative">
+                        <img
+                          src={
+                            trip.cover_photo_url ||
+                            'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80'
+                          }
+                          alt={trip.name || 'Trip Cover'}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                          <Badge variant={trip.is_public ? 'success' : 'neutral'}>
+                            {trip.is_public ? 'Public' : 'Private'}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <Card.Title className="group-hover:text-teal-400 transition-colors">
+                        {trip.name || 'Untitled Trip'}
+                      </Card.Title>
+                      <p className="text-xs text-slate-400 mt-1">
+                        📅 {trip.start_date} to {trip.end_date}
+                      </p>
+                      {trip.description && (
+                        <p className="text-xs text-slate-300 mt-2 line-clamp-2">{trip.description}</p>
+                      )}
+                    </div>
+
+                    <Card.Footer className="mt-4 pt-3 flex items-center justify-between border-t border-slate-800/80">
+                      <div className="flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/trips/${trip.id}/build`)}
+                        >
+                          Build
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/trips/${trip.id}/view`)}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setTripToEdit(trip)}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => setTripToDelete(trip)}
+                      >
+                        Delete
+                      </Button>
+                    </Card.Footer>
+                  </Card>
+                ))}
               </div>
+            );
 
-              <Card.Footer className="mt-4 pt-3 flex items-center justify-between border-t border-slate-800">
-                <div className="flex items-center gap-1.5">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => navigate(`/trips/${trip.id}/build`)}
-                  >
-                    Build
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setTripToEdit(trip)}
-                  >
-                    Edit
-                  </Button>
-                </div>
-                <Button
-                  size="sm"
-                  variant="danger"
-                  onClick={() => setTripToDelete(trip)}
-                >
-                  Delete
-                </Button>
-              </Card.Footer>
-            </Card>
-          ))}
+            return (
+              <>
+                {/* Ongoing Section */}
+                <section className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <span className="text-emerald-400 text-lg">🟢</span>
+                    <h2 className="text-xl font-bold text-white">Ongoing Trips</h2>
+                    <span className="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-full ml-1">
+                      {ongoing.length}
+                    </span>
+                  </div>
+                  {ongoing.length > 0 ? (
+                    renderCardList(ongoing)
+                  ) : (
+                    <p className="text-xs text-slate-500 italic">No trips currently in progress.</p>
+                  )}
+                </section>
+
+                {/* Upcoming Section */}
+                <section className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <span className="text-sky-400 text-lg">✈️</span>
+                    <h2 className="text-xl font-bold text-white">Upcoming Trips</h2>
+                    <span className="text-xs bg-sky-950 text-sky-300 border border-sky-800 px-2 py-0.5 rounded-full ml-1">
+                      {upcoming.length}
+                    </span>
+                  </div>
+                  {upcoming.length > 0 ? (
+                    renderCardList(upcoming)
+                  ) : (
+                    <p className="text-xs text-slate-500 italic">No upcoming trips planned yet.</p>
+                  )}
+                </section>
+
+                {/* Completed Section */}
+                <section className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <span className="text-purple-400 text-lg">🏁</span>
+                    <h2 className="text-xl font-bold text-white">Completed Trips</h2>
+                    <span className="text-xs bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full ml-1">
+                      {completed.length}
+                    </span>
+                  </div>
+                  {completed.length > 0 ? (
+                    renderCardList(completed)
+                  ) : (
+                    <p className="text-xs text-slate-500 italic">No completed past trips found.</p>
+                  )}
+                </section>
+              </>
+            );
+          })()}
         </div>
       )}
 
