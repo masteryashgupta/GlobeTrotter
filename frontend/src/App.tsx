@@ -11,6 +11,10 @@ import { DashboardPage } from './pages/DashboardPage';
 import { MyTripsPage } from './pages/MyTripsPage';
 import { CreateTripPage } from './pages/CreateTripPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { CitySearchPage } from './pages/CitySearchPage';
+import { ActivitySearchPage } from './pages/ActivitySearchPage';
+import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
+import { ItineraryViewPage } from './pages/ItineraryViewPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -95,7 +99,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Itinerary Builder" part="Part B: Itinerary & Search" />
+                      <ItineraryBuilderPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -105,7 +109,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="View Trip Details" part="Part B: Itinerary & Search" />
+                      <ItineraryViewPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -135,7 +139,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Search Cities" part="Part B: Itinerary & Search" />
+                      <CitySearchPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -145,7 +149,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Search Activities" part="Part B: Itinerary & Search" />
+                      <ActivitySearchPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
