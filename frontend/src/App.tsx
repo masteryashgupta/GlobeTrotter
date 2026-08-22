@@ -11,6 +11,9 @@ import { DashboardPage } from './pages/DashboardPage';
 import { MyTripsPage } from './pages/MyTripsPage';
 import { CreateTripPage } from './pages/CreateTripPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { BudgetPage } from './pages/BudgetPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { SharedTripPage } from './pages/SharedTripPage';
 import { CitySearchPage } from './pages/CitySearchPage';
 import { ActivitySearchPage } from './pages/ActivitySearchPage';
 import { ItineraryBuilderPage } from './pages/ItineraryBuilderPage';
@@ -52,16 +55,7 @@ export function App() {
               <Route path="/reset-password" element={<ResetPasswordPage />} />
 
               {/* Public Shared Trip Token Route */}
-              <Route
-                path="/share/:token"
-                element={
-                  <PlaceholderPage
-                    title="Shared Public Trip View"
-                    part="Part C: Budget / Calendar / Share"
-                    description="View shared public itinerary without requiring authentication."
-                  />
-                }
-              />
+              <Route path="/share/:token" element={<SharedTripPage />} />
 
               {/* Authenticated Protected Routes inside AppLayout */}
               <Route
@@ -119,7 +113,7 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Trip Budget & Expenses" part="Part C: Budget & Share" />
+                      <BudgetPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
@@ -129,11 +123,12 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout>
-                      <PlaceholderPage title="Trip Calendar View" part="Part C: Calendar" />
+                      <CalendarPage />
                     </AppLayout>
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="/cities/search"
                 element={

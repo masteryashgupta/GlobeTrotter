@@ -6,7 +6,9 @@ import { stopsRouter } from './routes/stops';
 import { activitiesRouter } from './routes/activities';
 import { citiesRouter } from './routes/cities';
 import { budgetRouter } from './routes/budget';
+import { expensesRouter } from './routes/expenses';
 import { adminRouter } from './routes/admin';
+import { shareRouter } from './routes/share';
 import { tripActivitiesRouter } from './routes/tripActivities';
 
 dotenv.config();
@@ -40,6 +42,8 @@ app.use('/api/activities', activitiesRouter);
 app.use('/api/trip-activities', tripActivitiesRouter);
 app.use('/api/cities', citiesRouter);
 app.use('/api/budget', budgetRouter);
+app.use('/api/share', shareRouter);
+app.use('/api', expensesRouter);
 app.use('/api/admin', adminRouter);
 
 app.listen(PORT, () => {
