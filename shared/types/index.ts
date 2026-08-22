@@ -1,88 +1,22 @@
-export interface Profile {
-  id: string;
-  email: string;
-  full_name?: string;
-  avatar_url?: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Database } from './database';
 
-export interface City {
-  id: string;
-  name: string;
-  country: string;
-  latitude?: number;
-  longitude?: number;
-  description?: string;
-  image_url?: string;
-  created_at: string;
-}
+export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type City = Database['public']['Tables']['cities']['Row'];
+export type Activity = Database['public']['Tables']['activities']['Row'];
+export type Trip = Database['public']['Tables']['trips']['Row'];
+export type Stop = Database['public']['Tables']['stops']['Row'];
+export type TripActivity = Database['public']['Tables']['trip_activities']['Row'];
+export type Expense = Database['public']['Tables']['expenses']['Row'];
+export type TripCopy = Database['public']['Tables']['trip_copies']['Row'];
 
-export interface Activity {
-  id: string;
-  city_id: string;
-  title: string;
-  description?: string;
-  category?: string;
-  cost_estimate?: number;
-  duration_hours?: number;
-  image_url?: string;
-  created_at: string;
-}
+export type ActivityCategory = NonNullable<Activity['category']>;
+export type ExpenseCategory = NonNullable<Expense['category']>;
 
-export interface Trip {
-  id: string;
-  user_id: string;
-  title: string;
-  description?: string;
-  start_date?: string;
-  end_date?: string;
-  is_public: boolean;
-  share_code?: string;
-  budget?: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Stop {
-  id: string;
-  trip_id: string;
-  city_id: string;
-  order_index: number;
-  start_date?: string;
-  end_date?: string;
-  notes?: string;
-  created_at: string;
-}
-
-export interface TripActivity {
-  id: string;
-  stop_id: string;
-  activity_id?: string;
-  title: string;
-  scheduled_time?: string;
-  notes?: string;
-  cost?: number;
-  completed: boolean;
-  order_index: number;
-  created_at: string;
-}
-
-export interface Expense {
-  id: string;
-  trip_id: string;
-  category: string;
-  amount: number;
-  currency: string;
-  description?: string;
-  date?: string;
-  created_at: string;
-}
-
-export interface TripCopy {
-  id: string;
-  original_trip_id: string;
-  copied_by_user_id: string;
-  new_trip_id: string;
-  created_at: string;
-}
+export type InsertProfile = Database['public']['Tables']['profiles']['Insert'];
+export type InsertCity = Database['public']['Tables']['cities']['Insert'];
+export type InsertActivity = Database['public']['Tables']['activities']['Insert'];
+export type InsertTrip = Database['public']['Tables']['trips']['Insert'];
+export type InsertStop = Database['public']['Tables']['stops']['Insert'];
+export type InsertTripActivity = Database['public']['Tables']['trip_activities']['Insert'];
+export type InsertExpense = Database['public']['Tables']['expenses']['Insert'];
+export type InsertTripCopy = Database['public']['Tables']['trip_copies']['Insert'];
