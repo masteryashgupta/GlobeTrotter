@@ -9,12 +9,16 @@ interface StopActivityRowProps {
   tripActivity: any;
   stop: Stop & { cities?: City };
   tripId: string;
+  dragHandleProps?: Record<string, any>;
+  isDragging?: boolean;
 }
 
 export const StopActivityRow: React.FC<StopActivityRowProps> = ({
   tripActivity,
   stop,
   tripId,
+  dragHandleProps,
+  isDragging = false,
 }) => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
@@ -73,16 +77,42 @@ export const StopActivityRow: React.FC<StopActivityRowProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-900 border border-slate-800 rounded-xl gap-3 transition-all hover:border-slate-700/80">
-      {/* Left: Info */}
-      <div className="flex items-center gap-3 min-w-0">
+    <div
+      className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 bg-slate-900 border rounded-xl gap-3 transition-all ${
+        isDragging
+          ? 'border-teal-500 ring-2 ring-teal-500/30 shadow-2xl bg-slate-850'
+          : 'border-slate-800 hover:border-slate-700/80'
+      }`}
+    >
+      {/* Left: Drag Handle & Info */}
+      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        {/* Grip Drag Handle */}
+        {dragHandleProps && (
+          <button
+            type="button"
+            {...dragHandleProps}
+            className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-slate-500 hover:text-teal-400 hover:bg-slate-800 rounded transition-colors touch-none select-none shrink-0"
+            title="Drag to reorder activity"
+            aria-label="Drag to reorder activity"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"
+              />
+            </svg>
+          </button>
+        )}
+
         <img
           src={
             activity.image_url ||
             'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80'
           }
           alt={activity.name || 'Experience'}
-          className="w-11 h-11 rounded-lg object-cover bg-slate-950 shrink-0 border border-slate-800"
+          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg object-cover bg-slate-950 shrink-0 border border-slate-800"
           onError={(e) => {
             (e.target as HTMLImageElement).src =
               'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80';

@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+  arrayMove,
+} from '@dnd-kit/sortable';
 import { Stop, City } from '../../../../shared/types';
 import { api } from '../../lib/api';
-import { Card, Badge, Button } from '../ui';
-import { StopActivityRow } from './StopActivityRow';
+import { Card, Badge, Button, useToast } from '../ui';
+import { SortableStopActivityRow } from './SortableStopActivityRow';
 import { AddActivityToStopModal } from './AddActivityToStopModal';
 
 interface StopCardProps {
@@ -27,8 +43,29 @@ export const StopCard: React.FC<StopCardProps> = ({
   dragHandleProps,
   isDragging = false,
 }) => {
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
+
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isAddActivityOpen, setIsAddActivityOpen] = useState<boolean>(false);
+
+  // Configure DND Sensors for Mouse + Touch
+  const activitySensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Fetch live activities assigned to this stop
   const { data: stopActivities = stop.trip_activities || [], isLoading: isActivitiesLoading } =
@@ -44,6 +81,46 @@ export const StopCard: React.FC<StopCardProps> = ({
   const departure = new Date(stop.departure_date);
   const diffTime = Math.abs(departure.getTime() - arrival.getTime());
   const nights = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+  // Drag-and-drop reorder handler for this specific stop's activities
+  const handleActivityDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = stopActivities.findIndex((a: any) => a.id === active.id);
+    const newIndex = stopActivities.findIndex((a: any) => a.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const previousActivities = [...stopActivities];
+    const newActivities = arrayMove(stopActivities, oldIndex, newIndex).map((a: any, idx: number) => ({
+      ...a,
+      order_index: idx,
+    }));
+
+    // 1. Optimistically update local query cache for this stop
+    queryClient.setQueryData(['stop-activities', stop.id], newActivities);
+
+    // 2. Call backend PATCH /api/stops/:stopId/activities/reorder
+    try {
+      await api.reorderStopActivities(
+        stop.id,
+        newActivities.map((a: any) => a.id)
+      );
+      addToast(
+        'success',
+        'Activities Reordered',
+        `Activity sequence updated for ${stop.cities?.name || 'this stop'}.`
+      );
+    } catch (err: any) {
+      // 3. Roll back on failure
+      queryClient.setQueryData(['stop-activities', stop.id], previousActivities);
+      addToast(
+        'error',
+        'Reorder Failed',
+        err.message || 'Could not save new activity sequence.'
+      );
+    }
+  };
 
   return (
     <Card
@@ -132,7 +209,7 @@ export const StopCard: React.FC<StopCardProps> = ({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-          {/* Add Activity Trigger (opens lightweight in-context picker modal) */}
+          {/* Add Activity Trigger */}
           <Button
             variant="outline"
             size="sm"
@@ -198,9 +275,17 @@ export const StopCard: React.FC<StopCardProps> = ({
       {isExpanded && (
         <div className="bg-slate-950/80 border-t border-slate-800 p-4 sm:p-5 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-              <span>Scheduled Experiences ({stopActivities.length})</span>
-            </h4>
+            <div className="flex items-center gap-3">
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                <span>Scheduled Experiences ({stopActivities.length})</span>
+              </h4>
+              {stopActivities.length > 1 && (
+                <span className="hidden sm:inline text-[11px] text-slate-500">
+                  (Drag ⋮⋮ to reorder)
+                </span>
+              )}
+            </div>
+
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsAddActivityOpen(true)}
@@ -233,16 +318,29 @@ export const StopCard: React.FC<StopCardProps> = ({
               </Button>
             </div>
           ) : (
-            <div className="space-y-2.5">
-              {stopActivities.map((act: any) => (
-                <StopActivityRow
-                  key={act.id}
-                  tripActivity={act}
-                  stop={stop}
-                  tripId={tripId}
-                />
-              ))}
-            </div>
+            /* Drag-and-drop sortable activities list scoped to this stop */
+            <DndContext
+              id={`dnd-activities-${stop.id}`}
+              sensors={activitySensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleActivityDragEnd}
+            >
+              <SortableContext
+                items={stopActivities.map((a: any) => a.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2.5">
+                  {stopActivities.map((act: any) => (
+                    <SortableStopActivityRow
+                      key={act.id}
+                      tripActivity={act}
+                      stop={stop}
+                      tripId={tripId}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       )}
