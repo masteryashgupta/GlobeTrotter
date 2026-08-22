@@ -148,6 +148,7 @@ export interface Database {
           id: string
           trip_id: string
           city_id: string | null
+          custom_city_name: string | null
           order_index: number
           arrival_date: string
           departure_date: string
@@ -157,6 +158,7 @@ export interface Database {
           id?: string
           trip_id: string
           city_id?: string | null
+          custom_city_name?: string | null
           order_index: number
           arrival_date: string
           departure_date: string
@@ -166,6 +168,7 @@ export interface Database {
           id?: string
           trip_id?: string
           city_id?: string | null
+          custom_city_name?: string | null
           order_index?: number
           arrival_date?: string
           departure_date?: string
@@ -177,6 +180,7 @@ export interface Database {
           id: string
           stop_id: string
           activity_id: string | null
+          custom_activity_name: string | null
           scheduled_date: string | null
           scheduled_time: string | null
           custom_cost: number | null
@@ -188,6 +192,7 @@ export interface Database {
           id?: string
           stop_id: string
           activity_id?: string | null
+          custom_activity_name?: string | null
           scheduled_date?: string | null
           scheduled_time?: string | null
           custom_cost?: number | null
@@ -199,6 +204,7 @@ export interface Database {
           id?: string
           stop_id?: string
           activity_id?: string | null
+          custom_activity_name?: string | null
           scheduled_date?: string | null
           scheduled_time?: string | null
           custom_cost?: number | null
