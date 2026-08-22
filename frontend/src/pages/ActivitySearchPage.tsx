@@ -325,7 +325,7 @@ export const ActivitySearchPage: React.FC = () => {
               {[1, 2, 3, 4, 5, 6].map((key) => (
                 <div
                   key={key}
-                  className="bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden p-0 space-y-3"
+                  className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl overflow-hidden p-0 space-y-3 shadow-sm"
                 >
                   <Skeleton variant="rectangular" height={176} className="w-full rounded-none" />
                   <div className="p-4 space-y-3">
@@ -371,16 +371,16 @@ export const ActivitySearchPage: React.FC = () => {
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
           <div
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-[#1A1523]/50 backdrop-blur-sm transition-opacity"
             onClick={() => setIsMobileFilterOpen(false)}
           />
-          <div className="relative w-full max-w-sm bg-slate-900 border-l border-slate-800 h-full p-6 overflow-y-auto z-10 shadow-2xl flex flex-col justify-between">
+          <div className="relative w-full max-w-sm bg-white border-l border-[#E9E4F5] h-full p-6 overflow-y-auto z-10 shadow-[0_8px_32px_rgba(124,58,237,0.15)] flex flex-col justify-between">
             <div className="space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <h3 className="text-base font-bold text-white">Filter Activities</h3>
+              <div className="flex items-center justify-between pb-4 border-b border-[#E9E4F5]">
+                <h3 className="text-base font-bold text-[#1A1523] font-heading">Filter Activities</h3>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-[#6B7280] hover:text-[#1A1523] p-1 hover:bg-[#F7F5FC] rounded-lg transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -403,7 +403,7 @@ export const ActivitySearchPage: React.FC = () => {
               />
             </div>
 
-            <div className="pt-6 border-t border-slate-800">
+            <div className="pt-6 border-t border-[#E9E4F5]">
               <Button
                 variant="primary"
                 className="w-full"

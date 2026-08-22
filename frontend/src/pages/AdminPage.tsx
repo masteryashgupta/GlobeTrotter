@@ -103,7 +103,7 @@ function StatCard({
 
 function StatCardSkeleton() {
   return (
-    <div className="rounded-xl border border-slate-700/60 bg-slate-800/60 p-5">
+    <div className="rounded-2xl border border-[#E9E4F5] bg-[#F7F5FC] p-5 shadow-sm">
       <Skeleton variant="text" width={100} className="mb-3" />
       <Skeleton variant="text" height={36} width={80} className="mb-2" />
       <Skeleton variant="text" width={120} />
@@ -207,7 +207,7 @@ export const AdminPage: React.FC = () => {
 
       {/* ── 1. Summary Stat Cards ─────────────────────────────────────────── */}
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-[#6B7280] mb-4">
           Platform Overview
         </h2>
         {isLoadingStats ? (
@@ -258,7 +258,7 @@ export const AdminPage: React.FC = () => {
                   margin={{ top: 4, right: 16, left: 0, bottom: 60 }}
                   barSize={28}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E9E4F5" vertical={false} />
                   <XAxis
                     dataKey="name"
                     tick={{ fill: '#94a3b8', fontSize: 11 }}
@@ -305,7 +305,7 @@ export const AdminPage: React.FC = () => {
                   margin={{ top: 4, right: 16, left: 0, bottom: 72 }}
                   barSize={28}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E9E4F5" vertical={false} />
                   <XAxis
                     dataKey="name"
                     tick={{ fill: '#94a3b8', fontSize: 11 }}

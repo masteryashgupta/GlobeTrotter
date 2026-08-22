@@ -262,23 +262,23 @@ export const ItineraryBuilderPage: React.FC = () => {
       {/* Itinerary Stops Section */}
       <div className="space-y-5">
         {/* Section Title & Realtime status */}
-        <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-slate-800">
+        <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-[#E9E4F5]">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-bold text-white tracking-tight">
+            <h2 className="text-xl font-bold text-[#1A1523] tracking-tight font-heading">
               Itinerary Stops ({stops.length})
             </h2>
             {isStopsFetching && !isStopsLoading && (
-              <div className="flex items-center gap-1 text-xs text-teal-400">
-                <span className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+              <div className="flex items-center gap-1 text-xs text-[#7C3AED] font-medium">
+                <span className="w-2 h-2 rounded-full bg-[#7C3AED] animate-ping" />
                 <span>Syncing live...</span>
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-slate-400">
+          <div className="flex items-center gap-4 text-xs text-[#6B7280]">
             {stops.length > 1 && (
-              <span className="hidden sm:inline-flex items-center gap-1 text-slate-500">
-                <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="hidden sm:inline-flex items-center gap-1 text-[#6B7280]">
+                <svg className="w-4 h-4 text-[#6B7280]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01" />
                 </svg>
                 Drag handles to reorder
@@ -286,7 +286,7 @@ export const ItineraryBuilderPage: React.FC = () => {
             )}
             <Link
               to="/cities/search"
-              className="text-teal-400 hover:text-teal-300 font-semibold transition-colors"
+              className="text-[#7C3AED] hover:text-[#5B21B6] font-semibold transition-colors"
             >
               + Browse Global Cities
             </Link>
@@ -299,7 +299,7 @@ export const ItineraryBuilderPage: React.FC = () => {
             {[1, 2, 3].map((key) => (
               <div
                 key={key}
-                className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4"
+                className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl p-5 space-y-4 shadow-sm"
               >
                 <div className="flex items-center gap-4">
                   <Skeleton variant="rectangular" width={64} height={64} className="rounded-xl" />

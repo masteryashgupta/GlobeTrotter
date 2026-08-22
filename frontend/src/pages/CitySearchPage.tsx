@@ -207,7 +207,7 @@ export const CitySearchPage: React.FC = () => {
               {[1, 2, 3, 4, 5, 6].map((key) => (
                 <div
                   key={key}
-                  className="bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden p-0 space-y-4"
+                  className="bg-[#F7F5FC] border border-[#E9E4F5] rounded-2xl overflow-hidden p-0 space-y-4 shadow-sm"
                 >
                   <Skeleton variant="rectangular" height={192} className="w-full rounded-none" />
                   <div className="p-4 space-y-3">
