@@ -12,6 +12,8 @@ import { profileRouter } from './routes/profile';
 import { shareRouter } from './routes/share';
 import { tripActivitiesRouter } from './routes/tripActivities';
 
+import { authRouter } from './routes/auth';
+
 dotenv.config();
 
 const app = express();
@@ -50,6 +52,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 });
 
 // Route Mounting
+app.use('/api/auth', authRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/trips', tripsRouter);
 app.use('/api/stops', stopsRouter);
