@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Calendar, dateFnsLocalizer, View, Views } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Card, Button, Badge, Modal, useToast, Skeleton } from '../components/ui';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import { Card, Button, Badge, Modal, Input, useToast, Skeleton, EmptyState } from '../components/ui';
 import { ShareTripModal } from '../components/trips/ShareTripModal';
 import { supabase } from '../lib/supabase';
-import { Trip, Stop } from '../../../shared/types';
+import { Trip } from '../../../shared/types';
 
 const locales = {
   'en-US': enUS,
@@ -21,6 +24,8 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const DnDCalendar = withDragAndDrop(Calendar as any);
+
 const CATEGORY_COLORS: Record<string, string> = {
   sightseeing: '#3b82f6',
   food: '#f59e0b',
@@ -31,148 +36,283 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: '#64748b',
 };
 
-interface CalendarEvent {
+export interface RawCalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  stopCity: string;
+  cost: number;
+  category: string;
+  notes: string;
+  stopArrival?: string;
+  stopDeparture?: string;
+}
+
+export interface BigCalendarEvent {
   id: string;
   title: string;
   start: Date;
   end: Date;
-  allDay?: boolean;
-  resource?: {
-    type: 'stop' | 'activity';
-    category?: string;
-    description?: string;
-    cost?: number;
-    notes?: string;
-    cityName?: string;
+  resource: {
+    stopCity: string;
+    cost: number;
+    category: string;
+    notes: string;
+    stopArrival?: string;
+    stopDeparture?: string;
   };
 }
 
 export const CalendarPage: React.FC = () => {
   const { id: tripId } = useParams<{ id: string }>();
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
 
-  const [trip, setTrip] = useState<Trip | null>(null);
-  const [stops, setStops] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [viewMode, setViewMode] = useState<'timeline' | 'calendar'>('timeline');
-  const [calendarView, setCalendarView] = useState<View>('month');
+  // Screen width responsive check
+  const [isMobile, setIsMobile] = useState<boolean>(() => window.innerWidth < 768);
+  const [calendarView, setCalendarView] = useState<View>(() => (window.innerWidth < 768 ? Views.AGENDA : Views.MONTH));
 
-  // Selected event modal
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Modals & Edit state
+  const [selectedEvent, setSelectedEvent] = useState<BigCalendarEvent | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [editFormData, setEditFormData] = useState({
+    custom_cost: '',
+    notes: '',
+    scheduled_time: '09:00',
+  });
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
 
-  const fetchTripDetails = async () => {
-    if (!tripId) return;
-    try {
-      setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
+  // Helper auth token
+  const getAuthToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token;
+  };
 
+  // 1. Fetch Trip details
+  const { data: trip, isLoading: isTripLoading } = useQuery<Trip>({
+    queryKey: ['trip', tripId],
+    queryFn: async () => {
+      const token = await getAuthToken();
       const res = await fetch(`http://localhost:5000/api/trips/${tripId}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-
       if (!res.ok) throw new Error('Failed to load trip details');
+      return res.json();
+    },
+    enabled: !!tripId,
+  });
 
-      const data = await res.json();
-      setTrip(data);
-      setStops(data.stops || []);
-    } catch (err: any) {
-      addToast('error', 'Error', err.message || 'Could not fetch trip schedule');
-    } finally {
-      setLoading(false);
+  // 2. Fetch Calendar Events from GET /api/trips/:tripId/calendar
+  const { data: rawEvents = [], isLoading: isEventsLoading } = useQuery<RawCalendarEvent[]>({
+    queryKey: ['trip-calendar', tripId],
+    queryFn: async () => {
+      const token = await getAuthToken();
+      const res = await fetch(`http://localhost:5000/api/trips/${tripId}/calendar`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error('Failed to load calendar events');
+      return res.json();
+    },
+    enabled: !!tripId,
+  });
+
+  // Convert raw events to Date object events for BigCalendar
+  const events = useMemo<BigCalendarEvent[]>(() => {
+    return rawEvents.map((evt) => ({
+      id: evt.id,
+      title: `${evt.title} (${evt.stopCity})`,
+      start: new Date(evt.start),
+      end: new Date(evt.end),
+      resource: {
+        stopCity: evt.stopCity,
+        cost: evt.cost,
+        category: evt.category,
+        notes: evt.notes,
+        stopArrival: evt.stopArrival,
+        stopDeparture: evt.stopDeparture,
+      },
+    }));
+  }, [rawEvents]);
+
+  // Mutations for PATCH and DELETE trip-activities
+  const updateActivityMutation = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { scheduled_date?: string; scheduled_time?: string; custom_cost?: number; notes?: string };
+    }) => {
+      const token = await getAuthToken();
+      const res = await fetch(`http://localhost:5000/api/trip-activities/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to update scheduled activity');
+      }
+      return res.json();
+    },
+    onMutate: async ({ id, data }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['trip-calendar', tripId] });
+      const previousEvents = queryClient.getQueryData<RawCalendarEvent[]>(['trip-calendar', tripId]);
+
+      // Optimistically update cache
+      if (previousEvents && data.scheduled_date) {
+        const updated = previousEvents.map((evt) => {
+          if (evt.id === id) {
+            const timeStr = data.scheduled_time || '09:00:00';
+            const newStart = new Date(`${data.scheduled_date}T${timeStr}`);
+            const durationMs = new Date(evt.end).getTime() - new Date(evt.start).getTime();
+            const newEnd = new Date(newStart.getTime() + durationMs);
+            return {
+              ...evt,
+              start: newStart.toISOString(),
+              end: newEnd.toISOString(),
+            };
+          }
+          return evt;
+        });
+        queryClient.setQueryData(['trip-calendar', tripId], updated);
+      }
+
+      return { previousEvents };
+    },
+    onError: (err: any, _vars, context) => {
+      if (context?.previousEvents) {
+        queryClient.setQueryData(['trip-calendar', tripId], context.previousEvents);
+      }
+      addToast('error', 'Reschedule Failed', err.message);
+    },
+    onSuccess: () => {
+      addToast('success', 'Activity Updated', 'Schedule change saved.');
+      queryClient.invalidateQueries({ queryKey: ['trip-calendar', tripId] });
+      queryClient.invalidateQueries({ queryKey: ['trip-budget', tripId] });
+      setIsEditModalOpen(false);
+      setSelectedEvent(null);
+    },
+  });
+
+  const deleteActivityMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const token = await getAuthToken();
+      const res = await fetch(`http://localhost:5000/api/trip-activities/${id}`, {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error('Failed to remove activity from schedule');
+      return res.json();
+    },
+    onSuccess: () => {
+      addToast('success', 'Removed', 'Activity removed from trip schedule.');
+      queryClient.invalidateQueries({ queryKey: ['trip-calendar', tripId] });
+      queryClient.invalidateQueries({ queryKey: ['trip-budget', tripId] });
+      setSelectedEvent(null);
+    },
+    onError: (err: any) => {
+      addToast('error', 'Delete Failed', err.message);
+    },
+  });
+
+  // Drag and Drop Handler
+  const handleEventDrop = ({ event, start }: any) => {
+    const droppedEvent = event as BigCalendarEvent;
+    const newDate = new Date(start);
+    const newScheduledDate = format(newDate, 'yyyy-MM-dd');
+    const newScheduledTime = format(newDate, 'HH:mm:ss');
+
+    // Validation: Stop date boundaries check if available
+    const stopArrival = droppedEvent.resource.stopArrival;
+    const stopDeparture = droppedEvent.resource.stopDeparture;
+
+    if (stopArrival && stopDeparture) {
+      if (newScheduledDate < stopArrival || newScheduledDate > stopDeparture) {
+        addToast(
+          'error',
+          'Date Out of Range',
+          `Cannot move activity outside stop dates (${stopArrival} to ${stopDeparture}).`
+        );
+        return;
+      }
+    }
+
+    updateActivityMutation.mutate({
+      id: droppedEvent.id,
+      data: {
+        scheduled_date: newScheduledDate,
+        scheduled_time: newScheduledTime,
+      },
+    });
+  };
+
+  const handleOpenEditModal = (evt: BigCalendarEvent) => {
+    setSelectedEvent(evt);
+    setEditFormData({
+      custom_cost: String(evt.resource.cost || ''),
+      notes: evt.resource.notes || '',
+      scheduled_time: format(evt.start, 'HH:mm'),
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEvent) return;
+
+    updateActivityMutation.mutate({
+      id: selectedEvent.id,
+      data: {
+        custom_cost: Number(editFormData.custom_cost) || 0,
+        notes: editFormData.notes,
+        scheduled_time: `${editFormData.scheduled_time}:00`,
+      },
+    });
+  };
+
+  const handleDeleteActivity = () => {
+    if (!selectedEvent) return;
+    if (confirm('Are you sure you want to remove this activity from your itinerary?')) {
+      deleteActivityMutation.mutate(selectedEvent.id);
     }
   };
 
-  useEffect(() => {
-    fetchTripDetails();
-  }, [tripId]);
-
-  // Convert stops & activities into Calendar Events
-  const events = useMemo<CalendarEvent[]>(() => {
-    const list: CalendarEvent[] = [];
-
-    stops.forEach((stop, stopIdx) => {
-      const cityName = stop.cities?.name || `Stop ${stopIdx + 1}`;
-
-      // Stop Event (All Day range)
-      if (stop.arrival_date && stop.departure_date) {
-        list.push({
-          id: `stop-${stop.id}`,
-          title: `📍 ${cityName}`,
-          start: new Date(stop.arrival_date),
-          end: new Date(stop.departure_date),
-          allDay: true,
-          resource: {
-            type: 'stop',
-            cityName,
-          },
-        });
-      }
-
-      // Activities Events
-      (stop.activities || []).forEach((act: any) => {
-        const actName = act.activities?.name || 'Scheduled Activity';
-        const actCategory = act.activities?.category || 'other';
-        const scheduledDateStr = act.scheduled_date || stop.arrival_date;
-        const scheduledTimeStr = act.scheduled_time || '10:00';
-
-        const startDateTime = new Date(`${scheduledDateStr}T${scheduledTimeStr}:00`);
-        const durationMins = act.activities?.duration_minutes || 120;
-        const endDateTime = new Date(startDateTime.getTime() + durationMins * 60 * 1000);
-
-        list.push({
-          id: `act-${act.id}`,
-          title: `🎟️ ${actName}`,
-          start: startDateTime,
-          end: endDateTime,
-          allDay: false,
-          resource: {
-            type: 'activity',
-            category: actCategory,
-            description: act.activities?.description,
-            cost: act.custom_cost ?? act.activities?.cost ?? 0,
-            notes: act.notes,
-            cityName,
-          },
-        });
-      });
-    });
-
-    return list;
-  }, [stops]);
-
-  // Event Styling for React Big Calendar
-  const eventPropGetter = (event: CalendarEvent) => {
-    if (event.resource?.type === 'stop') {
-      return {
-        style: {
-          backgroundColor: '#1e293b',
-          borderLeft: '4px solid #10b981',
-          color: '#f8fafc',
-          borderRadius: '6px',
-          padding: '2px 6px',
-          fontWeight: 600,
-        },
-      };
-    }
-
+  // Event Prop Styling
+  const eventPropGetter = (event: any) => {
     const cat = event.resource?.category || 'other';
     const color = CATEGORY_COLORS[cat] || '#64748b';
 
     return {
       style: {
-        backgroundColor: `${color}20`,
+        backgroundColor: `${color}25`,
         borderLeft: `4px solid ${color}`,
         color: '#ffffff',
         borderRadius: '6px',
-        padding: '2px 6px',
         fontSize: '12px',
+        fontWeight: 600,
+        padding: '2px 6px',
       },
     };
   };
 
-  if (loading) {
+  const isLoading = isTripLoading || isEventsLoading;
+
+  if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         <Skeleton className="h-10 w-1/3" />
@@ -195,28 +335,29 @@ export const CalendarPage: React.FC = () => {
             <span>{trip?.name || 'Trip Schedule'}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Trip Calendar & Schedule
+            Trip Calendar & Timeline
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800">
-            <button
-              onClick={() => setViewMode('timeline')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                viewMode === 'timeline' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Timeline View
-            </button>
-            <button
-              onClick={() => setViewMode('calendar')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                viewMode === 'calendar' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Calendar Grid
-            </button>
+          {/* View Switcher Pills */}
+          <div className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold">
+            {[
+              { id: Views.MONTH, label: 'Month' },
+              { id: Views.WEEK, label: 'Week' },
+              { id: Views.DAY, label: 'Day' },
+              { id: Views.AGENDA, label: 'Agenda' },
+            ].map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setCalendarView(v.id as View)}
+                className={`px-3 py-1.5 rounded-lg transition-all ${
+                  calendarView === v.id ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
           </div>
 
           <Button
@@ -224,176 +365,158 @@ export const CalendarPage: React.FC = () => {
             onClick={() => setIsShareModalOpen(true)}
             className="border-slate-700 text-slate-300 hover:text-white"
           >
-            Share Schedule
+            Share
           </Button>
         </div>
       </div>
 
-      {/* Main View Container */}
-      {viewMode === 'calendar' ? (
-        <Card className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl">
-          <div className="h-[650px] font-sans text-slate-200">
-            <Calendar
+      {/* Main Calendar View */}
+      {events.length === 0 ? (
+        <EmptyState
+          title="No Scheduled Activities"
+          description="Add destination stops and tours in your itinerary builder to populate your interactive trip timeline."
+          action={
+            <Link to={`/trips/${tripId}`}>
+              <Button variant="primary">Go to Itinerary Builder</Button>
+            </Link>
+          }
+        />
+      ) : (
+        <Card className="bg-slate-900/60 border border-slate-800 p-4 sm:p-6 rounded-2xl space-y-3">
+          <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800/80">
+            <span className="flex items-center gap-2">
+              💡 <span className="font-semibold text-slate-300">Drag and drop</span> activities onto any date to reschedule. Click an event to view or edit details.
+            </span>
+            {isMobile && (
+              <Badge variant="warning" size="sm">
+                Mobile View (Agenda)
+              </Badge>
+            )}
+          </div>
+
+          <div className="h-[520px] sm:h-[650px] font-sans text-slate-200">
+            <DnDCalendar
               localizer={localizer}
               events={events}
               startAccessor="start"
               endAccessor="end"
               defaultDate={defaultDate}
               view={calendarView}
-              onView={(v) => setCalendarView(v)}
-              onSelectEvent={(evt) => setSelectedEvent(evt as CalendarEvent)}
+              onView={(v: View) => setCalendarView(v)}
+              onEventDrop={handleEventDrop}
+              onSelectEvent={(evt: any) => setSelectedEvent(evt as BigCalendarEvent)}
               eventPropGetter={eventPropGetter}
+              resizable={false}
               className="custom-big-calendar"
             />
           </div>
         </Card>
-      ) : (
-        /* Timeline Day-by-Day Grid */
-        <div className="space-y-6">
-          {stops.length === 0 ? (
-            <Card className="p-8 text-center bg-slate-900/40 border border-slate-800 rounded-2xl">
-              <p className="text-slate-400 text-sm">No destination stops added to this trip yet.</p>
-            </Card>
-          ) : (
-            stops.map((stop, idx) => {
-              const cityName = stop.cities?.name || `Stop ${idx + 1}`;
-              const cityCountry = stop.cities?.country || '';
-              const activities = stop.activities || [];
-
-              return (
-                <Card key={stop.id} className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500/10 text-emerald-400 font-extrabold text-sm border border-emerald-500/20">
-                        {idx + 1}
-                      </span>
-                      <div>
-                        <h3 className="text-lg font-bold text-white">
-                          {cityName} {cityCountry && <span className="text-slate-400 font-normal">({cityCountry})</span>}
-                        </h3>
-                        <p className="text-xs text-slate-400">
-                          {stop.arrival_date} &rarr; {stop.departure_date}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge variant="neutral" className="w-fit text-slate-400 border-slate-700">
-                      {activities.length} {activities.length === 1 ? 'Activity' : 'Activities'}
-                    </Badge>
-                  </div>
-
-                  {/* Scheduled Activities */}
-                  {activities.length === 0 ? (
-                    <p className="text-xs text-slate-500 italic">No scheduled activities for this stop.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                      {activities.map((act: any) => {
-                        const actName = act.activities?.name || 'Scheduled Activity';
-                        const cat = act.activities?.category || 'other';
-                        const catColor = CATEGORY_COLORS[cat] || '#64748b';
-                        const cost = act.custom_cost ?? act.activities?.cost ?? 0;
-
-                        return (
-                          <div
-                            key={act.id}
-                            onClick={() =>
-                              setSelectedEvent({
-                                id: act.id,
-                                title: actName,
-                                start: new Date(act.scheduled_date || stop.arrival_date),
-                                end: new Date(act.scheduled_date || stop.arrival_date),
-                                resource: {
-                                  type: 'activity',
-                                  category: cat,
-                                  description: act.activities?.description,
-                                  cost,
-                                  notes: act.notes,
-                                  cityName,
-                                },
-                              })
-                            }
-                            className="group p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition-all cursor-pointer space-y-2"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span
-                                className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white"
-                                style={{ backgroundColor: catColor }}
-                              >
-                                {cat}
-                              </span>
-                              <span className="text-xs font-mono font-bold text-emerald-400">
-                                ${Number(cost).toFixed(2)}
-                              </span>
-                            </div>
-
-                            <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors text-sm line-clamp-1">
-                              {actName}
-                            </h4>
-
-                            <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
-                              <span>📅 {act.scheduled_date || stop.arrival_date}</span>
-                              <span>⏰ {act.scheduled_time || '10:00'}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </Card>
-              );
-            })
-          )}
-        </div>
       )}
 
-      {/* Event Details Modal */}
-      {selectedEvent && (
+      {/* Selected Event Details Modal */}
+      {selectedEvent && !isEditModalOpen && (
         <Modal
-          isOpen={!!selectedEvent}
+          isOpen={!!selectedEvent && !isEditModalOpen}
           onClose={() => setSelectedEvent(null)}
           title={selectedEvent.title}
         >
           <div className="space-y-4 text-sm text-slate-300">
-            {selectedEvent.resource?.category && (
+            <div className="flex items-center justify-between">
               <span
                 className="px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider text-white"
                 style={{ backgroundColor: CATEGORY_COLORS[selectedEvent.resource.category] || '#64748b' }}
               >
                 {selectedEvent.resource.category}
               </span>
-            )}
+              <span className="text-xs font-mono font-bold text-emerald-400">
+                ${Number(selectedEvent.resource.cost).toFixed(2)}
+              </span>
+            </div>
 
-            {selectedEvent.resource?.cityName && (
-              <p className="text-xs text-slate-400">📍 Destination: <span className="text-white font-semibold">{selectedEvent.resource.cityName}</span></p>
-            )}
+            <div className="space-y-1 bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 text-xs">
+              <p className="text-slate-400">📍 Destination: <span className="text-white font-semibold">{selectedEvent.resource.stopCity}</span></p>
+              <p className="text-slate-400">📅 Date: <span className="text-white font-semibold">{format(selectedEvent.start, 'yyyy-MM-dd')}</span></p>
+              <p className="text-slate-400">⏰ Time: <span className="text-white font-semibold">{format(selectedEvent.start, 'hh:mm a')} &rarr; {format(selectedEvent.end, 'hh:mm a')}</span></p>
+            </div>
 
-            {selectedEvent.resource?.description && (
-              <p className="text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-lg border border-slate-800">
-                {selectedEvent.resource.description}
-              </p>
-            )}
-
-            {selectedEvent.resource?.cost !== undefined && (
-              <div className="flex items-center justify-between py-2 border-t border-b border-slate-800">
-                <span className="text-xs font-semibold uppercase text-slate-400">Estimated Cost</span>
-                <span className="text-base font-bold font-mono text-emerald-400">
-                  ${Number(selectedEvent.resource.cost).toFixed(2)}
-                </span>
-              </div>
-            )}
-
-            {selectedEvent.resource?.notes && (
-              <div>
+            {selectedEvent.resource.notes && (
+              <div className="space-y-1">
                 <span className="text-xs font-semibold text-slate-400 uppercase">Notes</span>
-                <p className="text-xs text-slate-300 mt-1 italic">{selectedEvent.resource.notes}</p>
+                <p className="text-xs text-slate-300 italic bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/60">
+                  {selectedEvent.resource.notes}
+                </p>
               </div>
             )}
 
-            <div className="flex justify-end pt-2">
-              <Button variant="outline" onClick={() => setSelectedEvent(null)}>
-                Close
+            <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+              <Button
+                variant="ghost"
+                className="text-rose-400 hover:text-rose-300 text-xs"
+                onClick={handleDeleteActivity}
+                isLoading={deleteActivityMutation.isPending}
+              >
+                Delete Activity
               </Button>
+
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setSelectedEvent(null)}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={() => handleOpenEditModal(selectedEvent)}>
+                  Edit Details
+                </Button>
+              </div>
             </div>
           </div>
+        </Modal>
+      )}
+
+      {/* Edit Activity Modal */}
+      {selectedEvent && isEditModalOpen && (
+        <Modal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          title={`Edit ${selectedEvent.title}`}
+        >
+          <form onSubmit={handleSaveEdit} className="space-y-4">
+            <Input
+              label="Custom Cost ($ USD)"
+              type="number"
+              step="0.01"
+              min="0"
+              value={editFormData.custom_cost}
+              onChange={(e) => setEditFormData({ ...editFormData, custom_cost: e.target.value })}
+            />
+
+            <Input
+              label="Scheduled Time"
+              type="time"
+              value={editFormData.scheduled_time}
+              onChange={(e) => setEditFormData({ ...editFormData, scheduled_time: e.target.value })}
+            />
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                Notes & Reminders
+              </label>
+              <textarea
+                rows={3}
+                value={editFormData.notes}
+                onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
+                placeholder="e.g. Bring museum confirmation email"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" isLoading={updateActivityMutation.isPending}>
+                Save Changes
+              </Button>
+            </div>
+          </form>
         </Modal>
       )}
 
@@ -406,8 +529,8 @@ export const CalendarPage: React.FC = () => {
           tripName={trip.name || 'Trip'}
           isPublic={trip.is_public}
           shareToken={trip.share_token}
-          onShareUpdated={({ is_public, share_token }) => {
-            setTrip({ ...trip, is_public, share_token });
+          onShareUpdated={() => {
+            queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
           }}
         />
       )}

@@ -37,6 +37,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 app.use('/api/trips', tripsRouter);
 app.use('/api/stops', stopsRouter);
 app.use('/api/activities', activitiesRouter);
+app.use('/api/trip-activities', activitiesRouter);
 app.use('/api/cities', citiesRouter);
 app.use('/api/budget', budgetRouter);
 app.use('/api', expensesRouter);
