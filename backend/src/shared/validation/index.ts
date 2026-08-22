@@ -31,7 +31,7 @@ export const profileUpdateSchema = z.object({
     (val) => (typeof val === 'string' && val.trim() === '' ? null : val),
     z.string().url('Must be a valid image URL (https://...)').nullable().optional()
   ),
-  language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja']).optional(),
+  language_pref: z.enum(['en', 'es', 'fr', 'de', 'ja', 'hi']).optional(),
   currency: z.enum(['USD', 'INR', 'EUR', 'GBP', 'JPY', 'AUD']).optional(),
 });
 
@@ -82,8 +82,9 @@ export const tripUpdateSchema = z
 export const stopCreateSchema = z
   .object({
     trip_id: z.string().uuid('Invalid trip ID format'),
-    city_id: z.string().uuid('Invalid city ID format'),
-    order_index: z.number().int().min(0, 'Order index must be non-negative'),
+    city_id: z.string().uuid('Invalid city ID format').nullable().optional(),
+    custom_city_name: z.string().trim().optional(),
+    order_index: z.number().int().min(0, 'Order index must be non-negative').optional(),
     arrival_date: z.string().min(1, 'Arrival date is required'),
     departure_date: z.string().min(1, 'Departure date is required'),
   })

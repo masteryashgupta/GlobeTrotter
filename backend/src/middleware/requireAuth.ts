@@ -39,14 +39,18 @@ export const optionalAuth = async (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
+
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
     try {
-      const { data: { user } } = await supabaseAdmin.auth.getUser(token);
-      if (user) req.user = user;
+      const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+      if (!error && user) {
+        req.user = user;
+      }
     } catch {
       // Ignore invalid optional tokens
     }
   }
+
   next();
 };

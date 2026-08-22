@@ -119,13 +119,14 @@ export class StopService {
    */
   static async createStop(params: {
     tripId: string;
-    cityId: string;
+    cityId?: string | null;
+    customCityName?: string;
     arrivalDate: string;
     departureDate: string;
     orderIndex?: number;
     userId: string;
   }): Promise<StopWithCity> {
-    const { tripId, cityId, arrivalDate, departureDate, userId } = params;
+    const { tripId, cityId, customCityName, arrivalDate, departureDate, userId } = params;
 
     // 1. Ownership check
     const isOwner = await this.verifyTripOwnership(tripId, userId);
@@ -170,7 +171,8 @@ export class StopService {
         .from('stops')
         .insert({
           trip_id: tripId,
-          city_id: cityId,
+          city_id: cityId || null,
+          custom_city_name: customCityName || null,
           arrival_date: arrivalDate,
           departure_date: departureDate,
           order_index: orderIndex,
@@ -186,11 +188,12 @@ export class StopService {
     }
 
     // 6. In-memory fallback
-    const city = await CatalogService.getCityById(cityId);
+    const city = cityId ? await CatalogService.getCityById(cityId) : null;
     const newStop: StopWithCity = {
       id: `stop-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       trip_id: tripId,
-      city_id: cityId,
+      city_id: cityId || null,
+      custom_city_name: customCityName || null,
       order_index: orderIndex,
       arrival_date: arrivalDate,
       departure_date: departureDate,
@@ -208,7 +211,8 @@ export class StopService {
   static async updateStop(
     id: string,
     updates: {
-      city_id?: string;
+      city_id?: string | null;
+      custom_city_name?: string;
       arrival_date?: string;
       departure_date?: string;
       order_index?: number;
@@ -262,7 +266,8 @@ export class StopService {
       const { data: updated, error } = await supabaseAdmin
         .from('stops')
         .update({
-          ...(updates.city_id ? { city_id: updates.city_id } : {}),
+          ...(updates.city_id !== undefined ? { city_id: updates.city_id } : {}),
+          ...(updates.custom_city_name !== undefined ? { custom_city_name: updates.custom_city_name } : {}),
           ...(updates.arrival_date ? { arrival_date: updates.arrival_date } : {}),
           ...(updates.departure_date ? { departure_date: updates.departure_date } : {}),
           ...(updates.order_index !== undefined ? { order_index: updates.order_index } : {}),
@@ -286,7 +291,8 @@ export class StopService {
     const idx = inMemoryStops.findIndex((s) => s.id === id);
     const updatedInMemory: StopWithCity = {
       ...existingStop,
-      city_id: updates.city_id || existingStop.city_id,
+      city_id: updates.city_id !== undefined ? updates.city_id : existingStop.city_id,
+      custom_city_name: updates.custom_city_name !== undefined ? updates.custom_city_name : existingStop.custom_city_name,
       arrival_date: effectiveArrival,
       departure_date: effectiveDeparture,
       order_index:
