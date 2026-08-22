@@ -47,6 +47,35 @@ Copy `.env.example` to `.env` in both `/frontend` and `/backend` directories and
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `PORT`
 
+## Database Setup & Local Docker / Cloud Seeding
+
+### 1. Local Supabase Docker Stack (Offline Development)
+To run a complete local Postgres + Auth + Storage stack in Docker for offline development:
+```bash
+npx supabase start
+```
+
+To stop the local Supabase stack:
+```bash
+npx supabase stop
+```
+
+### 2. Database Seeding (`cities` & `activities`)
+Master data (56 cities, 224 activities) is seeded directly into Postgres tables. The seed is **idempotent** (using `ON CONFLICT DO UPDATE` / `ON CONFLICT DO NOTHING`), so running it multiple times will not duplicate records.
+
+- **Seed Local Docker Postgres:**
+  ```bash
+  cd backend
+  npm run seed:local
+  ```
+  *(Alternatively: `npx supabase db reset` or `npx supabase db seed`)*
+
+- **Seed Cloud Supabase:**
+  ```bash
+  cd backend
+  npm run seed:cloud
+  ```
+
 ## Git Workflow & Branch Strategy
 
 This project follows a 4-branch parallel development workflow across contributors:

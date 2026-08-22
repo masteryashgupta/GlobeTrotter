@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "seed:local": "SUPABASE_URL=http://127.0.0.1:54321 tsx scripts/seed.ts",
+    "seed:cloud": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",

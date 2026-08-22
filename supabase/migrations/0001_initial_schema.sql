@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS public.cities (
   cost_index INT CHECK (cost_index BETWEEN 1 AND 5),
   popularity INT DEFAULT 0,
   image_url TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT unique_city_country UNIQUE (name, country)
 );
 
 -- 3. Activities Table
@@ -32,7 +33,8 @@ CREATE TABLE IF NOT EXISTS public.activities (
   cost NUMERIC(10,2) CHECK (cost >= 0),
   duration_minutes INT CHECK (duration_minutes > 0),
   image_url TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT unique_city_activity UNIQUE (city_id, name)
 );
 
 -- 4. Trips Table
