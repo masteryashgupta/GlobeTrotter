@@ -191,7 +191,12 @@ export class CatalogService {
           queryBuilder = queryBuilder.eq('city_id', cityId.trim());
         }
         if (category && category.trim()) {
-          queryBuilder = queryBuilder.eq('category', category.trim());
+          const categories = category.split(',').map((c) => c.trim().toLowerCase()).filter(Boolean);
+          if (categories.length === 1) {
+            queryBuilder = queryBuilder.eq('category', categories[0]);
+          } else if (categories.length > 1) {
+            queryBuilder = queryBuilder.in('category', categories);
+          }
         }
         if (minCost !== undefined && !isNaN(minCost)) {
           queryBuilder = queryBuilder.gte('cost', minCost);
@@ -237,8 +242,8 @@ export class CatalogService {
     }
 
     if (category && category.trim()) {
-      const catLower = category.trim().toLowerCase();
-      results = results.filter((a) => a.category?.toLowerCase() === catLower);
+      const categories = category.split(',').map((c) => c.trim().toLowerCase()).filter(Boolean);
+      results = results.filter((a) => a.category && categories.includes(a.category.toLowerCase()));
     }
 
     if (minCost !== undefined && !isNaN(minCost)) {

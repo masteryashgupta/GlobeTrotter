@@ -130,4 +130,30 @@ export const api = {
     }
     return res.json();
   },
+
+  async assignActivityToStop(data: {
+    stop_id: string;
+    activity_id: string;
+    scheduled_date?: string;
+    scheduled_time?: string;
+    custom_cost?: number;
+    notes?: string;
+    order_index?: number;
+  }): Promise<any> {
+    const headers = await getAuthHeader();
+    const res = await fetch(`${BASE_URL}/activities/trip-activities`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || `Failed to assign activity (${res.status})`);
+    }
+    return res.json();
+  },
 };

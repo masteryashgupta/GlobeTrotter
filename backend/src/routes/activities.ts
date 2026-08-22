@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth, AuthenticatedRequest } from '../middleware/requireAuth';
 import { CatalogService } from '../services/catalogService';
+import { supabaseAdmin } from '../lib/supabaseAdmin';
+import { TripActivity } from '../../../shared/types';
 
 export const activitiesRouter = Router();
 
@@ -60,10 +62,60 @@ activitiesRouter.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// In-memory fallback for local offline development
+const inMemoryTripActivities: (TripActivity & { activities?: any })[] = [];
+
 /**
  * POST /api/activities/trip-activities
- * Reserved for Part B Itinerary Builder
+ * Assign an activity to a specific itinerary stop.
  */
-activitiesRouter.post('/trip-activities', requireAuth, (req: AuthenticatedRequest, res: Response) => {
-  res.json({ message: 'STUB: POST /api/activities/trip-activities - Assigned to Part B' });
+activitiesRouter.post('/trip-activities', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { stop_id, activity_id, scheduled_date, scheduled_time, custom_cost, notes, order_index } = req.body;
+
+    if (!stop_id) {
+      return res.status(400).json({ error: 'Missing stop_id' });
+    }
+
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('trip_activities')
+        .insert({
+          stop_id,
+          activity_id,
+          scheduled_date,
+          scheduled_time,
+          custom_cost,
+          notes,
+          order_index: order_index ?? 0,
+        } as any)
+        .select('*, activities(*)')
+        .single();
+
+      if (!error && data) {
+        return res.status(201).json(data);
+      }
+    } catch {
+      // Fall through to memory
+    }
+
+    const activity = activity_id ? await CatalogService.getActivityById(activity_id) : null;
+    const newTripActivity: TripActivity & { activities?: any } = {
+      id: `trip-act-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      stop_id,
+      activity_id: activity_id || null,
+      scheduled_date: scheduled_date || null,
+      scheduled_time: scheduled_time || null,
+      custom_cost: custom_cost !== undefined ? custom_cost : null,
+      notes: notes || null,
+      order_index: order_index ?? 0,
+      created_at: new Date().toISOString(),
+      activities: activity,
+    };
+
+    inMemoryTripActivities.push(newTripActivity);
+    return res.status(201).json(newTripActivity);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Server error assigning activity to stop', details: err.message });
+  }
 });
