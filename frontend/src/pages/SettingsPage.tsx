@@ -415,7 +415,7 @@ export const SettingsPage: React.FC = () => {
                 options={CURRENCY_OPTIONS}
                 error={errors.currency?.message}
                 {...register('currency')}
-                helpText="Display currency for costs and budgets"
+                helperText="Display currency for costs and budgets"
                 disabled={!isEditingInfo}
               />
             </div>
